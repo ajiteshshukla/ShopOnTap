@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
     <application
         android:allowBackup="true"
@@ -29,6 +30,16 @@
         <service android:name=".DodIntentService"
                  android:enabled="true"
                  android:label="DOD Intent Service">
+        </service>
+
+        <service android:name="com.lphaindia.dodapp.dodapp.accessibilityFeatures.TapAccessibilityService"
+                 android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE" >
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+            <meta-data
+                    android:name="android.accessibilityservice"
+                    android:resource="@xml/testservice"/>
         </service>
 
     </application>

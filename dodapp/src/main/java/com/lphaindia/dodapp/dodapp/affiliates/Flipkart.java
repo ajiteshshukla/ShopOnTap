@@ -2,10 +2,11 @@ package com.lphaindia.dodapp.dodapp.affiliates;
 
 import android.util.Log;
 import com.lphaindia.dodapp.dodapp.AppConstants;
-import com.lphaindia.dodapp.dodapp.DodIntentService;
+import com.lphaindia.dodapp.dodapp.Product.Product;
 import com.lphaindia.dodapp.dodapp.affiliateAdapters.FlipkartJsonAdapter;
 import com.lphaindia.dodapp.dodapp.affiliateCategories.Category;
 import com.lphaindia.dodapp.dodapp.affiliateCategories.FlipkartAffiliateCategory;
+import com.lphaindia.dodapp.dodapp.network.NetworkTask;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -18,6 +19,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -32,7 +34,7 @@ public class Flipkart implements IfaceAffiliate {
     public static final String TOKEN_HEADER = "Fk-Affiliate-Token";
 
     private FlipkartJsonAdapter flipkartJsonAdapter;
-    private List<FlipkartAffiliateCategory> flipkartAffiliateCategories;
+    public List<FlipkartAffiliateCategory> flipkartAffiliateCategories;
 
     public Flipkart(FlipkartJsonAdapter flipkartJsonAdapter, List<FlipkartAffiliateCategory> flipkartAffiliateCategories) {
         this.flipkartJsonAdapter = flipkartJsonAdapter;
@@ -62,18 +64,76 @@ public class Flipkart implements IfaceAffiliate {
     }
 
     @Override
-    public void getCategoryUrlList() {
-        List<Category > categoryUrlList = flipkartJsonAdapter.getCategoryList();
-        flipkartAffiliateCategories.clear();
+    public List<Category> getCategoryUrlList() {
+        List<Category> categoryUrlList = flipkartJsonAdapter.getCategoryList();
         for (int i = 0; i < categoryUrlList.size(); i++) {
-            flipkartAffiliateCategories.add(new FlipkartAffiliateCategory(categoryUrlList.get(i)));
+            int index = getCategoryIndex(categoryUrlList.get(i).categoryName);
+            if(index != -1) {
+                if(flipkartAffiliateCategories.get(index).categoryProductListExpiry < Calendar
+                        .getInstance().getTimeInMillis()) {
+                    flipkartAffiliateCategories.remove(index);
+                    flipkartAffiliateCategories.add(new FlipkartAffiliateCategory(categoryUrlList.get(i)));
+                } else {
+                    Log.d(AppConstants.TAG, "no need to delete category is in valid state");
+                }
+            } else {
+                flipkartAffiliateCategories.add(new FlipkartAffiliateCategory(categoryUrlList.get(i)));
+            }
         }
+        return categoryUrlList;
     }
 
+    @Override
     public void populateCategoriesWithData() throws JSONException {
         for(int i = 0; i < flipkartAffiliateCategories.size(); i++) {
             flipkartAffiliateCategories.get(i).fetchProducts();
         }
+    }
+
+    @Override
+    public void populateCategorywithData(String category) throws JSONException {
+        for(int i = 0; i < flipkartAffiliateCategories.size(); i++) {
+            if(flipkartAffiliateCategories.get(i).category.categoryName.contains(category)) {
+                flipkartAffiliateCategories.get(i).fetchProducts();
+            }
+        }
+    }
+
+    @Override
+    public long getCategoryExpiry(String category) {
+        for(int i = 0; i < flipkartAffiliateCategories.size(); i++) {
+            if(flipkartAffiliateCategories.get(i).category.categoryName.contains(category)) {
+                return flipkartAffiliateCategories.get(i).categoryProductListExpiry;
+            }
+        }
+        return 0;
+    }
+
+    @Override
+    public List<Product> getProductListFromCategory(String category) {
+        List<Product> products = new ArrayList<Product>();
+        for(int i = 0; i < flipkartAffiliateCategories.size(); i++) {
+            if(flipkartAffiliateCategories.get(i).category.categoryName.contains(category)) {
+                products = flipkartAffiliateCategories.get(i).products;
+            }
+        }
+        return products;
+    }
+
+    @Override
+    public Product getProductById(String category, String productId) {
+        Product product = null;
+        for(int i = 0; i < flipkartAffiliateCategories.size(); i++) {
+            if(flipkartAffiliateCategories.get(i).category.categoryName.contains(category)) {
+                List<Product> products = flipkartAffiliateCategories.get(i).products;
+                for(int j = 0; j < products.size(); j++) {
+                    if(products.get(j).productId.contains(productId)) {
+                        product = products.get(j);
+                    }
+                }
+            }
+        }
+        return product;
     }
 
     @Override
@@ -86,40 +146,21 @@ public class Flipkart implements IfaceAffiliate {
         return flipkartJsonAdapter.hasDataInDbExpired();
     }
 
+    @Override
+    public int getCategoryIndex(String category) {
+        for (int i = 0; i < flipkartAffiliateCategories.size(); i++) {
+            if (flipkartAffiliateCategories.get(i).category.categoryName.contains(category)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    @Override
     public String fetchCategoryDataInBackground() {
         String datafromServer = null;
-        try {
-            URL url = new URL(PLAN_URL);
-            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-
-            urlConnection.setRequestProperty("Accept", "application/json");
-            urlConnection.setRequestProperty(AFFILIATE_HEADER, AFFILIATE_ID);
-            urlConnection.setRequestProperty(TOKEN_HEADER, TOKEN_ID);
-
-            Log.d(AppConstants.TAG, urlConnection.toString());
-            InputStream is = new BufferedInputStream(url.openStream());
-            Log.d(AppConstants.TAG, urlConnection.getHeaderFields().toString());
-            BufferedReader br = new BufferedReader(new InputStreamReader(is));
-            StringBuilder sb = new StringBuilder();
-            String line = null;
-            int size = 0;
-            while ((line = br.readLine()) != null) {
-                sb.append(line + "\n");
-                size = size + line.length();
-            }
-            datafromServer=sb.toString();
-            Log.d(AppConstants.TAG, "Fetched data: " + size);
-            Log.d(AppConstants.TAG, String.valueOf(datafromServer.length()));
-
-        } catch (MalformedURLException e) {
-            Log.d(AppConstants.TAG, "Malformed URL Exception");
-            e.printStackTrace();
-        } catch (IOException e) {
-            Log.d(AppConstants.TAG, "IOException");
-            e.printStackTrace();
-        } catch (Exception e) {
-            Log.d(AppConstants.TAG, e.getClass() + "--" + e.getMessage());
-        }
+        NetworkTask networkTask = new NetworkTask(AppConstants.AFFILIATE_COLLECTION_VALUE_FLIPKART);
+        datafromServer = networkTask.fetchDataFromUrl(PLAN_URL);
         return datafromServer;
     }
 }

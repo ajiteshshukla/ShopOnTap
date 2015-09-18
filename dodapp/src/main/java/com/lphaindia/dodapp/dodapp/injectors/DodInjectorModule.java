@@ -8,6 +8,7 @@ import com.lphaindia.dodapp.dodapp.affiliateAdapters.FlipkartJsonAdapter;
 import com.lphaindia.dodapp.dodapp.affiliateAdapters.SnapdealJsonAdapter;
 import com.lphaindia.dodapp.dodapp.affiliateCategories.FlipkartAffiliateCategory;
 import com.lphaindia.dodapp.dodapp.affiliateCategories.SnapdealAffiliateCategory;
+import com.lphaindia.dodapp.dodapp.affiliates.AffiliateCollection;
 import com.lphaindia.dodapp.dodapp.affiliates.Flipkart;
 import com.lphaindia.dodapp.dodapp.affiliates.Snapdeal;
 import com.lphaindia.dodapp.dodapp.data.DodDbHelper;
@@ -32,6 +33,7 @@ public final class DodInjectorModule {
     private Snapdeal snapdeal;
     private DodDbHelper dodDbHelper;
     private Scheduler scheduler;
+    private AffiliateCollection affiliateCollection;
 
     public DodInjectorModule(Context context) {
         try {
@@ -44,6 +46,7 @@ public final class DodInjectorModule {
             flipkart = new Flipkart(flipkartJsonAdapter, flipkartAffiliateCategoryList);
             snapdeal = new Snapdeal(snapdealJsonAdapter, snapdealAffiliateCategoryList);
             scheduler = new Scheduler(context);
+            affiliateCollection = new AffiliateCollection(flipkart, snapdeal);
 
         } catch (Exception e) {
             Log.d(AppConstants.TAG, e.getMessage());
@@ -90,5 +93,11 @@ public final class DodInjectorModule {
     @Provides
     public Scheduler providesScheduler() {
         return scheduler;
+    }
+
+    @Singleton
+    @Provides
+    public AffiliateCollection providesAffiliateCollection() {
+        return affiliateCollection;
     }
 }

@@ -2,8 +2,11 @@ package com.lphaindia.dodapp.dodapp.affiliateCategories;
 
 import android.util.Log;
 import com.lphaindia.dodapp.dodapp.AppConstants;
-import com.lphaindia.dodapp.dodapp.Product.SnapdealProduct;
+import com.lphaindia.dodapp.dodapp.Product.Product;
+import com.lphaindia.dodapp.dodapp.affiliateCategoryAdapter.SnapdealAffiliateCategoryAdapter;
 import com.lphaindia.dodapp.dodapp.affiliates.Snapdeal;
+import com.lphaindia.dodapp.dodapp.network.NetworkTask;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -25,13 +28,14 @@ public class SnapdealAffiliateCategory implements IfaceAffiliateCategory{
 
     public Category category;
 
-    public static List<SnapdealProduct> snapdealProducts = new ArrayList<SnapdealProduct>();
+    public long categoryProductListExpiry;
+
+    public List<Product> products = new ArrayList<Product>();
 
     public SnapdealAffiliateCategory(Category category) {
         this.category = category;
     }
 
-    @Override
     public void fetchProducts() throws JSONException {
         fetchProducts(category.categoryUrl);
     }
@@ -39,40 +43,12 @@ public class SnapdealAffiliateCategory implements IfaceAffiliateCategory{
 
     public void fetchProducts(String categoryUrl) throws JSONException {
         String datafromServer = null;
-        try {
-            URL url = new URL(categoryUrl);
-            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-
-            urlConnection.setRequestProperty("Accept", "application/json");
-            urlConnection.setRequestProperty(Snapdeal.AFFILIATE_HEADER, Snapdeal.AFFILIATE_ID);
-            urlConnection.setRequestProperty(Snapdeal.TOKEN_HEADER, Snapdeal.TOKEN_ID);
-
-            Log.d(AppConstants.TAG, urlConnection.toString());
-            InputStream is = new BufferedInputStream(url.openStream());
-            Log.d(AppConstants.TAG, urlConnection.getHeaderFields().toString());
-            BufferedReader br = new BufferedReader(new InputStreamReader(is));
-            StringBuilder sb = new StringBuilder();
-            String line = null;
-            int size = 0;
-            while ((line = br.readLine()) != null) {
-                sb.append(line + "\n");
-                size = size + line.length();
-            }
-            datafromServer=sb.toString();
-            Log.d(AppConstants.TAG, "Fetched data: " + size);
-            Log.d(AppConstants.TAG, String.valueOf(datafromServer.length()));
-
-        } catch (MalformedURLException e) {
-            Log.d(AppConstants.TAG, "Malformed URL Exception");
-            e.printStackTrace();
-        } catch (IOException e) {
-            Log.d(AppConstants.TAG, "IOException");
-            e.printStackTrace();
-        } catch (Exception e) {
-            Log.d(AppConstants.TAG, e.getClass() + "--" + e.getMessage());
-        }
-        Log.d(AppConstants.TAG, "Product Category: " + category.categoryName);
-        Log.d(AppConstants.TAG, "" + datafromServer);
+        NetworkTask networkTask = new NetworkTask(AppConstants.AFFILIATE_COLLECTION_VALUE_SNAPDEAL);
+        datafromServer = networkTask.fetchDataFromUrl(categoryUrl);
+        //Log.d(AppConstants.TAG, "Product Category: " + category.categoryName);
+        //Log.d(AppConstants.TAG, "" + datafromServer);
         JSONObject productJsonObject = new JSONObject(datafromServer);
+        categoryProductListExpiry = Long.valueOf(productJsonObject.getString("validTill"));
+        products = SnapdealAffiliateCategoryAdapter.fetchProductsFromJson(productJsonObject, category.categoryName);
     }
 }

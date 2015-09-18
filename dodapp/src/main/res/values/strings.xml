@@ -1,6 +1,11 @@
 <resources>
-    <string name="app_name">Dodapp</string>
 
+    <string name="app_name">ShopOnTap</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="buy">Buy</string>
+    <string name="more">More</string>
+    <string name="getting_similar_items">Hang On ! We are getting similar products for you</string>
+    <string name="noitems">No items to display</string>
+
 </resources>

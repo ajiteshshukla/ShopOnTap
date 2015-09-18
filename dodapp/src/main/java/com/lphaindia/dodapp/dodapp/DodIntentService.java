@@ -44,7 +44,7 @@ public class DodIntentService extends IntentService {
                 //check if some data has expired or is about to expire
         try {
             checkForAffiliates();
-            populateAffiliateCategories();
+            populateCategoryUrlLists();
             scheduler.cancelNextSchedule();
             scheduler.schedule(getNextExpiry());
         } catch (Exception e) {
@@ -61,11 +61,9 @@ public class DodIntentService extends IntentService {
             flipkart.pushCategoryUrlList();
     }
 
-    public void populateAffiliateCategories() throws JSONException {
+    public void populateCategoryUrlLists() {
         flipkart.getCategoryUrlList();
-        flipkart.populateCategoriesWithData();
         snapdeal.getCategoryUrlList();
-        snapdeal.populateCategoriesWithData();
     }
 
     public long getNextExpiry() {
