@@ -11,14 +11,14 @@
             android:text="@string/getting_similar_items"
             android:singleLine="false"
             android:layout_alignParentTop="true"
-            android:paddingTop="15dp"/>
+            android:paddingTop="15dp"
+            android:paddingBottom="10dp"/>
     <ImageView
             android:id="@+id/myanimation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@layout/loading_anim"
             android:layout_centerInParent="true"
-            android:layout_alignParentBottom="true"
-            />
+            android:layout_alignParentBottom="true"/>
 
 </RelativeLayout>

@@ -45,6 +45,11 @@ public class FlipkartJsonAdapter implements IfaceAffiliateAdapter{
     }
 
     @Override
+    public void removeCompleteList() {
+        dodDbHelper.removeAllCategories(DodDbHelper.TABLE_FLIPKART);
+    }
+
+    @Override
     public long getNextExpiryFromDbHelper() {
         return dodDbHelper.getNextExpiry(DodDbHelper.TABLE_FLIPKART);
     }

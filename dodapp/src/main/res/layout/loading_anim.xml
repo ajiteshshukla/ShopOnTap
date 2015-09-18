@@ -4,27 +4,27 @@
                 android:layout_height="match_parent"
                 android:layout_width="match_parent">
     <item
-            android:drawable="@drawable/loading1"
+            android:drawable="@drawable/loadingfinal0"
             android:duration="100"/>
     <item
-            android:drawable="@drawable/loading1"
+            android:drawable="@drawable/loadingfinal1"
             android:duration="100"/>
     <item
-            android:drawable="@drawable/loading2"
+            android:drawable="@drawable/loadingfinal2"
             android:duration="100"/>
     <item
-            android:drawable="@drawable/loading3"
+            android:drawable="@drawable/loadingfinal3"
             android:duration="100"/>
     <item
-            android:drawable="@drawable/loading4"
+            android:drawable="@drawable/loadingfinal4"
             android:duration="100"/>
     <item
-            android:drawable="@drawable/loading5"
+            android:drawable="@drawable/loadingfinal5"
             android:duration="100"/>
     <item
-            android:drawable="@drawable/loading6"
+            android:drawable="@drawable/loadingfinal6"
             android:duration="100"/>
     <item
-            android:drawable="@drawable/loading7"
+            android:drawable="@drawable/loadingfinal7"
             android:duration="100"/>
 </animation-list>

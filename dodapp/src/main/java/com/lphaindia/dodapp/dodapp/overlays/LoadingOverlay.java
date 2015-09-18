@@ -46,8 +46,13 @@ public class LoadingOverlay {
                 PixelFormat.TRANSLUCENT);
         loadingParams.gravity = Gravity.BOTTOM;
         WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
-        LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        mLoadingView = (RelativeLayout)inflater.inflate(R.layout.loading, null);
+        LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(mContext.LAYOUT_INFLATER_SERVICE);
+        try {
+            mLoadingView = (RelativeLayout) inflater.inflate(R.layout.loading, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+            e.getCause();
+        }
         wm.addView(mLoadingView, loadingParams);
         mLoadingAnim = (ImageView)mLoadingView.findViewById(R.id.myanimation);
         final AnimationDrawable myAnimationDrawable
@@ -56,7 +61,7 @@ public class LoadingOverlay {
     }
     public boolean removeOverlay(){
         if(isOverlayShown()) {
-            WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
+            WindowManager wm = (WindowManager) mContext.getSystemService(mContext.WINDOW_SERVICE);
             wm.removeView(mLoadingView);
             mLoadingView = null;
             return true;

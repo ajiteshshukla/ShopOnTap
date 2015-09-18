@@ -54,14 +54,28 @@ public class DodDbHelper extends SQLiteOpenHelper {
 
     }
 
+    public void removeAllCategories(String tablename) {
+        final SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("DELETE FROM " + tablename);
+    }
+
     public void insertOrUpdateCategories(String categoryName, String categoryUrl, String categoryExpiry,
                                                  String tableName) {
         final SQLiteDatabase db = this.getWritableDatabase();
         Cursor c = db.rawQuery("SELECT * FROM " + tableName + " WHERE " + CATEGORY_NAME + " = "
-                + "'" + categoryName + "'" + " AND " + CATEGORY_URL + " = "
-                + "'" + categoryUrl + "'", null);
+                + "'" + categoryName + "'", null);
         if(c.moveToFirst()) {
-            Log.d(AppConstants.TAG, "Record Already Present... No need to update");
+            Log.d(AppConstants.TAG, "Record Already Present... check if url is updated");
+            if (c.getString(c.getColumnIndex(CATEGORY_URL)).contains(categoryUrl)) {
+                Log.d(AppConstants.TAG, "url is already updated");
+            } else {
+                ContentValues contentValues = new ContentValues();
+                contentValues.put(CATEGORY_NAME, categoryName);
+                contentValues.put(CATEGORY_URL, categoryUrl);
+                contentValues.put(CATEGORY_EXPIRY, categoryExpiry);
+                db.update(tableName, contentValues, CATEGORY_NAME + "="
+                        + "'" + categoryName + "'", null);
+            }
         } else {
             ContentValues contentValues = new ContentValues();
             contentValues.put(CATEGORY_NAME, categoryName);
@@ -109,5 +123,4 @@ public class DodDbHelper extends SQLiteOpenHelper {
         }
         return categoryList;
     }
-
 }

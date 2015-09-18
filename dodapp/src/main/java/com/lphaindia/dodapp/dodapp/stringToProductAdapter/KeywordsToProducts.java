@@ -55,11 +55,20 @@ public class KeywordsToProducts extends AsyncTask<String, String, List<Product>>
         String dataFromFlipkartServer = null;
         try {
             NetworkTask networkTaskFlipkart = new NetworkTask(AppConstants.AFFILIATE_COLLECTION_VALUE_FLIPKART);
-            dataFromFlipkartServer = networkTaskFlipkart.fetchDataFromUrl(createSearchUrlForFlipkart());
-            if (dataFromFlipkartServer != null) {
-                JSONObject flipkartJasonObject = new JSONObject(dataFromFlipkartServer);
-                flipkartProductList = FlipkartAffiliateCategoryAdapter.fetchProductsFromJson
-                        (flipkartJasonObject, "Matching Products");
+            for (int i = 0; i < AppConstants.KEYWORD_DEPTH; i++) {
+                String searchUrl = createSearchUrlForFlipkart(i);
+                if (searchUrl != null) {
+                    dataFromFlipkartServer = networkTaskFlipkart.fetchDataFromUrl(searchUrl);
+                    JSONObject flipkartJasonObject = new JSONObject(dataFromFlipkartServer);
+                    flipkartProductList = FlipkartAffiliateCategoryAdapter.fetchProductsFromJson
+                            (flipkartJasonObject, "Matching Products");
+                    if (flipkartProductList != null &&
+                            flipkartProductList.size() > 0) {
+                        i = AppConstants.KEYWORD_DEPTH;
+                    }
+                } else {
+                    i = AppConstants.KEYWORD_DEPTH;
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -71,28 +80,23 @@ public class KeywordsToProducts extends AsyncTask<String, String, List<Product>>
     }
 
     //implement similar url creators for other affiliates
-    public String createSearchUrlForFlipkart() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("https://affiliate-api.flipkart.net/affiliate/search/json?query=");
-        if(TapAccessibilityService.activityDataList.size() > 0) {
-            StringBuilder keywords = new StringBuilder();
-            for (int i = 0; i < AppConstants.KEYWORD_DEPTH
-                    && i < TapAccessibilityService.activityDataList.size(); i++) {
-                keywords.append(TapAccessibilityService.activityDataList.get(i));
-                keywords.append(" ");
-            }
-            String searchString = keywords.toString();
+    public String createSearchUrlForFlipkart(int i) {
+        if(TapAccessibilityService.activityDataList.size() > i) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("https://affiliate-api.flipkart.net/affiliate/search/json?query=");
+            String searchString = TapAccessibilityService.activityDataList.get(i);
             String[] words = searchString.split("\\s+");
-            for (int i = 0; i < words.length && i < 10; i++) {
-                words[i] = words[i].replaceAll("[^\\w]", "");
-                sb.append(words[i]);
+            for (int j = 0; j < words.length && j < 10; j++) {
+                words[j] = words[j].replaceAll("[^\\w]", "");
+                sb.append(words[j]);
                 sb.append("+");
             }
             sb.deleteCharAt(sb.length() - 1);
             sb.append("&resultCount=");
             sb.append(String.valueOf(AppConstants.ACCESSIBILITY_MAX_RESULT_COUNT));
+            Log.d(AppConstants.TAG, "search Url: " + sb.toString());
+            return sb.toString();
         }
-        Log.d(AppConstants.TAG,"search Url: " + sb.toString());
-        return sb.toString();
+        return null;
     }
 }

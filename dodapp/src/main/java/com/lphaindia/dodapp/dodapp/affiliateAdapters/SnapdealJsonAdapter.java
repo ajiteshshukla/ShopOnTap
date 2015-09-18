@@ -46,6 +46,11 @@ public class SnapdealJsonAdapter implements  IfaceAffiliateAdapter{
     }
 
     @Override
+    public void removeCompleteList() {
+        dodDbHelper.removeAllCategories(DodDbHelper.TABLE_SNAPDEAL);
+    }
+
+    @Override
     public long getNextExpiryFromDbHelper() {
         return dodDbHelper.getNextExpiry(DodDbHelper.TABLE_SNAPDEAL);
     }

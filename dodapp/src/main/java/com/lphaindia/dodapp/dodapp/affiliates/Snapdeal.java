@@ -163,4 +163,9 @@ public class Snapdeal implements IfaceAffiliate {
         datafromServer = networkTask.fetchDataFromUrl(PLAN_URL);
         return datafromServer;
     }
+
+    @Override
+    public void removeAllCategories() {
+        snapdealJsonAdapter.removeCompleteList();
+    }
 }

@@ -21,8 +21,6 @@ import java.util.List;
  */
 public class TapAccessibilityService extends AccessibilityService {
 
-    private long timeBackKeyDown = 0;
-
     public static String pkgName = null;
     public static String whiteListedPkgNames = "com.quikr com.olx.southasia com.snapdeal.main com.flipkart.android " +
             "com.myntra.android com.jabong.android ";

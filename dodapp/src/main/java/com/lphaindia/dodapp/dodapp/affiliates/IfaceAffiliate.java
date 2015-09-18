@@ -25,4 +25,5 @@ public interface IfaceAffiliate {
     void populateCategoriesWithData() throws JSONException;
     void populateCategorywithData(String category) throws JSONException;
     String fetchCategoryDataInBackground();
+    void removeAllCategories();
 }
