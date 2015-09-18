@@ -49,6 +49,9 @@ public class TapAccessibilityService extends AccessibilityService {
 
     public void updateOverlayOnWindowChange(AccessibilityEvent event) {
         if (event.getPackageName().toString().contains(mContext.getPackageName())) {
+            if (LoadingOverlay.getInstance(mContext).isOverlayShown()) {
+                LoadingOverlay.getInstance(mContext).removeOverlay();
+            }
             return;
         }
         clearList();
@@ -57,6 +60,9 @@ public class TapAccessibilityService extends AccessibilityService {
         if(pkgName != null && pkgName != "" && whiteListedPkgNames.contains(pkgName)) {
             //We will get that pullable overlay only on the whitelisted packages this way
             IconOverlay.getInstance(mContext).showOverlay();
+            if (LoadingOverlay.getInstance(mContext).isOverlayShown()) {
+                LoadingOverlay.getInstance(mContext).removeOverlay();
+            }
         } else {
             IconOverlay.getInstance(mContext).removeOverlay();
             if (LoadingOverlay.getInstance(mContext).isOverlayShown()) {
