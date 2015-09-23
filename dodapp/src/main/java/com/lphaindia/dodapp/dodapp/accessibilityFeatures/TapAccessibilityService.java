@@ -2,7 +2,10 @@ package com.lphaindia.dodapp.dodapp.accessibilityFeatures;
 
 import android.accessibilityservice.AccessibilityService;
 import android.accessibilityservice.AccessibilityServiceInfo;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.accessibility.AccessibilityEvent;
@@ -28,7 +31,6 @@ public class TapAccessibilityService extends AccessibilityService {
     public static Context mContext;
 
     public static List<String> activityDataList = new ArrayList<String>();
-
 
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {

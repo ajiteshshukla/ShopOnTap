@@ -45,10 +45,12 @@ public class SnapdealAffiliateCategory implements IfaceAffiliateCategory{
         String datafromServer = null;
         NetworkTask networkTask = new NetworkTask(AppConstants.AFFILIATE_COLLECTION_VALUE_SNAPDEAL);
         datafromServer = networkTask.fetchDataFromUrl(categoryUrl);
-        //Log.d(AppConstants.TAG, "Product Category: " + category.categoryName);
-        //Log.d(AppConstants.TAG, "" + datafromServer);
-        JSONObject productJsonObject = new JSONObject(datafromServer);
-        categoryProductListExpiry = Long.valueOf(productJsonObject.getString("validTill"));
-        products = SnapdealAffiliateCategoryAdapter.fetchProductsFromJson(productJsonObject, category.categoryName);
+        Log.d(AppConstants.TAG, "Product Category: " + category.categoryName);
+        Log.d(AppConstants.TAG, "" + datafromServer);
+        if (datafromServer != null) {
+            JSONObject productJsonObject = new JSONObject(datafromServer);
+            categoryProductListExpiry = Long.valueOf(productJsonObject.getString("validTill"));
+            products = SnapdealAffiliateCategoryAdapter.fetchProductsFromJson(productJsonObject, category.categoryName);
+        }
     }
 }

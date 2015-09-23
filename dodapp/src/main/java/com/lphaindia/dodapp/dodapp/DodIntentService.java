@@ -55,9 +55,7 @@ public class DodIntentService extends IntentService {
     }
 
     public void checkForAffiliates() throws JSONException {
-        if(snapdeal.hasDataExpired())
             snapdeal.pushCategoryUrlList();
-        if(flipkart.hasDataExpired())
             flipkart.pushCategoryUrlList();
     }
 

@@ -80,16 +80,18 @@ public class KeywordsToProducts extends AsyncTask<String, String, List<Product>>
         //List<Product> amazonProductList = new ArrayList<Product>();
         //List<Product> myntraProductList = new ArrayList<Product>();
         String dataFromFlipkartServer = null;
-        try {
-            NetworkTask networkTaskFlipkart = new NetworkTask(AppConstants.AFFILIATE_COLLECTION_VALUE_FLIPKART);
-            for (int i = 0; i < AppConstants.KEYWORD_DEPTH; i++) {
+        NetworkTask networkTaskFlipkart = new NetworkTask(AppConstants.AFFILIATE_COLLECTION_VALUE_FLIPKART);
+        for (int i = 1; i < AppConstants.KEYWORD_DEPTH; i++) {
+            try {
                 Log.d(AppConstants.TAG, "inside loop");
                 String searchUrl = createSearchUrlForFlipkart(i);
                 if (searchUrl != null) {
                     dataFromFlipkartServer = networkTaskFlipkart.fetchDataFromUrl(searchUrl);
-                    JSONObject flipkartJasonObject = new JSONObject(dataFromFlipkartServer);
-                    flipkartProductList = FlipkartAffiliateCategoryAdapter.fetchProductsFromJson
-                            (flipkartJasonObject, "Matching Products");
+                    if (dataFromFlipkartServer != null) {
+                        JSONObject flipkartJasonObject = new JSONObject(dataFromFlipkartServer);
+                        flipkartProductList = FlipkartAffiliateCategoryAdapter.fetchProductsFromJson
+                                (flipkartJasonObject, "Matching Products");
+                    }
                     if (flipkartProductList != null &&
                             flipkartProductList.size() > 0) {
                         i = AppConstants.KEYWORD_DEPTH;
@@ -97,11 +99,10 @@ public class KeywordsToProducts extends AsyncTask<String, String, List<Product>>
                 } else {
                     i = AppConstants.KEYWORD_DEPTH;
                 }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
-
         matchingProductList.addAll(flipkartProductList);
         //Log.d(AppConstants.TAG, dataFromFlipkartServer);
         return matchingProductList;
@@ -112,7 +113,12 @@ public class KeywordsToProducts extends AsyncTask<String, String, List<Product>>
         if(TapAccessibilityService.activityDataList.size() > i) {
             StringBuilder sb = new StringBuilder();
             sb.append("https://affiliate-api.flipkart.net/affiliate/search/json?query=");
-            String searchString = TapAccessibilityService.activityDataList.get(i);
+            StringBuilder searchStringBuilder = new StringBuilder();
+            for (int j = 0; j <= i; j++) {
+                searchStringBuilder.append(TapAccessibilityService.activityDataList.get(j));
+                searchStringBuilder.append(" ");
+            }
+            String searchString = searchStringBuilder.toString();
             String[] words = searchString.split("\\s+");
             for (int j = 0; j < words.length && j < 10; j++) {
                 words[j] = words[j].replaceAll("-", "");

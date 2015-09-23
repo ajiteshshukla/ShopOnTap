@@ -28,6 +28,13 @@
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
                     android:layout_below="@+id/productimage"/>
+            <TextView
+                    android:id="@+id/textviewdiscount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="italic"
+                    android:textColor="#61210B"
+                    android:layout_below="@+id/textviewtitle"/>
 
             <Button
                     android:id="@+id/buttoncost"

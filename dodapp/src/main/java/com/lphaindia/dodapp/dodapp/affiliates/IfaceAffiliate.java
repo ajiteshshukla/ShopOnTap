@@ -17,7 +17,7 @@ public interface IfaceAffiliate {
     void pushCategoryUrlList() throws JSONException;
     List<Category> getCategoryUrlList();
     long getCategoryExpiry(String category);
-    int getCategoryIndex(String category);
+    int getCategoryIndex(Category category);
     List<Product> getProductListFromCategory(String category);
     Product getProductById(String category, String productId);
     long getNextExpiry();

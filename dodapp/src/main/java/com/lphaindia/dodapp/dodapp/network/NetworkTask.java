@@ -41,27 +41,30 @@ public class NetworkTask {
                 urlConnection.setRequestProperty(Snapdeal.TOKEN_HEADER, Snapdeal.TOKEN_ID);
             }
 
+            //setting connection timeout of 5 seconds
+            urlConnection.setConnectTimeout(5000);
             Log.d(AppConstants.TAG, urlConnection.toString());
-            InputStream is = new BufferedInputStream(urlConnection.getInputStream());
-            Log.d(AppConstants.TAG, urlConnection.getHeaderFields().toString());
-            BufferedReader br = new BufferedReader(new InputStreamReader(is));
-            StringBuilder sb = new StringBuilder();
-            String line = null;
-            int size = 0;
-            while ((line = br.readLine()) != null) {
-                sb.append(line + "\n");
-                size = size + line.length();
+            for (int i = 0; i < 2; i++) {
+                try {
+                    InputStream is = new BufferedInputStream(urlConnection.getInputStream());
+                    Log.d(AppConstants.TAG, urlConnection.getHeaderFields().toString());
+                    BufferedReader br = new BufferedReader(new InputStreamReader(is));
+                    StringBuilder sb = new StringBuilder();
+                    String line = null;
+                    int size = 0;
+                    while ((line = br.readLine()) != null) {
+                        sb.append(line + "\n");
+                        size = size + line.length();
+                    }
+                    Log.d(AppConstants.TAG, "Fetched data: " + size);
+                    datafromServer = sb.toString();
+                    if (datafromServer != null)
+                        break;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    continue;
+                }
             }
-            datafromServer = sb.toString();
-            Log.d(AppConstants.TAG, "Fetched data: " + size);
-            Log.d(AppConstants.TAG, String.valueOf(datafromServer.length()));
-
-        } catch (MalformedURLException e) {
-            Log.d(AppConstants.TAG, "Malformed URL Exception");
-            e.printStackTrace();
-        } catch (IOException e) {
-            Log.d(AppConstants.TAG, "IOException");
-            e.printStackTrace();
         } catch (Exception e) {
             Log.d(AppConstants.TAG, e.getClass() + "--" + e.getMessage());
         }
