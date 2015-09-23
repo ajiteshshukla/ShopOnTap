@@ -37,13 +37,13 @@
                              android:layout_weight="60"
                              android:layout_height="40dp"
                              android:paddingTop="10dp"
-                             android:background="@drawable/layout_bg"
+                             style="@style/spinner_style"
                              android:id="@+id/flipkart_category_spinner"/>
                     <Spinner android:layout_width="0dp"
                              android:layout_weight="40"
                              android:layout_height="40dp"
                              android:paddingTop="10dp"
-                             android:background="@drawable/layout_bg"
+                             style="@style/spinner_style"
                              android:entries="@array/discount_array"
                              android:id="@+id/flipkart_discount_spinner"/>
                 </LinearLayout>
@@ -81,13 +81,13 @@
                              android:layout_weight="60"
                              android:layout_height="40dp"
                              android:paddingTop="10dp"
-                             android:background="@drawable/layout_bg"
+                             style="@style/spinner_style"
                              android:id="@+id/snapdeal_category_spinner"/>
                     <Spinner android:layout_width="0dp"
                              android:layout_weight="40"
                              android:layout_height="40dp"
                              android:paddingTop="10dp"
-                             android:background="@drawable/layout_bg"
+                             style="@style/spinner_style"
                              android:entries="@array/discount_array"
                              android:id="@+id/snapdeal_discount_spinner"/>
                 </LinearLayout>
