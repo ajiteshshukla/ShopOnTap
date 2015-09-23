@@ -57,25 +57,26 @@ public class Snapdeal implements IfaceAffiliate {
     }
 
     @Override
-    public void pushCategoryUrlList() throws JSONException {
+    public void pushCategoryUrlList() {
         String responseString = fetchCategoryDataInBackground();
-        JSONObject responseJson = new JSONObject(responseString);
-        snapdealJsonAdapter.insertJsonToDbHelper(responseJson);
+        if(responseString != null) {
+            try {
+                JSONObject responseJson = new JSONObject(responseString);
+                snapdealJsonAdapter.insertJsonToDbHelper(responseJson);
+            } catch (Exception e) {
+                Log.d(AppConstants.TAG, responseString);
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
     public List<Category> getCategoryUrlList() {
         List<Category> categoryUrlList = snapdealJsonAdapter.getCategoryList();
         for(int i = 0; i < categoryUrlList.size(); i++) {
-            int index = getCategoryIndex(categoryUrlList.get(i).categoryName);
+            int index = getCategoryIndex(categoryUrlList.get(i));
             if(index != -1) {
-                if(snapdealAffiliateCategories.get(index).categoryProductListExpiry < Calendar
-                        .getInstance().getTimeInMillis()) {
-                    snapdealAffiliateCategories.remove(index);
-                    snapdealAffiliateCategories.add(new SnapdealAffiliateCategory(categoryUrlList.get(i)));
-                } else {
-                    Log.d(AppConstants.TAG, "no need to delete category is in valid state");
-                }
+                Log.d(AppConstants.TAG, "no need to delete snapdeal category is in valid state");
             } else {
                 snapdealAffiliateCategories.add(new SnapdealAffiliateCategory(categoryUrlList.get(i)));
             }
@@ -94,9 +95,10 @@ public class Snapdeal implements IfaceAffiliate {
     }
 
     @Override
-    public int getCategoryIndex(String category) {
+    public int getCategoryIndex(Category category) {
         for(int i = 0; i < snapdealAffiliateCategories.size(); i++) {
-            if(snapdealAffiliateCategories.get(i).category.categoryName.contains(category)) {
+            if(snapdealAffiliateCategories.get(i).category.categoryName.contains(category.categoryName)
+                    && snapdealAffiliateCategories.get(i).category.categoryUrl.contains(category.categoryUrl)) {
                 return i;
             }
         }

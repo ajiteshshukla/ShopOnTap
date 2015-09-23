@@ -11,10 +11,12 @@ import android.widget.Spinner;
  */
 public class AffiliateActivityResources {
     public Spinner spinner;
+    public Spinner discountSpinner;
     public RecyclerView recyclerView;
 
-    public AffiliateActivityResources(Spinner spinner, RecyclerView recyclerView) {
+    public AffiliateActivityResources(Spinner spinner, Spinner discountSpinner, RecyclerView recyclerView) {
         this.spinner = spinner;
+        this.discountSpinner = discountSpinner;
         this.recyclerView = recyclerView;
     }
 }

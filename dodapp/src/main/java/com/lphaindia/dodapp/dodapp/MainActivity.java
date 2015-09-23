@@ -10,9 +10,12 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
+import com.facebook.drawee.backends.pipeline.Fresco;
 import com.lphaindia.dodapp.dodapp.Product.Product;
 import com.lphaindia.dodapp.dodapp.affiliateCategories.Category;
 import com.lphaindia.dodapp.dodapp.affiliateResources.AffiliateActivityResources;
@@ -24,7 +27,6 @@ import com.lphaindia.dodapp.dodapp.uiAdapters.SnapdealRecyclerViewAdapter;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.List;
 
 
@@ -44,6 +46,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
         super.onCreate(savedInstanceState);
         Injectors.initialize(this);
         Injectors.serviceInjector.injectMainActivity(this);
+        Fresco.initialize(this);
         setContentView(R.layout.activity_main);
         Intent dodIntent = new Intent(getApplicationContext(), DodIntentService.class);
         Log.d(AppConstants.TAG, "inside onCreate invoking DodIntentService");
@@ -81,12 +84,15 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
         flipkartSpinner.setAdapter(flipkartArrayAdapter);
         flipkartSpinner.setOnItemSelectedListener(this);
 
+        Spinner flipkartDiscountSpinner = (Spinner) findViewById(R.id.flipkart_discount_spinner);
+        flipkartDiscountSpinner.setOnItemSelectedListener(this);
+
         RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.flipkart_recycler_view);
         mRecyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this,
                 LinearLayoutManager.HORIZONTAL, false);
         mRecyclerView.setLayoutManager(mLayoutManager);
-        flipkartResources = new AffiliateActivityResources(flipkartSpinner, mRecyclerView);
+        flipkartResources = new AffiliateActivityResources(flipkartSpinner, flipkartDiscountSpinner, mRecyclerView);
     }
 
     public void registerResourcesSnapdeal() {
@@ -97,26 +103,36 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
         snapdealSpinner.setAdapter(snapdealArrayAdapter);
         snapdealSpinner.setOnItemSelectedListener(this);
 
+        Spinner snapdealDiscountSpinner = (Spinner) findViewById(R.id.snapdeal_discount_spinner);
+        snapdealDiscountSpinner.setOnItemSelectedListener(this);
+
         RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.snapdeal_recycler_view);
         mRecyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this,
                 LinearLayoutManager.HORIZONTAL, false);
         mRecyclerView.setLayoutManager(mLayoutManager);
-        snapdealResources = new AffiliateActivityResources(snapdealSpinner, mRecyclerView);
+        snapdealResources = new AffiliateActivityResources(snapdealSpinner, snapdealDiscountSpinner, mRecyclerView);
     }
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         if (parent.getId() == R.id.flipkart_category_spinner) {
-            handleFlipkartCategoryClick((String)parent.getItemAtPosition(position));
+            handleFlipkartCategoryClick((String) parent.getItemAtPosition(position));
         } else if (parent.getId() == R.id.snapdeal_category_spinner) {
-            handleSnapdealCategoryClick((String)parent.getItemAtPosition(position));
+            handleSnapdealCategoryClick((String) parent.getItemAtPosition(position));
+        } else if (parent.getId() == R.id.flipkart_discount_spinner) {
+            handleFlipkartCategoryClick((String) flipkartResources.spinner.getSelectedItem());
+        } else if (parent.getId() == R.id.snapdeal_discount_spinner) {
+            handleSnapdealCategoryClick((String) snapdealResources.spinner.getSelectedItem());
         }
     }
 
     public void handleSnapdealCategoryClick(String category) {
         Log.d(AppConstants.TAG, "" + affiliateCollection.snapdeal.getCategoryExpiry(category));
-        if (affiliateCollection.snapdeal.getCategoryExpiry(category) > Calendar.getInstance().getTimeInMillis()) {
+        List<Product> products = affiliateCollection.snapdeal.getProductListFromCategory(category);
+        if (affiliateCollection.snapdeal.getCategoryExpiry(category) > Calendar.getInstance().getTimeInMillis()
+                && products != null
+                && products.size() > 0) {
             snapdealPostExecute(category);
         } else {
             try {
@@ -130,7 +146,10 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
 
     public void handleFlipkartCategoryClick(String category) {
         Log.d(AppConstants.TAG, "" + affiliateCollection.flipkart.getCategoryExpiry(category));
-        if (affiliateCollection.flipkart.getCategoryExpiry(category) > Calendar.getInstance().getTimeInMillis()) {
+        List<Product> products = affiliateCollection.flipkart.getProductListFromCategory(category);
+        if (affiliateCollection.flipkart.getCategoryExpiry(category) > Calendar.getInstance().getTimeInMillis()
+                && products != null
+                && products.size() > 0) {
             flipkartPostExecute(category);
         } else {
             try {
@@ -202,13 +221,51 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
 
     public void flipkartPostExecute(String category) {
         List<Product> products = affiliateCollection.flipkart.getProductListFromCategory(category);
-        RecyclerView.Adapter mAdapter = new FlipkartRecyclerViewAdapter(products, this);
+        List<Product> verifiedProductList = checkProduct(products);
+        int position = flipkartResources.discountSpinner.getSelectedItemPosition();
+        verifiedProductList = filterOnDiscount((float)(10 * position), verifiedProductList);
+        RecyclerView.Adapter mAdapter = new FlipkartRecyclerViewAdapter(verifiedProductList, this);
         flipkartResources.recyclerView.setAdapter(mAdapter);
     }
 
     public void snapdealPostExecute(String category) {
         List<Product> products = affiliateCollection.snapdeal.getProductListFromCategory(category);
-        RecyclerView.Adapter mAdapter = new SnapdealRecyclerViewAdapter(products, this);
+        List<Product> verifiedProductList = checkProduct(products);
+        int position = snapdealResources.discountSpinner.getSelectedItemPosition();
+        verifiedProductList = filterOnDiscount((float)(10 * position), verifiedProductList);
+        RecyclerView.Adapter mAdapter = new SnapdealRecyclerViewAdapter(verifiedProductList, this);
         snapdealResources.recyclerView.setAdapter(mAdapter);
+    }
+
+    public List<Product> checkProduct(List<Product> products) {
+        List<Product> newList = new ArrayList<Product>();
+        for (int i = 0; i < products.size(); i++) {
+            if(products.get(i).imageUrl != null
+                    && products.get(i).imageUrl.length() > 2
+                    && products.get(i).sellingPrice != null
+                    && products.get(i).sellingPrice.length() > 0
+                    && Float.valueOf(products.get(i).sellingPrice) > 0.0) {
+                //Log.d(AppConstants.TAG, "product satifies all criteria: " + products.get(i).toString());
+                newList.add(products.get(i));
+            } else {
+                //Log.d(AppConstants.TAG, "criteria failed: " + products.get(i).toString());
+            }
+        }
+        return newList;
+    }
+
+    public List<Product> filterOnDiscount(Float discount, List<Product> products) {
+        List<Product> newList = new ArrayList<Product>();
+        for (int i = 0; i < products.size(); i++) {
+            if(products.get(i).discountPercentage != null
+                    && products.get(i).discountPercentage.length() > 0
+                    && Float.valueOf(products.get(i).discountPercentage) >= discount) {
+                Log.d(AppConstants.TAG, "product satifies all criteria: " + products.get(i).discountPercentage);
+                newList.add(products.get(i));
+            } else {
+                //Log.d(AppConstants.TAG, "criteria failed: " + products.get(i).toString());
+            }
+        }
+        return newList;
     }
 }

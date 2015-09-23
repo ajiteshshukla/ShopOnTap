@@ -33,6 +33,7 @@ public class FlipkartRecyclerViewAdapter extends RecyclerView.Adapter<FlipkartRe
             .OnClickListener {
 
         private TextView title;
+        private TextView discount;
         private Button cost;
         private ImageView imageView;
         private Product product;
@@ -42,6 +43,7 @@ public class FlipkartRecyclerViewAdapter extends RecyclerView.Adapter<FlipkartRe
         public DataObjectHolder(View itemView) {
             super(itemView);
             title = (TextView) itemView.findViewById(R.id.textviewtitle);
+            discount = (TextView) itemView.findViewById(R.id.textviewdiscount);
             cost = (Button) itemView.findViewById(R.id.buttoncost);
             imageView = (ImageView) itemView.findViewById(R.id.productimage);
             Log.d(AppConstants.TAG, "Adding Listener");
@@ -62,8 +64,10 @@ public class FlipkartRecyclerViewAdapter extends RecyclerView.Adapter<FlipkartRe
         public void setInfo(Product product, Context context) {
             mContext = context;
             this.product = product;
-            title.setText(product.title);
+            title.setText(product.title.substring(0, product.title.length() > 20 ? (20) : (product.title.length()-1)));
+            discount.setText("Discount: " + product.discountPercentage + "%");
             cost.setText("Rs. " + product.sellingPrice);
+
             Picasso.with(mContext).load(product.imageUrl).resize(400, 400).into(imageView);
             productUrl = product.productUrl;
         }

@@ -3,12 +3,20 @@ package com.lphaindia.dodapp.dodapp.overlays;
 import android.content.Context;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
+import android.net.Uri;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import com.facebook.common.util.UriUtil;
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.drawee.interfaces.DraweeController;
+import com.facebook.drawee.view.DraweeView;
+import com.facebook.drawee.view.SimpleDraweeView;
+import com.facebook.imagepipeline.request.ImageRequest;
+import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.lphaindia.dodapp.dodapp.Product.Product;
 import com.lphaindia.dodapp.dodapp.R;
 import com.lphaindia.dodapp.dodapp.accessibilityFeatures.TapAccessibilityService;
@@ -22,7 +30,8 @@ import java.util.concurrent.ExecutionException;
  */
 public class IconOverlay{
     private static IconOverlay mInstance = null;
-    ImageView mOverlayView;
+    //ImageView mOverlayView;
+    DraweeView draweeView;
     private static Context mContext;
     public static IconOverlay getInstance(Context ctxt){
         if(null == mInstance) {
@@ -41,8 +50,10 @@ public class IconOverlay{
         if (isOverlayShown()) {
             try {
                 WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
-                wm.removeView(mOverlayView);
-                mOverlayView = null;
+                //wm.removeView(mOverlayView);
+                wm.removeView(draweeView);
+                //mOverlayView = null;
+                draweeView = null;
                 mInstance = null;
             } catch (Exception e) {
                 e.printStackTrace();
@@ -53,17 +64,20 @@ public class IconOverlay{
     }
     public boolean showOverlay() {
         boolean isSuccess = false;
-        if (mOverlayView != null) {
+        //if (mOverlayView != null) {
+        if(draweeView != null) {
             Log.w("TAG", "Cannot recreate overlay");
             return isSuccess;
         }
         //TapAnalytics.sendAnalyticsSwipeIconVisible(TapAccessibilityService.mTracker);
         // Create overlay video
-        createOverlay(mOverlayView != null);
+        //createOverlay(mOverlayView != null);
+        createOverlay(draweeView != null);
         return true;
     }
     public boolean isOverlayShown(){
-        return (mOverlayView != null);
+        //return (mOverlayView != null);
+        return (draweeView != null);
     }
     /**
      * Create video overlay
@@ -83,12 +97,26 @@ public class IconOverlay{
         params.gravity = Gravity.BOTTOM | Gravity.RIGHT;
         params.x = 0;
         params.y = 300;
-        mOverlayView = new ImageView(mContext);
-        mOverlayView.setImageResource(R.drawable.icon);
+        //mOverlayView = new ImageView(mContext);
+        draweeView = new SimpleDraweeView(mContext);
+        //draweeView.setImageResource(R.drawable.icon);
+        //mOverlayView.setImageResource(R.drawable.icon);
+        /*Uri uri = new Uri.Builder()
+                .scheme(UriUtil.LOCAL_RESOURCE_SCHEME) // "res"
+                .path(String.valueOf(R.drawable.icon))
+                .build();
+        ImageRequest imageRequest = ImageRequestBuilder.newBuilderWithSource(uri).build();*/
+        DraweeController controller = Fresco.newDraweeControllerBuilder()
+                .setUri(Uri.parse("res:///" + R.drawable.iconfinal))
+                .setAutoPlayAnimations(true)
+                .build();
+        draweeView.setController(controller);
         //Add close button
         final WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
-        wm.addView(mOverlayView, params);
-        mOverlayView.setOnTouchListener(new View.OnTouchListener() {
+        //wm.addView(mOverlayView, params);
+        wm.addView(draweeView, params);
+        //mOverlayView.setOnTouchListener(new View.OnTouchListener() {
+        draweeView.setOnTouchListener(new View.OnTouchListener() {
             private WindowManager.LayoutParams paramsF = params;
             private float initialX;
             private float initialTouchX;
@@ -106,9 +134,12 @@ public class IconOverlay{
                         {
                             Point size = new Point();
                             wm.getDefaultDisplay().getSize(size);
-                            paramsF.x = size.x - mOverlayView.getWidth();
-                            mOverlayView.animate().translationX(paramsF.x);
-                            wm.updateViewLayout(mOverlayView, paramsF);
+                            //paramsF.x = size.x - mOverlayView.getWidth();
+                            paramsF.x = size.x - draweeView.getWidth();
+                            //mOverlayView.animate().translationX(paramsF.x);
+                            draweeView.animate().translationX(paramsF.x);
+                            //wm.updateViewLayout(mOverlayView, paramsF);
+                            wm.updateViewLayout(draweeView, paramsF);
                             //send to analytics - swipe event
                             //TapAnalytics.sendAnalyticsSwipeOnIcon(TapAccessibilityService.mTracker);
                             //Remove icon and fetch results from server

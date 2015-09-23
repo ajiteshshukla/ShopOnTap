@@ -7,6 +7,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +35,20 @@ public class SnapdealAffiliateCategoryAdapter {
             String imageUrl = productAttributes.getString("imageLink");
             String productId = productAttributes.getString("id");
 
+            if(maximumRetailPrice != null
+                    && maximumRetailPrice.length() > 0
+                    && sellingPrice != null
+                    && sellingPrice.length() > 0) {
+                float discountPct = (float) 0.0;
+                float mrp = Float.valueOf(maximumRetailPrice);
+                float sp = Float.valueOf(sellingPrice);
+                if (sp > 0.0) {
+                    discountPct = (mrp - sp) * 100 / mrp;
+                    discountPct = round(discountPct, 2);
+                }
+                discountPercentage = String.valueOf(discountPct);
+            }
+
             Log.d(AppConstants.TAG, "title: " + title);
             Log.d(AppConstants.TAG, "productUrl: " + productUrl);
             Log.d(AppConstants.TAG, "productBrand: " + brand);
@@ -49,5 +64,10 @@ public class SnapdealAffiliateCategoryAdapter {
                     currency, brand, color, sizeUnit, productId, categoryName, productUrl));
         }
         return intermProducts;
+    }
+    public static float round(float d, int decimalPlace) {
+        BigDecimal bd = new BigDecimal(Float.toString(d));
+        bd = bd.setScale(decimalPlace, BigDecimal.ROUND_HALF_UP);
+        return bd.floatValue();
     }
 }

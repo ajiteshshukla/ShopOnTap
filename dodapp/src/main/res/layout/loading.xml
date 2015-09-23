@@ -12,7 +12,7 @@
             android:singleLine="false"
             android:layout_alignParentTop="true"
             android:paddingTop="15dp"
-            android:paddingBottom="10dp"/>
+            android:paddingBottom="20dp"/>
     <ImageView
             android:id="@+id/myanimation"
             android:layout_width="wrap_content"

@@ -8,4 +8,16 @@
     <string name="getting_similar_items">Hang On ! We are getting similar products for you</string>
     <string name="noitems">No items to display</string>
 
+    <string-array name="discount_array">
+        <item>min 0% off</item>
+        <item>min 10% off</item>
+        <item>min 20% off</item>
+        <item>min 30% off</item>
+        <item>min 40% off</item>
+        <item>min 50% off</item>
+        <item>min 60% off</item>
+        <item>min 70% off</item>
+        <item>min 80% off</item>
+    </string-array>
+
 </resources>
