@@ -2,10 +2,7 @@ package com.lphaindia.dodapp.dodapp.accessibilityFeatures;
 
 import android.accessibilityservice.AccessibilityService;
 import android.accessibilityservice.AccessibilityServiceInfo;
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.pm.ActivityInfo;
-import android.content.pm.PackageManager;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.accessibility.AccessibilityEvent;
@@ -37,6 +34,7 @@ public class TapAccessibilityService extends AccessibilityService {
         //if a new view is clicked or the window state is changed clear the old list
         if (event.getEventType() == AccessibilityEvent.TYPE_VIEW_CLICKED ||
                 event.getEventType() == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
+            Log.d(AppConstants.TAG, event.getClassName().toString());
             updateOverlayOnWindowChange(event);
         }
 

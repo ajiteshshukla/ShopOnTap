@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -27,7 +28,9 @@ import com.lphaindia.dodapp.dodapp.uiAdapters.SnapdealRecyclerViewAdapter;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 
 public class MainActivity extends Activity implements AdapterView.OnItemSelectedListener {
@@ -46,11 +49,15 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
         super.onCreate(savedInstanceState);
         Injectors.initialize(this);
         Injectors.serviceInjector.injectMainActivity(this);
-        Fresco.initialize(this);
         setContentView(R.layout.activity_main);
         Intent dodIntent = new Intent(getApplicationContext(), DodIntentService.class);
         Log.d(AppConstants.TAG, "inside onCreate invoking DodIntentService");
         startService(dodIntent);
+
+        if(isAccessibilityEnabled() == false) {
+            Intent intent = new Intent(getApplicationContext(), ScreenSlidePagerActivity.class);
+            startActivity(intent);
+        }
 
         //register resources for affiliates
         registerResourcesFlipkart();
@@ -60,18 +67,18 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
 
     public List<String> getFlipkartCategoryList() {
         List<String> categoryList= new ArrayList<String>();
-        flipkartAffiliateCategories = affiliateCollection.flipkart.getCategoryUrlList();
+        flipkartAffiliateCategories = affiliateCollection.flipkart.getCategoryList();
         for(int i = 0; i < flipkartAffiliateCategories.size(); i++) {
-            categoryList.add(flipkartAffiliateCategories.get(i).categoryName);
+            categoryList.add(flipkartAffiliateCategories.get(i).getCategoryName());
         }
         return categoryList;
     }
 
     public List<String> getSnapdealCategoryList() {
         List<String> categoryList= new ArrayList<String>();
-        snapdealAffiliateCategories = affiliateCollection.snapdeal.getCategoryUrlList();
+        snapdealAffiliateCategories = affiliateCollection.snapdeal.getCategoryList();
         for(int i = 0; i < snapdealAffiliateCategories.size(); i++) {
-            categoryList.add(snapdealAffiliateCategories.get(i).categoryName);
+            categoryList.add(snapdealAffiliateCategories.get(i).getCategoryName());
         }
         return categoryList;
     }
@@ -128,11 +135,8 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
     }
 
     public void handleSnapdealCategoryClick(String category) {
-        Log.d(AppConstants.TAG, "" + affiliateCollection.snapdeal.getCategoryExpiry(category));
         List<Product> products = affiliateCollection.snapdeal.getProductListFromCategory(category);
-        if (affiliateCollection.snapdeal.getCategoryExpiry(category) > Calendar.getInstance().getTimeInMillis()
-                && products != null
-                && products.size() > 0) {
+        if (products != null && products.size() > 0) {
             snapdealPostExecute(category);
         } else {
             try {
@@ -145,11 +149,8 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
     }
 
     public void handleFlipkartCategoryClick(String category) {
-        Log.d(AppConstants.TAG, "" + affiliateCollection.flipkart.getCategoryExpiry(category));
         List<Product> products = affiliateCollection.flipkart.getProductListFromCategory(category);
-        if (affiliateCollection.flipkart.getCategoryExpiry(category) > Calendar.getInstance().getTimeInMillis()
-                && products != null
-                && products.size() > 0) {
+        if (products != null && products.size() > 0) {
             flipkartPostExecute(category);
         } else {
             try {
@@ -267,5 +268,22 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
             }
         }
         return newList;
+    }
+
+    public boolean isAccessibilityEnabled() {
+        int accessibilityEnabled = 0;
+        String checkSettings = Settings.Secure.getString(this.getContentResolver(),
+                Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES);
+        try {
+            accessibilityEnabled = Settings.Secure.getInt(this.getContentResolver(), Settings.Secure.ACCESSIBILITY_ENABLED);
+        } catch (Settings.SettingNotFoundException e) {
+            Log.d(AppConstants.TAG, " Settings not found Exception");
+            e.printStackTrace();
+        }
+        if (accessibilityEnabled == 1 && checkSettings.contains("com.lphaindia.dodapp.dodapp")) {
+            Log.d(AppConstants.TAG, " Settings fine. No need to redirect");
+            return true;
+        }
+        return false;
     }
 }

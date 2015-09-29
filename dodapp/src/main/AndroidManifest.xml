@@ -21,6 +21,9 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".ScreenSlidePagerActivity"
+                  android:theme="@android:style/Theme.DeviceDefault.Light.NoActionBar"/>
+
         <receiver android:name=".IntentListener">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
