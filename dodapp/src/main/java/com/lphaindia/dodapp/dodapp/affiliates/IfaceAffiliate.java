@@ -11,19 +11,11 @@ import java.util.List;
  * Created by ajitesh.shukla on 9/14/15.
  */
 public interface IfaceAffiliate {
-    String getPlanUrl();
-    String getTokenId();
-    String getAffiliateId();
-    void pushCategoryUrlList() throws JSONException;
-    List<Category> getCategoryUrlList();
-    long getCategoryExpiry(String category);
+    void pushCategoryList() throws JSONException;
+    List<Category> getCategoryList();
     int getCategoryIndex(Category category);
     List<Product> getProductListFromCategory(String category);
-    Product getProductById(String category, String productId);
-    long getNextExpiry();
-    boolean hasDataExpired();
-    void populateCategoriesWithData() throws JSONException;
     void populateCategorywithData(String category) throws JSONException;
-    String fetchCategoryDataInBackground();
+    String fetchCategoryListInBackground();
     void removeAllCategories();
 }

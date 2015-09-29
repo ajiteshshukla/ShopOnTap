@@ -12,7 +12,7 @@ import java.util.List;
 public interface IfaceAffiliateAdapter {
     void insertJsonToDbHelper(JSONObject jsonObject) throws JSONException;
     void removeCompleteList();
-    long getNextExpiryFromDbHelper();
-    boolean hasDataInDbExpired();
-    public List<Category> getCategoryList();
+    //long getNextExpiryFromDbHelper();
+    //boolean hasDataInDbExpired();
+    List<Category> getCategoryList();
 }

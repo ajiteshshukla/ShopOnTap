@@ -107,7 +107,7 @@ public class IconOverlay{
                 .build();
         ImageRequest imageRequest = ImageRequestBuilder.newBuilderWithSource(uri).build();*/
         DraweeController controller = Fresco.newDraweeControllerBuilder()
-                .setUri(Uri.parse("res:///" + R.drawable.iconfinal))
+                .setUri(Uri.parse("res:///" + R.drawable.icon))
                 .setAutoPlayAnimations(true)
                 .build();
         draweeView.setController(controller);
