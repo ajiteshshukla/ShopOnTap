@@ -1,39 +1,100 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.lphaindia.dodapp.dodapp.uiAdapters.CardView
+<com.hack.tap.app.ui.overlay.adapters.CardView
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="310dp"
         android:layout_height="match_parent"
-        android:background="@drawable/border">
+        android:background="@drawable/border"
+        android:paddingLeft="20dp">
 
         <ImageView
                 android:id="@+id/product_image"
                 android:layout_width="300dp"
                 android:layout_height="800dp"
                 android:layout_gravity="center"
-                android:layout_marginBottom="80dp"
+                android:layout_marginBottom="180dp"
                 android:src="@drawable/ic_launcher"
                 />
         <TextView
                 android:id="@+id/product_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:singleLine="true"
+                android:singleLine="false"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="#333333"
-                android:text="Prodcue Name"
-                android:layout_marginBottom="60dp"
+                android:text="Product Name"
+                android:layout_marginBottom="120dp"
                 android:layout_alignParentBottom="true"/>
-        <TextView
-                android:id="@+id/product_brand"
+        <LinearLayout android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:orientation="horizontal"
+                      android:layout_marginBottom="90dp"
+                      android:layout_alignParentBottom="true">
+                <TextView
+                        android:id="@+id/label_brand"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:text="Brand"
+                        android:textColor="#333333"
+                        android:layout_weight="1"/>
+                <TextView
+                        android:id="@+id/product_brand"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:text="Brand"
+                        android:textColor="#333333"
+                        android:layout_weight="1"/>
+        </LinearLayout>
+        <LinearLayout
+                android:id="@+id/layout_size"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="Brand"
-                android:textColor="#333333"
-                android:layout_marginBottom="40dp"
-                android:layout_alignParentBottom="true"/>
+                android:orientation="horizontal"
+                android:layout_marginBottom="70dp"
+                android:layout_alignParentBottom="true"
+                android:visibility="gone">
+                <TextView
+                        android:id="@+id/label_size"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:text="Size"
+                        android:textColor="#333333"
+                        android:layout_weight="1"/>
+                <TextView
+                        android:id="@+id/product_size"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textColor="#333333"
+                        android:layout_weight="1"/>
+        </LinearLayout>
+        <LinearLayout
+                android:id="@+id/layout_color"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="50dp"
+                android:layout_alignParentBottom="true"
+                android:visibility="gone">
+                <TextView
+                        android:id="@+id/label_color"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textColor="#333333"
+                        android:text="Color"
+                        android:layout_weight="1"/>
+                <TextView
+                        android:id="@+id/product_color"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textColor="#333333"
+                        android:layout_weight="1"/>
+        </LinearLayout>
         <Button
                 android:id="@+id/product_price"
                 android:layout_width="match_parent"
@@ -48,4 +109,4 @@
                 android:background="#08c"
                 android:layout_centerInParent="true"/>
 
-</com.lphaindia.dodapp.dodapp.uiAdapters.CardView>
+</com.hack.tap.app.ui.overlay.adapters.CardView>

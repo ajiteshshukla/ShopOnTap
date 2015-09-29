@@ -7,11 +7,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
-import com.lphaindia.dodapp.dodapp.Product.DummyProduct;
+import android.widget.*;
+import com.lphaindia.dodapp.dodapp.Product.Product;
 import com.lphaindia.dodapp.dodapp.R;
 import com.lphaindia.dodapp.dodapp.overlays.CarouselOverlay;
 import com.lphaindia.dodapp.dodapp.overlays.FullScreenOverlay;
@@ -21,12 +18,12 @@ import java.util.ArrayList;
 
 public class FullscreenAdapter extends RecyclerView.Adapter<FullscreenAdapter.VerticalItemHolder> {
 
-    private ArrayList<DummyProduct> mProductList;
+    private ArrayList<Product> mProductList;
     private Context mCtxt;
     private AdapterView.OnItemClickListener mOnItemClickListener;
 
     public FullscreenAdapter(Context ctxt) {
-        mProductList = new ArrayList<DummyProduct>();
+        mProductList = new ArrayList<Product>();
         mCtxt = ctxt;
     }
 
@@ -46,7 +43,7 @@ public class FullscreenAdapter extends RecyclerView.Adapter<FullscreenAdapter.Ve
      * RecyclerView method, notifyItemInserted(), to trigger any enabled item
      * animations in addition to updating the view.
      */
-    public void addItem(int position, DummyProduct p) {
+    public void addItem(int position, Product p) {
         mProductList.add(position, p);
         notifyItemInserted(position);
     }
@@ -70,13 +67,15 @@ public class FullscreenAdapter extends RecyclerView.Adapter<FullscreenAdapter.Ve
 
     @Override
     public void onBindViewHolder(VerticalItemHolder itemHolder, int position) {
-        DummyProduct item = mProductList.get(position);
+        Product item = mProductList.get(position);
         itemHolder.setContext(this.mCtxt);
-        itemHolder.setImgProductImage(item.mProductImage);
-        itemHolder.setProductName(item.productName);
-        itemHolder.setProductPrice(item.mProductPrice);
-        itemHolder.setBrandName(item.mBrandName);
-        itemHolder.setUrl(item.mDetails);
+        itemHolder.setImgProductImage(item.productUrl);
+        itemHolder.setProductName(item.title);
+        itemHolder.setProductPrice(item.maximumRetailPrice);
+        itemHolder.setBrandName(item.brand);
+        itemHolder.setColor(item.color);
+        itemHolder.setSize(item.sizeUnit);
+        itemHolder.setUrl(item.productUrl);
     }
 
     @Override
@@ -100,8 +99,12 @@ public class FullscreenAdapter extends RecyclerView.Adapter<FullscreenAdapter.Ve
         private ImageView mImgProductImage;
         private Button mBtnProductPrice;
         private TextView mTextBrandName;
+        private TextView mTextColor;
+        private TextView mTextSize;
         private String mUrl;
         private FullscreenAdapter mAdapter;
+        private LinearLayout mSizeLayout;
+        private LinearLayout mColorLayout;
         private Context mCtxt;
         public VerticalItemHolder(View itemView, FullscreenAdapter adapter) {
             super(itemView);
@@ -109,6 +112,11 @@ public class FullscreenAdapter extends RecyclerView.Adapter<FullscreenAdapter.Ve
             mAdapter = adapter;
             mTextProductName = (TextView) itemView.findViewById(R.id.product_name);
             mImgProductImage = (ImageView) itemView.findViewById(R.id.product_image);
+            mTextBrandName = (TextView)itemView.findViewById(R.id.product_brand);
+            mTextColor = (TextView)itemView.findViewById(R.id.product_color);
+            mTextSize = (TextView)itemView.findViewById(R.id.product_size);
+            mColorLayout = (LinearLayout)itemView.findViewById(R.id.layout_color);
+            mSizeLayout = (LinearLayout)itemView.findViewById(R.id.layout_size);
             mBtnProductPrice = (Button) itemView.findViewById(R.id.product_price);
             mBtnProductPrice.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -139,6 +147,23 @@ public class FullscreenAdapter extends RecyclerView.Adapter<FullscreenAdapter.Ve
         }
         public void setBrandName(CharSequence brandName) {
             mTextBrandName.setText(brandName);
+        }
+        public void setColor(CharSequence color) {
+            if(null == color) {
+                mColorLayout.setVisibility(View.GONE);
+            }
+            else {
+                mColorLayout.setVisibility(View.VISIBLE);
+                mTextColor.setText(color);
+            }
+        }
+        public void setSize(CharSequence size) {
+            if(null == size) {
+                mSizeLayout.setVisibility(View.GONE);
+            }else {
+                mSizeLayout.setVisibility(View.VISIBLE);
+                mTextSize.setText(size);
+            }
         }
         public void setContext(Context ctxt){
             mCtxt = ctxt;
