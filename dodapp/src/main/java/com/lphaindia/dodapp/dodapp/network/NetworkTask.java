@@ -19,11 +19,11 @@ import java.net.URL;
  */
 public class NetworkTask {
 
-    private int affiliate;
+    //private int affiliate;
 
-    public NetworkTask(int affiliate) {
+    /*public NetworkTask(int affiliate) {
         this.affiliate = affiliate;
-    }
+    }*/
 
     public String fetchDataFromUrl(String categoryUrl) {
         String datafromServer = null;
@@ -33,13 +33,14 @@ public class NetworkTask {
 
             urlConnection.setRequestProperty("Accept", "application/json");
 
-            if (affiliate == AppConstants.AFFILIATE_COLLECTION_VALUE_FLIPKART) {
-                urlConnection.setRequestProperty(Flipkart.AFFILIATE_HEADER, Flipkart.AFFILIATE_ID);
-                urlConnection.setRequestProperty(Flipkart.TOKEN_HEADER, Flipkart.TOKEN_ID);
+            /*if (affiliate == AppConstants.AFFILIATE_COLLECTION_VALUE_FLIPKART) {
+                //urlConnection.setRequestProperty(Flipkart.AFFILIATE_HEADER, Flipkart.AFFILIATE_ID);
+                //urlConnection.setRequestProperty(Flipkart.TOKEN_HEADER, Flipkart.TOKEN_ID);
             } else if (affiliate == AppConstants.AFFILIATE_COLLECTION_VALUE_SNAPDEAL){
                 urlConnection.setRequestProperty(Snapdeal.AFFILIATE_HEADER, Snapdeal.AFFILIATE_ID);
                 urlConnection.setRequestProperty(Snapdeal.TOKEN_HEADER, Snapdeal.TOKEN_ID);
             }
+            */
 
             //setting connection timeout of 5 seconds
             urlConnection.setConnectTimeout(5000);
@@ -62,7 +63,6 @@ public class NetworkTask {
                         break;
                 } catch (IOException e) {
                     e.printStackTrace();
-                    continue;
                 }
             }
         } catch (Exception e) {

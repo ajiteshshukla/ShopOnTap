@@ -25,8 +25,6 @@ public class DodDbHelper extends SQLiteOpenHelper {
 
     public static final String CATEGORY_ID = "categoryid";
     public static final String CATEGORY_NAME = "categoryname";
-    public static final String CATEGORY_EXPIRY = "categoryexpiry";
-    public static final String CATEGORY_URL = "categoryurl";
 
     public DodDbHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, DATABASE_NAME, null, 1);
@@ -36,16 +34,12 @@ public class DodDbHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(" CREATE TABLE " + TABLE_FLIPKART + " ("
                         + CATEGORY_ID + " INTEGER PRIMARY KEY, "
-                        + CATEGORY_NAME + " TEXT UNIQUE NOT NULL, "
-                        + CATEGORY_EXPIRY + " INTEGER DEFAULT 0, "
-                        + CATEGORY_URL + " TEXT NOT NULL);"
+                        + CATEGORY_NAME + " TEXT UNIQUE NOT NULL);"
         );
 
         db.execSQL(" CREATE TABLE " + TABLE_SNAPDEAL + " ("
                         + CATEGORY_ID + " INTEGER PRIMARY KEY, "
-                        + CATEGORY_NAME + " TEXT UNIQUE NOT NULL, "
-                        + CATEGORY_EXPIRY + " INTEGER DEFAULT 0, "
-                        + CATEGORY_URL + " TEXT NOT NULL);"
+                        + CATEGORY_NAME + " TEXT UNIQUE NOT NULL);"
         );
     }
 
@@ -59,54 +53,20 @@ public class DodDbHelper extends SQLiteOpenHelper {
         db.execSQL("DELETE FROM " + tablename);
     }
 
-    public void insertOrUpdateCategories(String categoryName, String categoryUrl, String categoryExpiry,
-                                                 String tableName) {
+    public void insertOrUpdateCategories(String categoryName, String tableName) {
         final SQLiteDatabase db = this.getWritableDatabase();
         Cursor c = db.rawQuery("SELECT * FROM " + tableName + " WHERE " + CATEGORY_NAME + " = "
                 + "'" + categoryName + "'", null);
         if(c.moveToFirst()) {
-            Log.d(AppConstants.TAG, "Record Already Present... check if url is updated");
-            if (c.getString(c.getColumnIndex(CATEGORY_URL)).contains(categoryUrl)) {
-                Log.d(AppConstants.TAG, "url is already updated");
-            } else {
-                ContentValues contentValues = new ContentValues();
-                contentValues.put(CATEGORY_NAME, categoryName);
-                contentValues.put(CATEGORY_URL, categoryUrl);
-                contentValues.put(CATEGORY_EXPIRY, categoryExpiry);
-                db.update(tableName, contentValues, CATEGORY_NAME + "="
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(CATEGORY_NAME, categoryName);
+            db.update(tableName, contentValues, CATEGORY_NAME + "="
                         + "'" + categoryName + "'", null);
-            }
         } else {
             ContentValues contentValues = new ContentValues();
             contentValues.put(CATEGORY_NAME, categoryName);
-            contentValues.put(CATEGORY_URL, categoryUrl);
-            contentValues.put(CATEGORY_EXPIRY, categoryExpiry);
             db.insert(tableName, null, contentValues);
         }
-    }
-
-    public long getNextExpiry(String tableName) {
-        final SQLiteDatabase db = this.getWritableDatabase();
-        Cursor c = db.rawQuery("SELECT * FROM " + tableName
-                + " ORDER BY " + CATEGORY_EXPIRY + " ASC", null);
-        if(c.moveToFirst()) {
-            long expiry = c.getLong(c.getColumnIndex(CATEGORY_EXPIRY));
-            if (expiry > Calendar.getInstance().getTimeInMillis())
-                return expiry;
-        }
-        return 0;
-    }
-
-    public boolean hasDataExpired(String tableName) {
-        final SQLiteDatabase db = this.getWritableDatabase();
-        Cursor c = db.rawQuery("SELECT * FROM " + tableName
-                + " ORDER BY " + CATEGORY_EXPIRY + " ASC", null);
-        if(c.moveToFirst()) {
-            long expiry = c.getLong(c.getColumnIndex(CATEGORY_EXPIRY));
-            if (expiry > Calendar.getInstance().getTimeInMillis())
-                return false;
-        }
-        return true;
     }
 
     public List<Category> getCategoryList(String tableName) {
@@ -116,8 +76,7 @@ public class DodDbHelper extends SQLiteOpenHelper {
         if(c.moveToFirst()) {
             do {
                 String categoryName = c.getString(c.getColumnIndex(CATEGORY_NAME));
-                String categoryUrl = c.getString(c.getColumnIndex(CATEGORY_URL));
-                Category category = new Category(categoryName, categoryUrl);
+                Category category = new Category(categoryName);
                 categoryList.add(category);
             } while (c.moveToNext());
         }
