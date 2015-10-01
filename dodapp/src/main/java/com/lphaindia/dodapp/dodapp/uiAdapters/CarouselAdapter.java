@@ -16,6 +16,8 @@ import android.widget.TextView;
 import android.content.Context;
 import com.lphaindia.dodapp.dodapp.Product.Product;
 import com.lphaindia.dodapp.dodapp.R;
+import com.lphaindia.dodapp.dodapp.accessibilityFeatures.TapAccessibilityService;
+import com.lphaindia.dodapp.dodapp.accessibilityFeatures.TapAnalytics;
 import com.lphaindia.dodapp.dodapp.overlays.CarouselOverlay;
 import com.squareup.picasso.Picasso;
 
@@ -115,6 +117,7 @@ public class CarouselAdapter extends RecyclerView.Adapter<CarouselAdapter.Vertic
             mBtnProductPrice.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    TapAnalytics.sendAnalyticsBuyProduct(TapAccessibilityService.mTracker);
                     if(mUrl != null){
                         Intent i = new Intent(Intent.ACTION_VIEW);
                         i.setData(Uri.parse(mUrl));

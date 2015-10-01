@@ -20,6 +20,7 @@ import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.lphaindia.dodapp.dodapp.Product.Product;
 import com.lphaindia.dodapp.dodapp.R;
 import com.lphaindia.dodapp.dodapp.accessibilityFeatures.TapAccessibilityService;
+import com.lphaindia.dodapp.dodapp.accessibilityFeatures.TapAnalytics;
 import com.lphaindia.dodapp.dodapp.stringToProductAdapter.KeywordsToProducts;
 
 import java.util.List;
@@ -143,6 +144,7 @@ public class IconOverlay{
                             //send to analytics - swipe event
                             //TapAnalytics.sendAnalyticsSwipeOnIcon(TapAccessibilityService.mTracker);
                             //Remove icon and fetch results from server
+                            TapAnalytics.sendAnalyticsSwipeOnIcon(TapAccessibilityService.mTracker);
                             removeOverlay();
                             try {
                                 new KeywordsToProducts(mContext).execute("test");
