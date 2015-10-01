@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_height="match_parent"
               android:layout_width="match_parent"
               android:background="#F5F6CE"
-              android:minHeight="1000dp">>
+              android:minHeight="1000dp">
     <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
                 android:id="@+id/content"
                 android:layout_width="match_parent"
@@ -16,15 +16,12 @@
                           android:orientation="vertical">
                 <TextView style="?android:textAppearanceMedium"
                           android:padding="16dp"
-                          android:lineSpacingMultiplier="1.2"
+                          android:lineSpacingMultiplier="1"
                           android:layout_width="wrap_content"
                           android:layout_height="wrap_content"
-                          android:textSize="@dimen/abc_text_size_small_material"
+                          android:textSize="@dimen/abc_text_size_title_material"
                           android:textStyle="italic"
-                          android:text="Navigate to product page using one of these apps."/>
-                <ImageView android:layout_height="50dp"
-                           android:layout_width="match_parent"
-                           android:src="@drawable/alllogo"/>
+                          android:text="How To Use ShopOnTap"/>
                 <TextView style="?android:textAppearanceMedium"
                           android:padding="16dp"
                           android:lineSpacingMultiplier="1.2"
@@ -32,16 +29,16 @@
                           android:layout_height="wrap_content"
                           android:textSize="@dimen/abc_text_size_small_material"
                           android:textStyle="italic"
-                          android:text="Now swipe this icon visible on product page."/>
+                          android:text="Navigate to product page using shopping apps shown previously. Now swipe this icon visible on the product page."/>
                 <ImageView android:layout_width="match_parent"
-                           android:layout_height="100dp"
+                           android:layout_height="65dp"
                            android:src="@drawable/icon_swipe"/>
                 <TextView style="?android:textAppearanceMedium"
                           android:padding="16dp"
                           android:lineSpacingMultiplier="1.2"
                           android:layout_width="wrap_content"
                           android:layout_height="wrap_content"
-                          android:textSize="@dimen/abc_text_size_small_material"
+                          android:textSize="@dimen/abc_text_size_subhead_material"
                           android:textStyle="italic"
                           android:text="Please view the following demo: "/>
             </LinearLayout>
@@ -59,14 +56,19 @@
                                                            android:layout_centerInParent="true"/>
             </RelativeLayout>
             <TextView android:layout_width="match_parent"
-                  android:layout_height="30dp"/>
-            <Button android:id="@+id/next2"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="true"
-                    android:textColor="#FFFFFF"
-                    android:background="#3399FF"
-                    android:text="NEXT" />
+                  android:layout_height="60dp"/>
         </LinearLayout>
     </ScrollView>
-</LinearLayout>
+    <RelativeLayout android:id="@+id/footer2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true">
+
+        <Button android:id="@+id/next2"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#FFFFFF"
+                android:background="#3399FF"
+                android:text="NEXT" />
+    </RelativeLayout>
+</RelativeLayout>
