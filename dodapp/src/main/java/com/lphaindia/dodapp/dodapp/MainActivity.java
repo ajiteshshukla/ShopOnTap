@@ -65,6 +65,13 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerResourcesFlipkart();
+        registerResourcesSnapdeal();
+    }
+
     public List<String> getFlipkartCategoryList() {
         List<String> categoryList= new ArrayList<String>();
         flipkartAffiliateCategories = affiliateCollection.flipkart.getCategoryList();
