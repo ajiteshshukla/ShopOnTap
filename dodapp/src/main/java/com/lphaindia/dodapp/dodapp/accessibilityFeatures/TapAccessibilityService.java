@@ -7,6 +7,8 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
+import com.google.android.gms.analytics.Tracker;
+import com.lphaindia.dodapp.dodapp.Analytics.AnalyticsHelper;
 import com.lphaindia.dodapp.dodapp.AppConstants;
 import com.lphaindia.dodapp.dodapp.overlays.CarouselOverlay;
 import com.lphaindia.dodapp.dodapp.overlays.FullScreenOverlay;
@@ -24,6 +26,9 @@ public class TapAccessibilityService extends AccessibilityService {
     public static String pkgName = null;
     public static String whiteListedPkgNames = "com.quikr com.olx.southasia com.snapdeal.main com.flipkart.android " +
             "com.myntra.android com.jabong.android ";
+
+    private AnalyticsHelper analyticsHelper = new AnalyticsHelper();
+    public static Tracker mTracker;
 
     public static Context mContext;
 
@@ -155,6 +160,10 @@ public class TapAccessibilityService extends AccessibilityService {
     protected void onServiceConnected() {
         Log.d(AppConstants.TAG, " ServiceConnected");
         mContext = this;
+
+        mTracker = analyticsHelper.getTracker(AnalyticsHelper.TrackerName.APP_TRACKER, mContext);
+        //send to analytics - acessibility enabled
+        TapAnalytics.sendAnalyticsAccessibilityEnabled(mTracker);
 
         AccessibilityServiceInfo info = new AccessibilityServiceInfo();
         info.eventTypes = AccessibilityEvent.TYPES_ALL_MASK;

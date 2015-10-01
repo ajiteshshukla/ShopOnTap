@@ -47,6 +47,7 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:22.2.1'
     compile 'com.facebook.fresco:fresco:0.7.0+'
     compile 'com.github.kierans:ViewPagerIndicator:138e5f5bd9'
+    compile 'com.google.android.gms:play-services-analytics:7.0.0'
     testCompile('com.squareup.assertj:assertj-android:1.0.0') {
         exclude group: 'com.android.support', module: 'support-annotations'
     }
