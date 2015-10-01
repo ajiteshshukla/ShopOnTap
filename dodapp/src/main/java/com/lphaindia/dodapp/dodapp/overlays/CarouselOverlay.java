@@ -16,6 +16,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.lphaindia.dodapp.dodapp.Product.Product;
 import com.lphaindia.dodapp.dodapp.R;
+import com.lphaindia.dodapp.dodapp.accessibilityFeatures.TapAccessibilityService;
+import com.lphaindia.dodapp.dodapp.accessibilityFeatures.TapAnalytics;
 import com.lphaindia.dodapp.dodapp.uiAdapters.CarouselAdapter;
 
 import java.util.List;
@@ -115,7 +117,7 @@ public class CarouselOverlay implements AdapterView.OnItemClickListener{
             Toast.makeText(mContext, "Sorry we could'nt find anything matching the product title !!!",
                     Toast.LENGTH_LONG).show();
             IconOverlay.getInstance(mContext).showOverlay();
-
+            TapAnalytics.sendAnalyticsNullList(TapAccessibilityService.mTracker);
            return;
         }
         mList = (RecyclerView) mOverlayView.findViewById(R.id.section_list);
