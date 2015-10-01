@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Dodapp.iml" filepath="$PROJECT_DIR$/Dodapp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ShopOnTap.iml" filepath="$PROJECT_DIR$/ShopOnTap.iml" />
       <module fileurl="file://$PROJECT_DIR$/dodapp/dodapp.iml" filepath="$PROJECT_DIR$/dodapp/dodapp.iml" />
     </modules>
   </component>

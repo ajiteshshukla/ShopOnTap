@@ -23,6 +23,7 @@ import java.util.List;
  * Created by aasha.medhi on 8/27/15.
  */
 public class FullScreenOverlay{
+
     private static FullScreenOverlay mInstance = null;
     RelativeLayout mOverlayView;
     private RecyclerView mList;
@@ -67,7 +68,6 @@ public class FullScreenOverlay{
             Log.w("TAG", "Cannot recreate overlay");
             return isSuccess;
         }
-        //TapAnalytics.sendAnalyticsFullScreenDisplayed(TapAccessibilityService.mTracker);
         mItems = items;
         // Create overlay video
         mPosition = position;
@@ -124,20 +124,10 @@ public class FullScreenOverlay{
             Product product = mItems.get(index);
             if(product != null) {
                 try {
-                    String title = product.title;
-                    String image = product.imageUrl;
-                    String price = product.sellingPrice;
-                    if (price != null) {
-                        price = price.replaceAll("INR", "₹");
-                        price = price.replaceAll("\\.\\d\\d", "");
-                    }
-                    String brand = product.brand;
-                    String details = product.productUrl;
-                    DummyProduct p = new DummyProduct(title, image, brand, price, details);
-                    mAdapter.addItem(productListIndex, p);
+                    mAdapter.addItem(productListIndex, product);
                     productListIndex++;
                 }catch ( NullPointerException e){
-                   //e.printStackTrace();
+                    //e.printStackTrace();
                 }
             }
         }

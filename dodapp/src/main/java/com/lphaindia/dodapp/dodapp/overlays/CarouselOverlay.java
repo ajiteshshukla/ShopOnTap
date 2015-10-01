@@ -14,7 +14,6 @@ import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.lphaindia.dodapp.dodapp.Product.DummyProduct;
 import com.lphaindia.dodapp.dodapp.Product.Product;
 import com.lphaindia.dodapp.dodapp.R;
 import com.lphaindia.dodapp.dodapp.uiAdapters.CarouselAdapter;
@@ -71,7 +70,6 @@ public class CarouselOverlay implements AdapterView.OnItemClickListener{
         }
         mItems = items;
         // Create overlay video
-        //TapAnalytics.sendAnalyticsCarouselDisplayed(TapAccessibilityService.mTracker);
         createOverlay(mOverlayView != null);
         return true;
     }
@@ -110,7 +108,7 @@ public class CarouselOverlay implements AdapterView.OnItemClickListener{
             }
         });
         wm.addView(mOverlayView, params);
-        if(null == mItems || mItems.size() == 0){
+        if(null == mItems){
             //mNoItemsTextView = (TextView)mOverlayView.findViewById(R.id.no_items);
             //mNoItemsTextView.setVisibility(View.VISIBLE);
             removeOverlay();
@@ -118,10 +116,7 @@ public class CarouselOverlay implements AdapterView.OnItemClickListener{
                     Toast.LENGTH_LONG).show();
             IconOverlay.getInstance(mContext).showOverlay();
 
-            //send to analytics - emptyList
-            //TapAnalytics.sendAnalyticsNullList(TapAccessibilityService.mTracker);
-
-            return;
+           return;
         }
         mList = (RecyclerView) mOverlayView.findViewById(R.id.section_list);
         mList.setLayoutManager(getLayoutManager());
@@ -140,16 +135,10 @@ public class CarouselOverlay implements AdapterView.OnItemClickListener{
             Product product = mItems.get(index);
             if(product != null) {
                 try {
-                    String title = product.title;
-                    String image = product.imageUrl;
-                    String price = product.sellingPrice;
-                    String brand = product.brand;
-                    String details = product.productUrl;
-                    DummyProduct p = new DummyProduct(title, image, brand, price, details);
-                    mAdapter.addItem(productListIndex, p);
+                    mAdapter.addItem(productListIndex, product);
                     productListIndex++;
                 }catch ( NullPointerException e){
-                   //e.printStackTrace();
+                    e.printStackTrace();
                 }
             }
         }
