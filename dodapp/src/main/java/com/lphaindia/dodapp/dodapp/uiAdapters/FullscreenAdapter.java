@@ -2,16 +2,14 @@ package com.lphaindia.dodapp.dodapp.uiAdapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
-import com.lphaindia.dodapp.dodapp.Product.DummyProduct;
+import android.widget.*;
+import com.lphaindia.dodapp.dodapp.Product.Product;
 import com.lphaindia.dodapp.dodapp.R;
 import com.lphaindia.dodapp.dodapp.overlays.CarouselOverlay;
 import com.lphaindia.dodapp.dodapp.overlays.FullScreenOverlay;
@@ -21,12 +19,12 @@ import java.util.ArrayList;
 
 public class FullscreenAdapter extends RecyclerView.Adapter<FullscreenAdapter.VerticalItemHolder> {
 
-    private ArrayList<DummyProduct> mProductList;
+    private ArrayList<Product> mProductList;
     private Context mCtxt;
     private AdapterView.OnItemClickListener mOnItemClickListener;
 
     public FullscreenAdapter(Context ctxt) {
-        mProductList = new ArrayList<DummyProduct>();
+        mProductList = new ArrayList<Product>();
         mCtxt = ctxt;
     }
 
@@ -46,7 +44,7 @@ public class FullscreenAdapter extends RecyclerView.Adapter<FullscreenAdapter.Ve
      * RecyclerView method, notifyItemInserted(), to trigger any enabled item
      * animations in addition to updating the view.
      */
-    public void addItem(int position, DummyProduct p) {
+    public void addItem(int position, Product p) {
         mProductList.add(position, p);
         notifyItemInserted(position);
     }
@@ -70,13 +68,15 @@ public class FullscreenAdapter extends RecyclerView.Adapter<FullscreenAdapter.Ve
 
     @Override
     public void onBindViewHolder(VerticalItemHolder itemHolder, int position) {
-        DummyProduct item = mProductList.get(position);
+        Product item = mProductList.get(position);
         itemHolder.setContext(this.mCtxt);
-        itemHolder.setImgProductImage(item.mProductImage);
-        itemHolder.setProductName(item.productName);
-        itemHolder.setProductPrice(item.mProductPrice);
-        itemHolder.setBrandName(item.mBrandName);
-        itemHolder.setUrl(item.mDetails);
+        itemHolder.setImgProductImage(item.imageUrl);
+        itemHolder.setProductName(item.title);
+        itemHolder.setProductPrice(item.maximumRetailPrice);
+        itemHolder.setBrandName(item.brand);
+        itemHolder.setOfferPrice(item.sellingPrice);
+        itemHolder.setMRP(item.maximumRetailPrice);
+        itemHolder.setUrl(item.productUrl);
     }
 
     @Override
@@ -100,8 +100,12 @@ public class FullscreenAdapter extends RecyclerView.Adapter<FullscreenAdapter.Ve
         private ImageView mImgProductImage;
         private Button mBtnProductPrice;
         private TextView mTextBrandName;
+        private TextView mTextOfferPrice;
+        private TextView mTextMaxPrice;
         private String mUrl;
         private FullscreenAdapter mAdapter;
+        private LinearLayout mMaxPriceLayout;
+        private LinearLayout mOfferPriceLayout;
         private Context mCtxt;
         public VerticalItemHolder(View itemView, FullscreenAdapter adapter) {
             super(itemView);
@@ -109,6 +113,12 @@ public class FullscreenAdapter extends RecyclerView.Adapter<FullscreenAdapter.Ve
             mAdapter = adapter;
             mTextProductName = (TextView) itemView.findViewById(R.id.product_name);
             mImgProductImage = (ImageView) itemView.findViewById(R.id.product_image);
+            mTextBrandName = (TextView)itemView.findViewById(R.id.product_brand);
+            mTextOfferPrice = (TextView)itemView.findViewById(R.id.product_offer_price);
+            mTextMaxPrice = (TextView)itemView.findViewById(R.id.product_max_price);
+            mTextMaxPrice.setPaintFlags(mTextMaxPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            mOfferPriceLayout = (LinearLayout)itemView.findViewById(R.id.layout_offer_price);
+            mMaxPriceLayout = (LinearLayout)itemView.findViewById(R.id.layout_max_price);
             mBtnProductPrice = (Button) itemView.findViewById(R.id.product_price);
             mBtnProductPrice.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -139,6 +149,23 @@ public class FullscreenAdapter extends RecyclerView.Adapter<FullscreenAdapter.Ve
         }
         public void setBrandName(CharSequence brandName) {
             mTextBrandName.setText(brandName);
+        }
+        public void setOfferPrice(CharSequence color) {
+            if(null == color) {
+                mOfferPriceLayout.setVisibility(View.GONE);
+            }
+            else {
+                mOfferPriceLayout.setVisibility(View.VISIBLE);
+                mTextOfferPrice.setText(color);
+            }
+        }
+        public void setMRP(CharSequence size) {
+            if(null == size) {
+                mMaxPriceLayout.setVisibility(View.GONE);
+            }else {
+                mMaxPriceLayout.setVisibility(View.VISIBLE);
+                mTextMaxPrice.setText(size);
+            }
         }
         public void setContext(Context ctxt){
             mCtxt = ctxt;
