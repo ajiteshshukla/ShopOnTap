@@ -27,12 +27,6 @@ import java.util.List;
  */
 public class Flipkart implements IfaceAffiliate {
 
-    private static final String PLAN_URL = "https://affiliate-api.flipkart.net/affiliate/api/ajiteshsh.json";
-    public static final String TOKEN_ID = "65d9f08946454a9e871d6ee07ecaa63d";
-    public static final String AFFILIATE_ID = "ajiteshsh";
-    public static final String AFFILIATE_HEADER = "Fk-Affiliate-Id";
-    public static final String TOKEN_HEADER = "Fk-Affiliate-Token";
-
     private FlipkartJsonAdapter flipkartJsonAdapter;
     public List<FlipkartAffiliateCategory> flipkartAffiliateCategories;
 
@@ -42,78 +36,47 @@ public class Flipkart implements IfaceAffiliate {
     }
 
     @Override
-    public String getPlanUrl() {
-        return PLAN_URL;
-    }
-
-    @Override
-    public String getTokenId() {
-        return TOKEN_ID;
-    }
-
-    @Override
-    public String getAffiliateId() {
-        return AFFILIATE_ID;
-    }
-
-    @Override
-    public void pushCategoryUrlList() throws JSONException {
-        String responseString = fetchCategoryDataInBackground();
-        JSONObject responseJson = new JSONObject(responseString);
-        flipkartJsonAdapter.insertJsonToDbHelper(responseJson);
-    }
-
-    @Override
-    public List<Category> getCategoryUrlList() {
-        List<Category> categoryUrlList = flipkartJsonAdapter.getCategoryList();
-        for (int i = 0; i < categoryUrlList.size(); i++) {
-            int index = getCategoryIndex(categoryUrlList.get(i).categoryName);
-            if(index != -1) {
-                if(flipkartAffiliateCategories.get(index).categoryProductListExpiry < Calendar
-                        .getInstance().getTimeInMillis()) {
-                    flipkartAffiliateCategories.remove(index);
-                    flipkartAffiliateCategories.add(new FlipkartAffiliateCategory(categoryUrlList.get(i)));
-                } else {
-                    Log.d(AppConstants.TAG, "no need to delete category is in valid state");
-                }
-            } else {
-                flipkartAffiliateCategories.add(new FlipkartAffiliateCategory(categoryUrlList.get(i)));
+    public void pushCategoryList() {
+        String responseString = fetchCategoryListInBackground();
+        if(responseString != null) {
+            try {
+                JSONObject responseJson = new JSONObject(responseString);
+                flipkartJsonAdapter.insertJsonToDbHelper(responseJson);
+            } catch (Exception e) {
+                Log.d(AppConstants.TAG, responseString);
+                e.printStackTrace();
             }
         }
-        return categoryUrlList;
     }
 
     @Override
-    public void populateCategoriesWithData() throws JSONException {
-        for(int i = 0; i < flipkartAffiliateCategories.size(); i++) {
-            flipkartAffiliateCategories.get(i).fetchProducts();
+    public List<Category> getCategoryList() {
+        List<Category> categoryList = flipkartJsonAdapter.getCategoryList();
+        for (int i = 0; i < categoryList.size(); i++) {
+            int index = getCategoryIndex(categoryList.get(i));
+            if(index != -1) {
+                Log.d(AppConstants.TAG, "no need to delete flipkart category is in valid state");
+            } else {
+                flipkartAffiliateCategories.add(new FlipkartAffiliateCategory(categoryList.get(i)));
+            }
         }
+        return categoryList;
     }
 
     @Override
     public void populateCategorywithData(String category) throws JSONException {
         for(int i = 0; i < flipkartAffiliateCategories.size(); i++) {
-            if(flipkartAffiliateCategories.get(i).category.categoryName.contains(category)) {
+            if(flipkartAffiliateCategories.get(i).category.getCategoryName().contains(category)) {
                 flipkartAffiliateCategories.get(i).fetchProducts();
             }
         }
     }
 
     @Override
-    public long getCategoryExpiry(String category) {
-        for(int i = 0; i < flipkartAffiliateCategories.size(); i++) {
-            if(flipkartAffiliateCategories.get(i).category.categoryName.contains(category)) {
-                return flipkartAffiliateCategories.get(i).categoryProductListExpiry;
-            }
-        }
-        return 0;
-    }
-
-    @Override
     public List<Product> getProductListFromCategory(String category) {
         List<Product> products = new ArrayList<Product>();
         for(int i = 0; i < flipkartAffiliateCategories.size(); i++) {
-            if(flipkartAffiliateCategories.get(i).category.categoryName.contains(category)) {
+            if(flipkartAffiliateCategories.get(i).category.getCategoryName().contains(category)) {
                 products = flipkartAffiliateCategories.get(i).products;
             }
         }
@@ -121,35 +84,9 @@ public class Flipkart implements IfaceAffiliate {
     }
 
     @Override
-    public Product getProductById(String category, String productId) {
-        Product product = null;
-        for(int i = 0; i < flipkartAffiliateCategories.size(); i++) {
-            if(flipkartAffiliateCategories.get(i).category.categoryName.contains(category)) {
-                List<Product> products = flipkartAffiliateCategories.get(i).products;
-                for(int j = 0; j < products.size(); j++) {
-                    if(products.get(j).productId.contains(productId)) {
-                        product = products.get(j);
-                    }
-                }
-            }
-        }
-        return product;
-    }
-
-    @Override
-    public long getNextExpiry() {
-        return flipkartJsonAdapter.getNextExpiryFromDbHelper();
-    }
-
-    @Override
-    public boolean hasDataExpired() {
-        return flipkartJsonAdapter.hasDataInDbExpired();
-    }
-
-    @Override
-    public int getCategoryIndex(String category) {
+    public int getCategoryIndex(Category category) {
         for (int i = 0; i < flipkartAffiliateCategories.size(); i++) {
-            if (flipkartAffiliateCategories.get(i).category.categoryName.contains(category)) {
+            if (flipkartAffiliateCategories.get(i).category.getCategoryName().contains(category.getCategoryName())) {
                 return i;
             }
         }
@@ -157,11 +94,16 @@ public class Flipkart implements IfaceAffiliate {
     }
 
     @Override
-    public String fetchCategoryDataInBackground() {
+    public String fetchCategoryListInBackground() {
         String datafromServer = null;
-        NetworkTask networkTask = new NetworkTask(AppConstants.AFFILIATE_COLLECTION_VALUE_FLIPKART);
-        datafromServer = networkTask.fetchDataFromUrl(PLAN_URL);
+        NetworkTask networkTask = new NetworkTask();
+        datafromServer = networkTask.fetchDataFromUrl(createFetchCategoryListUrl());
         return datafromServer;
+    }
+
+    public String createFetchCategoryListUrl() {
+        return (AppConstants.REQUEST_URL + "?requesttype=" + AppConstants.REQUEST_CATEGORY + "&affiliate="
+                + AppConstants.AFFILIATE_FLIPKART);
     }
 
     @Override

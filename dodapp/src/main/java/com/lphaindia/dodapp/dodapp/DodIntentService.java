@@ -3,6 +3,7 @@ package com.lphaindia.dodapp.dodapp;
 import android.app.IntentService;
 import android.content.Intent;
 import android.util.Log;
+import com.facebook.drawee.backends.pipeline.Fresco;
 import com.lphaindia.dodapp.dodapp.affiliates.Flipkart;
 import com.lphaindia.dodapp.dodapp.affiliates.Snapdeal;
 import com.lphaindia.dodapp.dodapp.injectors.Injectors;
@@ -10,6 +11,8 @@ import com.lphaindia.dodapp.dodapp.intentScheduler.Scheduler;
 import org.json.JSONException;
 
 import javax.inject.Inject;
+import java.util.Calendar;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by ajitesh.shukla on 9/13/15.
@@ -38,6 +41,7 @@ public class DodIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        Fresco.initialize(this);
         Log.d(AppConstants.TAG, "Intent Handler initiated");
         //invoked on boot completed....fetch data from the flipkart affiliate-api
         Log.d(AppConstants.TAG, "boot completed initiate JSON fetch if possible");
@@ -55,20 +59,16 @@ public class DodIntentService extends IntentService {
     }
 
     public void checkForAffiliates() throws JSONException {
-        if(snapdeal.hasDataExpired())
-            snapdeal.pushCategoryUrlList();
-        if(flipkart.hasDataExpired())
-            flipkart.pushCategoryUrlList();
+            snapdeal.pushCategoryList();
+            flipkart.pushCategoryList();
     }
 
     public void populateCategoryUrlLists() {
-        flipkart.getCategoryUrlList();
-        snapdeal.getCategoryUrlList();
+        flipkart.getCategoryList();
+        snapdeal.getCategoryList();
     }
 
     public long getNextExpiry() {
-        long expiryFlipkart = flipkart.getNextExpiry();
-        long expirySnapdeal = snapdeal.getNextExpiry();
-        return expiryFlipkart < expirySnapdeal ? expiryFlipkart : expirySnapdeal;
+        return (Calendar.getInstance().getTimeInMillis() + TimeUnit.HOURS.toMillis(2));
     }
 }

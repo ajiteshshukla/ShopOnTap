@@ -4,30 +4,36 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.HorizontalScrollView;
-import android.widget.ImageView;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.widget.Spinner;
+import com.facebook.drawee.backends.pipeline.Fresco;
 import com.lphaindia.dodapp.dodapp.Product.Product;
 import com.lphaindia.dodapp.dodapp.affiliateCategories.Category;
 import com.lphaindia.dodapp.dodapp.affiliateResources.AffiliateActivityResources;
 import com.lphaindia.dodapp.dodapp.affiliates.AffiliateCollection;
 import com.lphaindia.dodapp.dodapp.injectors.Injectors;
-import com.squareup.picasso.Picasso;
+import com.lphaindia.dodapp.dodapp.uiAdapters.FlipkartRecyclerViewAdapter;
+import com.lphaindia.dodapp.dodapp.uiAdapters.SnapdealRecyclerViewAdapter;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 
-public class MainActivity extends Activity implements View.OnClickListener {
+public class MainActivity extends Activity implements AdapterView.OnItemSelectedListener {
 
     @Inject
     AffiliateCollection affiliateCollection;
@@ -48,111 +54,96 @@ public class MainActivity extends Activity implements View.OnClickListener {
         Log.d(AppConstants.TAG, "inside onCreate invoking DodIntentService");
         startService(dodIntent);
 
+        if(isAccessibilityEnabled() == false) {
+            Intent intent = new Intent(getApplicationContext(), ScreenSlidePagerActivity.class);
+            startActivity(intent);
+        }
+
         //register resources for affiliates
         registerResourcesFlipkart();
         registerResourcesSnapdeal();
 
     }
 
-    public void registerResourcesFlipkart() {
-        Button flipkartBackToCategories = (Button) findViewById(R.id.button1);
-        flipkartBackToCategories.setOnClickListener(this);
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerResourcesFlipkart();
+        registerResourcesSnapdeal();
+    }
 
-        LinearLayout flipkartLinearLayout = (LinearLayout) findViewById(R.id.ll2);
-        HorizontalScrollView flipkartScrollView = (HorizontalScrollView) findViewById(R.id.horizontalScrollView);
-
-        flipkartAffiliateCategories = affiliateCollection.flipkart.getCategoryUrlList();
+    public List<String> getFlipkartCategoryList() {
+        List<String> categoryList= new ArrayList<String>();
+        flipkartAffiliateCategories = affiliateCollection.flipkart.getCategoryList();
         for(int i = 0; i < flipkartAffiliateCategories.size(); i++) {
-            Log.d(AppConstants.TAG, "Adding view for: " + flipkartAffiliateCategories.get(i).categoryName);
-            TextView txtview = new TextView(this);
-            txtview.setText(flipkartAffiliateCategories.get(i).categoryName);
-            txtview.setId(AppConstants.FLIPKART_CATEGORY_ID_OFFSET + i);
-            txtview.setPadding(10, 0, 10, 0);
-            txtview.setOnClickListener(this);
-            ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(1000, ViewGroup.LayoutParams.MATCH_PARENT);
-            flipkartLinearLayout.addView(txtview, i, layoutParams);
+            categoryList.add(flipkartAffiliateCategories.get(i).getCategoryName());
         }
-        flipkartResources = new AffiliateActivityResources(flipkartBackToCategories, flipkartLinearLayout,
-                flipkartScrollView);
+        return categoryList;
+    }
+
+    public List<String> getSnapdealCategoryList() {
+        List<String> categoryList= new ArrayList<String>();
+        snapdealAffiliateCategories = affiliateCollection.snapdeal.getCategoryList();
+        for(int i = 0; i < snapdealAffiliateCategories.size(); i++) {
+            categoryList.add(snapdealAffiliateCategories.get(i).getCategoryName());
+        }
+        return categoryList;
+    }
+
+    public void registerResourcesFlipkart() {
+        Spinner flipkartSpinner = (Spinner) findViewById(R.id.flipkart_category_spinner);
+        ArrayAdapter flipkartArrayAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item,
+                getFlipkartCategoryList());
+        flipkartArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        flipkartSpinner.setAdapter(flipkartArrayAdapter);
+        flipkartSpinner.setOnItemSelectedListener(this);
+
+        Spinner flipkartDiscountSpinner = (Spinner) findViewById(R.id.flipkart_discount_spinner);
+        flipkartDiscountSpinner.setOnItemSelectedListener(this);
+
+        RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.flipkart_recycler_view);
+        mRecyclerView.setHasFixedSize(true);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this,
+                LinearLayoutManager.HORIZONTAL, false);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        flipkartResources = new AffiliateActivityResources(flipkartSpinner, flipkartDiscountSpinner, mRecyclerView);
     }
 
     public void registerResourcesSnapdeal() {
-        Button snapdealBackToCategories = (Button) findViewById(R.id.button2);
-        snapdealBackToCategories.setOnClickListener(this);
+        Spinner snapdealSpinner = (Spinner) findViewById(R.id.snapdeal_category_spinner);
+        ArrayAdapter snapdealArrayAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item,
+                getSnapdealCategoryList());
+        snapdealArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        snapdealSpinner.setAdapter(snapdealArrayAdapter);
+        snapdealSpinner.setOnItemSelectedListener(this);
 
-        LinearLayout snapdealLinearLayout = (LinearLayout) findViewById(R.id.ll3);
-        HorizontalScrollView snapdealScrollView = (HorizontalScrollView) findViewById(R.id.horizontalScrollView2);
+        Spinner snapdealDiscountSpinner = (Spinner) findViewById(R.id.snapdeal_discount_spinner);
+        snapdealDiscountSpinner.setOnItemSelectedListener(this);
 
-        snapdealAffiliateCategories = affiliateCollection.snapdeal.getCategoryUrlList();
-        for(int i = 0; i < snapdealAffiliateCategories.size(); i++) {
-            TextView txtview = new TextView(this);
-            txtview.setText(snapdealAffiliateCategories.get(i).categoryName);
-            txtview.setId(AppConstants.SNAPDEAL_CATEGORY_ID_OFFSET + i);
-            txtview.setPadding(10, 0, 10, 0);
-            txtview.setOnClickListener(this);
-            ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(1000, ViewGroup.LayoutParams.MATCH_PARENT);
-            snapdealLinearLayout.addView(txtview, i, layoutParams);
-        }
-        snapdealResources = new AffiliateActivityResources(snapdealBackToCategories, snapdealLinearLayout,
-                snapdealScrollView);
+        RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.snapdeal_recycler_view);
+        mRecyclerView.setHasFixedSize(true);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this,
+                LinearLayoutManager.HORIZONTAL, false);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        snapdealResources = new AffiliateActivityResources(snapdealSpinner, snapdealDiscountSpinner, mRecyclerView);
     }
 
     @Override
-    public void onClick(View v) {
-        if (v.getId() == flipkartResources.backToCategoryButton.getId()) {
-            handleFlipkartBackButtonClick();
-        } else if (v.getId() == snapdealResources.backToCategoryButton.getId()) {
-            handleSnapdealBackButtonClick();
-        } else if(v.getId() >= AppConstants.FLIPKART_CATEGORY_ID_OFFSET
-                && v.getId() < AppConstants.FLIPKART_CATEGORY_ID_LIMIT) {
-            handleFlipkartCategoryClick(v);
-        } else if(v.getId() >= AppConstants.FLIPKART_PRODUCT_ID_OFFSET
-                && v.getId() < AppConstants.FLIPKART_PRODUCT_ID_LIMIT) {
-            handleFlipkartProductClick(v);
-        } else if(v.getId() >= AppConstants.SNAPDEAL_CATEGORY_ID_OFFSET
-                && v.getId() < AppConstants.SNAPDEAL_CATEGORY_ID_LIMIT) {
-            handleSnapdealCategoryClick(v);
-        } else if(v.getId() >= AppConstants.SNAPDEAL_PRODUCT_ID_OFFSET
-                && v.getId() < AppConstants.SNAPDEAL_PRODUCT_ID_LIMIT) {
-            handleSnapdealProductClick(v);
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        if (parent.getId() == R.id.flipkart_category_spinner) {
+            handleFlipkartCategoryClick((String) parent.getItemAtPosition(position));
+        } else if (parent.getId() == R.id.snapdeal_category_spinner) {
+            handleSnapdealCategoryClick((String) parent.getItemAtPosition(position));
+        } else if (parent.getId() == R.id.flipkart_discount_spinner) {
+            handleFlipkartCategoryClick((String) flipkartResources.spinner.getSelectedItem());
+        } else if (parent.getId() == R.id.snapdeal_discount_spinner) {
+            handleSnapdealCategoryClick((String) snapdealResources.spinner.getSelectedItem());
         }
     }
 
-    public void handleSnapdealBackButtonClick() {
-        snapdealResources.linearLayout.removeAllViewsInLayout();
-        snapdealAffiliateCategories = affiliateCollection.snapdeal.getCategoryUrlList();
-        for(int i = 0; i < snapdealAffiliateCategories.size(); i++) {
-            TextView txtview = new TextView(this);
-            txtview.setText(snapdealAffiliateCategories.get(i).categoryName);
-            txtview.setId(AppConstants.SNAPDEAL_CATEGORY_ID_OFFSET + i);
-            txtview.setPadding(10, 0, 10, 0);
-            txtview.setOnClickListener(this);
-            ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(1000, ViewGroup.LayoutParams.MATCH_PARENT);
-            snapdealResources.linearLayout.addView(txtview, i, layoutParams);
-        }
-        snapdealResources.horizontalScrollView.scrollTo(0,0);
-    }
-
-    public void handleFlipkartBackButtonClick() {
-        flipkartResources.linearLayout.removeAllViewsInLayout();
-        flipkartAffiliateCategories = affiliateCollection.flipkart.getCategoryUrlList();
-        for(int i = 0; i < flipkartAffiliateCategories.size(); i++) {
-            TextView txtview = new TextView(this);
-            txtview.setText(flipkartAffiliateCategories.get(i).categoryName);
-            txtview.setId(AppConstants.FLIPKART_CATEGORY_ID_OFFSET + i);
-            txtview.setPadding(10, 0, 10, 0);
-            txtview.setOnClickListener(this);
-            ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(1000, ViewGroup.LayoutParams.MATCH_PARENT);
-            flipkartResources.linearLayout.addView(txtview, i, layoutParams);
-        }
-        flipkartResources.horizontalScrollView.scrollTo(0,0);
-    }
-
-    public void handleSnapdealCategoryClick(View view) {
-        TextView textView = (TextView) view;
-        String category = (String) textView.getText();
-        Log.d(AppConstants.TAG, "" + affiliateCollection.snapdeal.getCategoryExpiry(category));
-        if (affiliateCollection.snapdeal.getCategoryExpiry(category) > Calendar.getInstance().getTimeInMillis()) {
+    public void handleSnapdealCategoryClick(String category) {
+        List<Product> products = affiliateCollection.snapdeal.getProductListFromCategory(category);
+        if (products != null && products.size() > 0) {
             snapdealPostExecute(category);
         } else {
             try {
@@ -162,14 +153,11 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 e.printStackTrace();
             }
         }
-        snapdealResources.horizontalScrollView.scrollTo(0, 0);
     }
 
-    public void handleFlipkartCategoryClick(View view) {
-        TextView textView = (TextView) view;
-        String category = (String) textView.getText();
-        Log.d(AppConstants.TAG, "" + affiliateCollection.flipkart.getCategoryExpiry(category));
-        if (affiliateCollection.flipkart.getCategoryExpiry(category) > Calendar.getInstance().getTimeInMillis()) {
+    public void handleFlipkartCategoryClick(String category) {
+        List<Product> products = affiliateCollection.flipkart.getProductListFromCategory(category);
+        if (products != null && products.size() > 0) {
             flipkartPostExecute(category);
         } else {
             try {
@@ -179,25 +167,11 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 e.printStackTrace();
             }
         }
-        flipkartResources.horizontalScrollView.scrollTo(0, 0);
     }
 
-    public void handleSnapdealProductClick(View view) {
-        String description = String.valueOf(view.getContentDescription());
-        String productId = description.substring(description.indexOf("productId:") + 10,
-                description.indexOf("categoryName:"));
-        String categoryName = description.substring(description.indexOf("categoryName:") + 13);
-        Product product = affiliateCollection.snapdeal.getProductById(categoryName, productId);
-        launchUri(product.productUrl);
-    }
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
 
-    public void handleFlipkartProductClick(View view) {
-        String description = String.valueOf(view.getContentDescription());
-        String productId = description.substring(description.indexOf("productId:") + 10,
-                description.indexOf("categoryName:"));
-        String categoryName = description.substring(description.indexOf("categoryName:") + 13);
-        Product product = affiliateCollection.flipkart.getProductById(categoryName, productId);
-        launchUri(product.productUrl);
     }
 
     private class NetworkRequest extends AsyncTask<AffiliateCollection, Void, Void> {
@@ -255,63 +229,68 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     public void flipkartPostExecute(String category) {
         List<Product> products = affiliateCollection.flipkart.getProductListFromCategory(category);
-        flipkartResources.linearLayout.removeAllViewsInLayout();
-        for(int i = 0; i < products.size() && i < AppConstants.PRODUCT_CLUSTER_SIZE; i++) {
-            if (products.get(i).imageUrl != null && products.get(i).imageUrl.length() > 5) {
-                ImageView imageView = new ImageView(this);
-                Picasso.with(this).load(products.get(i).imageUrl).into(imageView);
-                imageView.setId(AppConstants.FLIPKART_PRODUCT_ID_OFFSET + i);
-                imageView.setPadding(10, 0, 10, 0);
-                imageView.setOnClickListener(this);
-                imageView.setContentDescription("productId:" + products.get(i).productId
-                        + "categoryName:" + products.get(i).category);
-                ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(1000, ViewGroup.LayoutParams.MATCH_PARENT);
-                flipkartResources.linearLayout.addView(imageView, i, layoutParams);
-            } else {
-                TextView txtview = new TextView(this);
-                txtview.setText(products.get(i).title);
-                txtview.setId(AppConstants.FLIPKART_PRODUCT_ID_OFFSET + i);
-                txtview.setPadding(10, 0, 10, 0);
-                txtview.setOnClickListener(this);
-                txtview.setContentDescription("productId:" + products.get(i).productId
-                        + "categoryName:" + products.get(i).category);
-                ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(1000, ViewGroup.LayoutParams.MATCH_PARENT);
-                flipkartResources.linearLayout.addView(txtview, i, layoutParams);
-            }
-        }
+        List<Product> verifiedProductList = checkProduct(products);
+        int position = flipkartResources.discountSpinner.getSelectedItemPosition();
+        verifiedProductList = filterOnDiscount((float)(10 * position), verifiedProductList);
+        RecyclerView.Adapter mAdapter = new FlipkartRecyclerViewAdapter(verifiedProductList, this);
+        flipkartResources.recyclerView.setAdapter(mAdapter);
     }
 
     public void snapdealPostExecute(String category) {
         List<Product> products = affiliateCollection.snapdeal.getProductListFromCategory(category);
-        snapdealResources.linearLayout.removeAllViewsInLayout();
-        for(int i = 0; i < products.size() && i < AppConstants.PRODUCT_CLUSTER_SIZE; i++) {
-            if (products.get(i).imageUrl != null && products.get(i).imageUrl.length() > 5) {
-                ImageView imageView = new ImageView(this);
-                Picasso.with(this).load(products.get(i).imageUrl).into(imageView);
-                imageView.setId(AppConstants.SNAPDEAL_PRODUCT_ID_OFFSET + i);
-                imageView.setPadding(10, 0, 10, 0);
-                imageView.setOnClickListener(this);
-                imageView.setContentDescription("productId:" + products.get(i).productId
-                        + "categoryName:" + products.get(i).category);
-                ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(1000, ViewGroup.LayoutParams.MATCH_PARENT);
-                snapdealResources.linearLayout.addView(imageView, i, layoutParams);
-            } else {
-                TextView txtview = new TextView(this);
-                txtview.setText(products.get(i).title);
-                txtview.setId(AppConstants.SNAPDEAL_PRODUCT_ID_OFFSET + i);
-                txtview.setPadding(10, 0, 10, 0);
-                txtview.setOnClickListener(this);
-                txtview.setContentDescription("productId:" + products.get(i).productId
-                        + "categoryName:" + products.get(i).category);
-                ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(1000, ViewGroup.LayoutParams.MATCH_PARENT);
-                snapdealResources.linearLayout.addView(txtview, i, layoutParams);
-            }
-        }
+        List<Product> verifiedProductList = checkProduct(products);
+        int position = snapdealResources.discountSpinner.getSelectedItemPosition();
+        verifiedProductList = filterOnDiscount((float)(10 * position), verifiedProductList);
+        RecyclerView.Adapter mAdapter = new SnapdealRecyclerViewAdapter(verifiedProductList, this);
+        snapdealResources.recyclerView.setAdapter(mAdapter);
     }
 
-    public void launchUri(String uri) {
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setData(Uri.parse(uri));
-        startActivity(intent);
+    public List<Product> checkProduct(List<Product> products) {
+        List<Product> newList = new ArrayList<Product>();
+        for (int i = 0; i < products.size(); i++) {
+            if(products.get(i).imageUrl != null
+                    && products.get(i).imageUrl.length() > 2
+                    && products.get(i).sellingPrice != null
+                    && products.get(i).sellingPrice.length() > 0
+                    && Float.valueOf(products.get(i).sellingPrice) > 0.0) {
+                //Log.d(AppConstants.TAG, "product satifies all criteria: " + products.get(i).toString());
+                newList.add(products.get(i));
+            } else {
+                //Log.d(AppConstants.TAG, "criteria failed: " + products.get(i).toString());
+            }
+        }
+        return newList;
+    }
+
+    public List<Product> filterOnDiscount(Float discount, List<Product> products) {
+        List<Product> newList = new ArrayList<Product>();
+        for (int i = 0; i < products.size(); i++) {
+            if(products.get(i).discountPercentage != null
+                    && products.get(i).discountPercentage.length() > 0
+                    && Float.valueOf(products.get(i).discountPercentage) >= discount) {
+                Log.d(AppConstants.TAG, "product satifies all criteria: " + products.get(i).discountPercentage);
+                newList.add(products.get(i));
+            } else {
+                //Log.d(AppConstants.TAG, "criteria failed: " + products.get(i).toString());
+            }
+        }
+        return newList;
+    }
+
+    public boolean isAccessibilityEnabled() {
+        int accessibilityEnabled = 0;
+        String checkSettings = Settings.Secure.getString(this.getContentResolver(),
+                Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES);
+        try {
+            accessibilityEnabled = Settings.Secure.getInt(this.getContentResolver(), Settings.Secure.ACCESSIBILITY_ENABLED);
+        } catch (Settings.SettingNotFoundException e) {
+            Log.d(AppConstants.TAG, " Settings not found Exception");
+            e.printStackTrace();
+        }
+        if (accessibilityEnabled == 1 && checkSettings.contains("com.lphaindia.dodapp.dodapp")) {
+            Log.d(AppConstants.TAG, " Settings fine. No need to redirect");
+            return true;
+        }
+        return false;
     }
 }
