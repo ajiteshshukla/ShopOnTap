@@ -1,6 +1,8 @@
 package com.lphaindia.dodapp.dodapp.uiAdapters;
 
-import android.content.Context;
+import android.support.v7.widget.RecyclerView;
+
+
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
@@ -11,7 +13,8 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import com.lphaindia.dodapp.dodapp.Product.DummyProduct;
+import android.content.Context;
+import com.lphaindia.dodapp.dodapp.Product.Product;
 import com.lphaindia.dodapp.dodapp.R;
 import com.lphaindia.dodapp.dodapp.overlays.CarouselOverlay;
 import com.squareup.picasso.Picasso;
@@ -20,12 +23,12 @@ import java.util.ArrayList;
 
 public class CarouselAdapter extends RecyclerView.Adapter<CarouselAdapter.VerticalItemHolder> {
 
-    private ArrayList<DummyProduct> mProductList;
+    private ArrayList<Product> mProductList;
     private Context mCtxt;
     private AdapterView.OnItemClickListener mOnItemClickListener;
 
     public CarouselAdapter(Context ctxt) {
-        mProductList = new ArrayList<DummyProduct>();
+        mProductList = new ArrayList<Product>();
         mCtxt = ctxt;
     }
 
@@ -45,7 +48,7 @@ public class CarouselAdapter extends RecyclerView.Adapter<CarouselAdapter.Vertic
      * RecyclerView method, notifyItemInserted(), to trigger any enabled item
      * animations in addition to updating the view.
      */
-    public void addItem(int position, DummyProduct p) {
+    public void addItem(int position, Product p) {
         mProductList.add(position, p);
         notifyItemInserted(position);
     }
@@ -69,13 +72,13 @@ public class CarouselAdapter extends RecyclerView.Adapter<CarouselAdapter.Vertic
 
     @Override
     public void onBindViewHolder(VerticalItemHolder itemHolder, int position) {
-        DummyProduct item = mProductList.get(position);
+        Product item = mProductList.get(position);
         itemHolder.setContext(this.mCtxt);
-        itemHolder.setImgProductImage(item.mProductImage);
-        itemHolder.setProductName(item.productName);
-        itemHolder.setProductPrice(item.mProductPrice);
-        itemHolder.setBrandName(item.mBrandName);
-        itemHolder.setUrl(item.mDetails);
+        itemHolder.setImgProductImage(item.imageUrl);
+        itemHolder.setProductName(item.title);
+        itemHolder.setProductPrice(item.sellingPrice);
+        itemHolder.setBrandName(item.brand);
+        itemHolder.setUrl(item.productUrl);
     }
 
     @Override
@@ -118,7 +121,6 @@ public class CarouselAdapter extends RecyclerView.Adapter<CarouselAdapter.Vertic
                         i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         mCtxt.startActivity(i);
                         CarouselOverlay.getInstance(mCtxt).removeOverlay();
-                        //TapAnalytics.sendAnalyticsBuyProduct(TapAccessibilityService.mTracker);
                     }
                 }
             });
