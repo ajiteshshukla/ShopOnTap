@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.hack.tap.app.ui.overlay.adapters.CardView
+<com.lphaindia.dodapp.dodapp.uiAdapters.CardView
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="310dp"
@@ -48,7 +48,7 @@
                         android:layout_weight="1"/>
         </LinearLayout>
         <LinearLayout
-                android:id="@+id/layout_size"
+                android:id="@+id/layout_max_price"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
@@ -60,11 +60,11 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:text="Size"
+                        android:text="MRP"
                         android:textColor="#333333"
                         android:layout_weight="1"/>
                 <TextView
-                        android:id="@+id/product_size"
+                        android:id="@+id/product_max_price"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textAppearance="?android:attr/textAppearanceSmall"
@@ -72,7 +72,7 @@
                         android:layout_weight="1"/>
         </LinearLayout>
         <LinearLayout
-                android:id="@+id/layout_color"
+                android:id="@+id/layout_offer_price"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
@@ -84,15 +84,15 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:textColor="#333333"
-                        android:text="Color"
+                        android:textColor="#336600"
+                        android:text="Offer Price"
                         android:layout_weight="1"/>
                 <TextView
-                        android:id="@+id/product_color"
+                        android:id="@+id/product_offer_price"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:textColor="#333333"
+                        android:textColor="#336600"
                         android:layout_weight="1"/>
         </LinearLayout>
         <Button
@@ -109,4 +109,4 @@
                 android:background="#08c"
                 android:layout_centerInParent="true"/>
 
-</com.hack.tap.app.ui.overlay.adapters.CardView>
+</com.lphaindia.dodapp.dodapp.uiAdapters.CardView>

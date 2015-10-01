@@ -2,6 +2,7 @@ package com.lphaindia.dodapp.dodapp.uiAdapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -69,12 +70,12 @@ public class FullscreenAdapter extends RecyclerView.Adapter<FullscreenAdapter.Ve
     public void onBindViewHolder(VerticalItemHolder itemHolder, int position) {
         Product item = mProductList.get(position);
         itemHolder.setContext(this.mCtxt);
-        itemHolder.setImgProductImage(item.productUrl);
+        itemHolder.setImgProductImage(item.imageUrl);
         itemHolder.setProductName(item.title);
         itemHolder.setProductPrice(item.maximumRetailPrice);
         itemHolder.setBrandName(item.brand);
-        itemHolder.setColor(item.color);
-        itemHolder.setSize(item.sizeUnit);
+        itemHolder.setOfferPrice(item.sellingPrice);
+        itemHolder.setMRP(item.maximumRetailPrice);
         itemHolder.setUrl(item.productUrl);
     }
 
@@ -99,12 +100,12 @@ public class FullscreenAdapter extends RecyclerView.Adapter<FullscreenAdapter.Ve
         private ImageView mImgProductImage;
         private Button mBtnProductPrice;
         private TextView mTextBrandName;
-        private TextView mTextColor;
-        private TextView mTextSize;
+        private TextView mTextOfferPrice;
+        private TextView mTextMaxPrice;
         private String mUrl;
         private FullscreenAdapter mAdapter;
-        private LinearLayout mSizeLayout;
-        private LinearLayout mColorLayout;
+        private LinearLayout mMaxPriceLayout;
+        private LinearLayout mOfferPriceLayout;
         private Context mCtxt;
         public VerticalItemHolder(View itemView, FullscreenAdapter adapter) {
             super(itemView);
@@ -113,10 +114,11 @@ public class FullscreenAdapter extends RecyclerView.Adapter<FullscreenAdapter.Ve
             mTextProductName = (TextView) itemView.findViewById(R.id.product_name);
             mImgProductImage = (ImageView) itemView.findViewById(R.id.product_image);
             mTextBrandName = (TextView)itemView.findViewById(R.id.product_brand);
-            mTextColor = (TextView)itemView.findViewById(R.id.product_color);
-            mTextSize = (TextView)itemView.findViewById(R.id.product_size);
-            mColorLayout = (LinearLayout)itemView.findViewById(R.id.layout_color);
-            mSizeLayout = (LinearLayout)itemView.findViewById(R.id.layout_size);
+            mTextOfferPrice = (TextView)itemView.findViewById(R.id.product_offer_price);
+            mTextMaxPrice = (TextView)itemView.findViewById(R.id.product_max_price);
+            mTextMaxPrice.setPaintFlags(mTextMaxPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            mOfferPriceLayout = (LinearLayout)itemView.findViewById(R.id.layout_offer_price);
+            mMaxPriceLayout = (LinearLayout)itemView.findViewById(R.id.layout_max_price);
             mBtnProductPrice = (Button) itemView.findViewById(R.id.product_price);
             mBtnProductPrice.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -148,21 +150,21 @@ public class FullscreenAdapter extends RecyclerView.Adapter<FullscreenAdapter.Ve
         public void setBrandName(CharSequence brandName) {
             mTextBrandName.setText(brandName);
         }
-        public void setColor(CharSequence color) {
+        public void setOfferPrice(CharSequence color) {
             if(null == color) {
-                mColorLayout.setVisibility(View.GONE);
+                mOfferPriceLayout.setVisibility(View.GONE);
             }
             else {
-                mColorLayout.setVisibility(View.VISIBLE);
-                mTextColor.setText(color);
+                mOfferPriceLayout.setVisibility(View.VISIBLE);
+                mTextOfferPrice.setText(color);
             }
         }
-        public void setSize(CharSequence size) {
+        public void setMRP(CharSequence size) {
             if(null == size) {
-                mSizeLayout.setVisibility(View.GONE);
+                mMaxPriceLayout.setVisibility(View.GONE);
             }else {
-                mSizeLayout.setVisibility(View.VISIBLE);
-                mTextSize.setText(size);
+                mMaxPriceLayout.setVisibility(View.VISIBLE);
+                mTextMaxPrice.setText(size);
             }
         }
         public void setContext(Context ctxt){
