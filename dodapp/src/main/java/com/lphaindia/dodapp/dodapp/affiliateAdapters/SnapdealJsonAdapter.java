@@ -1,10 +1,7 @@
 package com.lphaindia.dodapp.dodapp.affiliateAdapters;
 
-import android.util.Log;
-import com.lphaindia.dodapp.dodapp.AppConstants;
 import com.lphaindia.dodapp.dodapp.affiliateCategories.Category;
 import com.lphaindia.dodapp.dodapp.data.DodDbHelper;
-import com.lphaindia.dodapp.dodapp.DodIntentService;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

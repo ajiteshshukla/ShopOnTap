@@ -4,11 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -17,7 +15,6 @@ import com.lphaindia.dodapp.dodapp.Product.Product;
 import com.lphaindia.dodapp.dodapp.R;
 import com.squareup.picasso.Picasso;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -46,7 +43,7 @@ public class SnapdealRecyclerViewAdapter extends RecyclerView.Adapter<SnapdealRe
             discount = (TextView) itemView.findViewById(R.id.textviewdiscount);
             cost = (Button) itemView.findViewById(R.id.buttoncost);
             imageView = (ImageView) itemView.findViewById(R.id.productimage);
-            Log.d(AppConstants.TAG, "Adding Listener");
+            //Log.d(AppConstants.TAG, "Adding Listener");
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

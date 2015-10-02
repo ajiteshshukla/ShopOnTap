@@ -3,7 +3,6 @@ package com.lphaindia.dodapp.dodapp.stringToProductAdapter;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.CountDownTimer;
-import android.util.Log;
 import com.lphaindia.dodapp.dodapp.AppConstants;
 import com.lphaindia.dodapp.dodapp.Product.Product;
 import com.lphaindia.dodapp.dodapp.accessibilityFeatures.TapAccessibilityService;
@@ -31,7 +30,7 @@ public class KeywordsToProducts extends AsyncTask<String, String, List<Product>>
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        Log.d(AppConstants.TAG, "inside pre execute loading overlay shall show now");
+        //Log.d(AppConstants.TAG, "inside pre execute loading overlay shall show now");
         LoadingOverlay.getInstance(context).showOverlay();
 
         keywordsToProducts = this;
@@ -60,7 +59,7 @@ public class KeywordsToProducts extends AsyncTask<String, String, List<Product>>
     @Override
     protected void onPostExecute(List<Product> products) {
         super.onPostExecute(products);
-        Log.d(AppConstants.TAG, "inside post execute loading overlay shall go now");
+        //Log.d(AppConstants.TAG, "inside post execute loading overlay shall go now");
         if (LoadingOverlay.getInstance(context).isOverlayShown()) {
             LoadingOverlay.getInstance(context).removeOverlay();
             if (products != null && TapAccessibilityService.isPackageWhiteListed())
@@ -81,7 +80,7 @@ public class KeywordsToProducts extends AsyncTask<String, String, List<Product>>
         NetworkTask networkTaskFlipkart = new NetworkTask();
         for (int i = 1; i < AppConstants.KEYWORD_DEPTH; i++) {
             try {
-                Log.d(AppConstants.TAG, "inside loop");
+                //Log.d(AppConstants.TAG, "inside loop");
                 String searchUrl = createSearchUrlForFlipkart(i);
                 if (searchUrl != null) {
                     dataFromFlipkartServer = networkTaskFlipkart.fetchDataFromUrl(searchUrl);
@@ -128,7 +127,7 @@ public class KeywordsToProducts extends AsyncTask<String, String, List<Product>>
                 }
             }
             sb.deleteCharAt(sb.length() - 1);
-            Log.d(AppConstants.TAG, "search Url: " + sb.toString());
+            //Log.d(AppConstants.TAG, "search Url: " + sb.toString());
             return sb.toString();
         }
         return null;

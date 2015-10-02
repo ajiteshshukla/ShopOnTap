@@ -1,7 +1,5 @@
 package com.lphaindia.dodapp.dodapp.affiliateCategoryAdapter;
 
-import android.util.Log;
-import com.lphaindia.dodapp.dodapp.AppConstants;
 import com.lphaindia.dodapp.dodapp.Product.Product;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -34,7 +32,7 @@ public class AffiliateCategoryAdapter {
                 String categoryName = productInfo.getString("category");
                 String sizeUnit = productInfo.getString("sizeUnit");
 
-                Log.d(AppConstants.TAG, "title: " + title);
+                /*Log.d(AppConstants.TAG, "title: " + title);
                 Log.d(AppConstants.TAG, "productUrl: " + productUrl);
                 Log.d(AppConstants.TAG, "productBrand: " + brand);
                 Log.d(AppConstants.TAG, "discountPercentage: " + discountPercentage);
@@ -44,7 +42,7 @@ public class AffiliateCategoryAdapter {
                 Log.d(AppConstants.TAG, "SellingPrice: " + sellingPrice);
                 Log.d(AppConstants.TAG, "currency: " + currency);
                 Log.d(AppConstants.TAG, "imageurl: " + imageUrl);
-                Log.d(AppConstants.TAG, "================================ \n");
+                Log.d(AppConstants.TAG, "================================ \n");*/
                 intermProducts.add(new Product(title, maximumRetailPrice, sellingPrice, discountPercentage, imageUrl,
                         currency, brand, color, sizeUnit, productId, categoryName, productUrl));
             }

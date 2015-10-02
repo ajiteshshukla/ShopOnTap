@@ -1,9 +1,7 @@
 package com.lphaindia.dodapp.dodapp.injectors;
 
 import android.content.Context;
-import android.util.Log;
 import com.lphaindia.dodapp.dodapp.AppConstants;
-import com.lphaindia.dodapp.dodapp.DodIntentService;
 import com.lphaindia.dodapp.dodapp.affiliateAdapters.FlipkartJsonAdapter;
 import com.lphaindia.dodapp.dodapp.affiliateAdapters.SnapdealJsonAdapter;
 import com.lphaindia.dodapp.dodapp.affiliateCategories.FlipkartAffiliateCategory;
@@ -49,7 +47,7 @@ public final class DodInjectorModule {
             affiliateCollection = new AffiliateCollection(flipkart, snapdeal);
 
         } catch (Exception e) {
-            Log.d(AppConstants.TAG, e.getMessage());
+            //Log.d(AppConstants.TAG, e.getMessage());
         }
     }
 

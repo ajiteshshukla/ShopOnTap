@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.PixelFormat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -67,7 +66,7 @@ public class CarouselOverlay implements AdapterView.OnItemClickListener{
     public boolean showOverlay(List<Product> items) {
         boolean isSuccess = false;
         if (mOverlayView != null) {
-            Log.w("TAG", "Cannot recreate overlay");
+            //Log.w("TAG", "Cannot recreate overlay");
             return isSuccess;
         }
         mItems = items;
@@ -110,7 +109,7 @@ public class CarouselOverlay implements AdapterView.OnItemClickListener{
             }
         });
         wm.addView(mOverlayView, params);
-        if(null == mItems){
+        if(null == mItems || mItems.size() == 0){
             //mNoItemsTextView = (TextView)mOverlayView.findViewById(R.id.no_items);
             //mNoItemsTextView.setVisibility(View.VISIBLE);
             removeOverlay();
@@ -123,7 +122,6 @@ public class CarouselOverlay implements AdapterView.OnItemClickListener{
         mList = (RecyclerView) mOverlayView.findViewById(R.id.section_list);
         mList.setLayoutManager(getLayoutManager());
         mList.addItemDecoration(getItemDecoration());
-
         mList.getItemAnimator().setAddDuration(1000);
         mList.getItemAnimator().setChangeDuration(1000);
         mList.getItemAnimator().setMoveDuration(1000);
