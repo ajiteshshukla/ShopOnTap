@@ -9,14 +9,10 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
 import android.widget.Spinner;
-import com.facebook.drawee.backends.pipeline.Fresco;
 import com.lphaindia.dodapp.dodapp.Product.Product;
 import com.lphaindia.dodapp.dodapp.affiliateCategories.Category;
 import com.lphaindia.dodapp.dodapp.affiliateResources.AffiliateActivityResources;
@@ -27,10 +23,7 @@ import com.lphaindia.dodapp.dodapp.uiAdapters.SnapdealRecyclerViewAdapter;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
 
 
 public class MainActivity extends Activity implements AdapterView.OnItemSelectedListener {
@@ -51,7 +44,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
         Injectors.serviceInjector.injectMainActivity(this);
         setContentView(R.layout.activity_main);
         Intent dodIntent = new Intent(getApplicationContext(), DodIntentService.class);
-        Log.d(AppConstants.TAG, "inside onCreate invoking DodIntentService");
+        //Log.d(AppConstants.TAG, "inside onCreate invoking DodIntentService");
         startService(dodIntent);
 
         if(isAccessibilityEnabled() == false) {
@@ -268,7 +261,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
             if(products.get(i).discountPercentage != null
                     && products.get(i).discountPercentage.length() > 0
                     && Float.valueOf(products.get(i).discountPercentage) >= discount) {
-                Log.d(AppConstants.TAG, "product satifies all criteria: " + products.get(i).discountPercentage);
+                //Log.d(AppConstants.TAG, "product satifies all criteria: " + products.get(i).discountPercentage);
                 newList.add(products.get(i));
             } else {
                 //Log.d(AppConstants.TAG, "criteria failed: " + products.get(i).toString());
@@ -284,11 +277,11 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
         try {
             accessibilityEnabled = Settings.Secure.getInt(this.getContentResolver(), Settings.Secure.ACCESSIBILITY_ENABLED);
         } catch (Settings.SettingNotFoundException e) {
-            Log.d(AppConstants.TAG, " Settings not found Exception");
+            //Log.d(AppConstants.TAG, " Settings not found Exception");
             e.printStackTrace();
         }
         if (accessibilityEnabled == 1 && checkSettings.contains("com.lphaindia.dodapp.dodapp")) {
-            Log.d(AppConstants.TAG, " Settings fine. No need to redirect");
+            //Log.d(AppConstants.TAG, " Settings fine. No need to redirect");
             return true;
         }
         return false;

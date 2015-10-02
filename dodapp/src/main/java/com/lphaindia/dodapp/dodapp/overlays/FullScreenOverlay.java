@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.PixelFormat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,7 +11,6 @@ import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import com.lphaindia.dodapp.dodapp.Product.DummyProduct;
 import com.lphaindia.dodapp.dodapp.Product.Product;
 import com.lphaindia.dodapp.dodapp.R;
 import com.lphaindia.dodapp.dodapp.uiAdapters.FullscreenAdapter;
@@ -65,7 +63,7 @@ public class FullScreenOverlay{
     public boolean showOverlay(List<Product> items, int position) {
         boolean isSuccess = false;
         if (mOverlayView != null) {
-            Log.w("TAG", "Cannot recreate overlay");
+            //Log.w("TAG", "Cannot recreate overlay");
             return isSuccess;
         }
         mItems = items;

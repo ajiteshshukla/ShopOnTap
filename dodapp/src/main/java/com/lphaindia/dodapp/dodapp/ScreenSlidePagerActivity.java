@@ -1,15 +1,11 @@
 package com.lphaindia.dodapp.dodapp;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.view.WindowManager;
-import com.viewpagerindicator.CirclePageIndicator;
-import com.viewpagerindicator.LinePageIndicator;
 
 /**
  * Created by ajitesh.shukla on 9/10/15.

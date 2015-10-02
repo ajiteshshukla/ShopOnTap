@@ -142,7 +142,7 @@ public class FullscreenAdapter extends RecyclerView.Adapter<FullscreenAdapter.Ve
         }
 
         public void setProductPrice(CharSequence productPrice) {
-            mBtnProductPrice.setText(productPrice);
+            mBtnProductPrice.setText("BUY NOW");
         }
         public void setProductName(CharSequence productName) {
             mTextProductName.setText(productName);

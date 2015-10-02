@@ -1,6 +1,5 @@
 package com.lphaindia.dodapp.dodapp.affiliates;
 
-import android.util.Log;
 import com.lphaindia.dodapp.dodapp.AppConstants;
 import com.lphaindia.dodapp.dodapp.Product.Product;
 import com.lphaindia.dodapp.dodapp.affiliateAdapters.SnapdealJsonAdapter;
@@ -10,16 +9,7 @@ import com.lphaindia.dodapp.dodapp.network.NetworkTask;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -43,7 +33,7 @@ public class Snapdeal implements IfaceAffiliate {
                 JSONObject responseJson = new JSONObject(responseString);
                 snapdealJsonAdapter.insertJsonToDbHelper(responseJson);
             } catch (Exception e) {
-                Log.d(AppConstants.TAG, responseString);
+                //Log.d(AppConstants.TAG, responseString);
                 e.printStackTrace();
             }
         }
@@ -55,7 +45,7 @@ public class Snapdeal implements IfaceAffiliate {
         for (int i = 0; i < categoryList.size(); i++) {
             int index = getCategoryIndex(categoryList.get(i));
             if(index != -1) {
-                Log.d(AppConstants.TAG, "no need to delete flipkart category is in valid state");
+                //Log.d(AppConstants.TAG, "no need to delete flipkart category is in valid state");
             } else {
                 snapdealAffiliateCategories.add(new SnapdealAffiliateCategory(categoryList.get(i)));
             }
