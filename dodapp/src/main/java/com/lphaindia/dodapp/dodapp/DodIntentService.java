@@ -2,7 +2,6 @@ package com.lphaindia.dodapp.dodapp;
 
 import android.app.IntentService;
 import android.content.Intent;
-import android.util.Log;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.lphaindia.dodapp.dodapp.affiliates.Flipkart;
 import com.lphaindia.dodapp.dodapp.affiliates.Snapdeal;
@@ -42,9 +41,9 @@ public class DodIntentService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         Fresco.initialize(this);
-        Log.d(AppConstants.TAG, "Intent Handler initiated");
+        //Log.d(AppConstants.TAG, "Intent Handler initiated");
         //invoked on boot completed....fetch data from the flipkart affiliate-api
-        Log.d(AppConstants.TAG, "boot completed initiate JSON fetch if possible");
+        //Log.d(AppConstants.TAG, "boot completed initiate JSON fetch if possible");
                 //check if some data has expired or is about to expire
         try {
             checkForAffiliates();

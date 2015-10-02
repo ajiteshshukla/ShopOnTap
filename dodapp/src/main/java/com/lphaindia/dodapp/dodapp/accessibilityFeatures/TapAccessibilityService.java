@@ -3,11 +3,11 @@ package com.lphaindia.dodapp.dodapp.accessibilityFeatures;
 import android.accessibilityservice.AccessibilityService;
 import android.accessibilityservice.AccessibilityServiceInfo;
 import android.content.Context;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
-import com.lphaindia.dodapp.dodapp.AppConstants;
+import com.google.android.gms.analytics.Tracker;
+import com.lphaindia.dodapp.dodapp.Analytics.AnalyticsHelper;
 import com.lphaindia.dodapp.dodapp.overlays.CarouselOverlay;
 import com.lphaindia.dodapp.dodapp.overlays.FullScreenOverlay;
 import com.lphaindia.dodapp.dodapp.overlays.IconOverlay;
@@ -25,6 +25,9 @@ public class TapAccessibilityService extends AccessibilityService {
     public static String whiteListedPkgNames = "com.quikr com.olx.southasia com.snapdeal.main com.flipkart.android " +
             "com.myntra.android com.jabong.android ";
 
+    private AnalyticsHelper analyticsHelper = new AnalyticsHelper();
+    public static Tracker mTracker;
+
     public static Context mContext;
 
     public static List<String> activityDataList = new ArrayList<String>();
@@ -34,7 +37,7 @@ public class TapAccessibilityService extends AccessibilityService {
         //if a new view is clicked or the window state is changed clear the old list
         if (event.getEventType() == AccessibilityEvent.TYPE_VIEW_CLICKED ||
                 event.getEventType() == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
-            Log.d(AppConstants.TAG, event.getClassName().toString());
+            //Log.d(AppConstants.TAG, event.getClassName().toString());
             updateOverlayOnWindowChange(event);
         }
 
@@ -55,7 +58,7 @@ public class TapAccessibilityService extends AccessibilityService {
             return;
         }
         clearList();
-        Log.d(AppConstants.TAG, String.valueOf(event.getPackageName()));
+        //Log.d(AppConstants.TAG, String.valueOf(event.getPackageName()));
         pkgName = String.valueOf(event.getPackageName());
         if(pkgName != null && pkgName != "" && whiteListedPkgNames.contains(pkgName)) {
             //We will get that pullable overlay only on the whitelisted packages this way
@@ -153,8 +156,12 @@ public class TapAccessibilityService extends AccessibilityService {
 
     @Override
     protected void onServiceConnected() {
-        Log.d(AppConstants.TAG, " ServiceConnected");
+        //Log.d(AppConstants.TAG, " ServiceConnected");
         mContext = this;
+
+        mTracker = analyticsHelper.getTracker(AnalyticsHelper.TrackerName.APP_TRACKER, mContext);
+        //send to analytics - acessibility enabled
+        TapAnalytics.sendAnalyticsAccessibilityEnabled(mTracker);
 
         AccessibilityServiceInfo info = new AccessibilityServiceInfo();
         info.eventTypes = AccessibilityEvent.TYPES_ALL_MASK;

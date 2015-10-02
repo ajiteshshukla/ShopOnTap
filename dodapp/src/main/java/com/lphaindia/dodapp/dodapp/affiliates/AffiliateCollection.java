@@ -1,10 +1,5 @@
 package com.lphaindia.dodapp.dodapp.affiliates;
 
-import com.lphaindia.dodapp.dodapp.Product.Product;
-import com.lphaindia.dodapp.dodapp.affiliateCategories.Category;
-import org.json.JSONException;
-
-import java.util.List;
 
 /**
  * Created by ajitesh.shukla on 9/17/15.

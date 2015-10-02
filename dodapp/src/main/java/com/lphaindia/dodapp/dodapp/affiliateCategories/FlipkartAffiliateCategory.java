@@ -1,6 +1,5 @@
 package com.lphaindia.dodapp.dodapp.affiliateCategories;
 
-import android.util.Log;
 import com.lphaindia.dodapp.dodapp.AppConstants;
 import com.lphaindia.dodapp.dodapp.Product.Product;
 import com.lphaindia.dodapp.dodapp.affiliateCategoryAdapter.AffiliateCategoryAdapter;
@@ -39,8 +38,8 @@ public class FlipkartAffiliateCategory implements IfaceAffiliateCategory{
         String datafromServer = null;
         NetworkTask networkTask = new NetworkTask();
         datafromServer = networkTask.fetchDataFromUrl(categoryUrl);
-        Log.d(AppConstants.TAG, "Product Category: " + category.getCategoryName());
-        Log.d(AppConstants.TAG, "" + datafromServer);
+        //Log.d(AppConstants.TAG, "Product Category: " + category.getCategoryName());
+        //Log.d(AppConstants.TAG, "" + datafromServer);
         if (datafromServer != null) {
             JSONObject productJsonObject = new JSONObject(datafromServer);
             products = AffiliateCategoryAdapter.fetchProductsFromJson(productJsonObject);

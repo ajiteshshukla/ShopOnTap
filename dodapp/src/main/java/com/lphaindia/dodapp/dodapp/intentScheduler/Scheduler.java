@@ -4,7 +4,6 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import com.lphaindia.dodapp.dodapp.AppConstants;
 import com.lphaindia.dodapp.dodapp.DodIntentService;
 
@@ -27,13 +26,13 @@ public class Scheduler {
             PendingIntent pi = PendingIntent.getService(context, 1, dodIntentService, PendingIntent.FLAG_UPDATE_CURRENT);
             AlarmManager dodAlarm = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
             dodAlarm.set(AlarmManager.RTC_WAKEUP, scheduleTime, pi);
-            Log.d(AppConstants.TAG, "Alarm set for time: " + scheduleTime);
+            //Log.d(AppConstants.TAG, "Alarm set for time: " + scheduleTime);
         } else {
             Intent dodIntentService = new Intent(context, DodIntentService.class);
             PendingIntent pi = PendingIntent.getService(context, 1, dodIntentService, PendingIntent.FLAG_UPDATE_CURRENT);
             AlarmManager dodAlarm = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
             dodAlarm.set(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis() + AppConstants.TIME_DELAY, pi);
-            Log.d(AppConstants.TAG, "Schedule time less then current: " + scheduleTime);
+            //Log.d(AppConstants.TAG, "Schedule time less then current: " + scheduleTime);
         }
     }
 

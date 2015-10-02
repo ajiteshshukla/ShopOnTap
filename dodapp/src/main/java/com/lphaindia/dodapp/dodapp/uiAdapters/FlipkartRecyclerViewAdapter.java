@@ -2,10 +2,8 @@ package com.lphaindia.dodapp.dodapp.uiAdapters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.media.Image;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +15,6 @@ import com.lphaindia.dodapp.dodapp.Product.Product;
 import com.lphaindia.dodapp.dodapp.R;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -46,7 +43,7 @@ public class FlipkartRecyclerViewAdapter extends RecyclerView.Adapter<FlipkartRe
             discount = (TextView) itemView.findViewById(R.id.textviewdiscount);
             cost = (Button) itemView.findViewById(R.id.buttoncost);
             imageView = (ImageView) itemView.findViewById(R.id.productimage);
-            Log.d(AppConstants.TAG, "Adding Listener");
+            //Log.d(AppConstants.TAG, "Adding Listener");
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
