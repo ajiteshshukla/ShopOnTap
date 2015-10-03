@@ -3,11 +3,13 @@ package com.lphaindia.dodapp.dodapp.accessibilityFeatures;
 import android.accessibilityservice.AccessibilityService;
 import android.accessibilityservice.AccessibilityServiceInfo;
 import android.content.Context;
+import android.content.Intent;
 import android.view.KeyEvent;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 import com.google.android.gms.analytics.Tracker;
 import com.lphaindia.dodapp.dodapp.Analytics.AnalyticsHelper;
+import com.lphaindia.dodapp.dodapp.DodIntentService;
 import com.lphaindia.dodapp.dodapp.overlays.CarouselOverlay;
 import com.lphaindia.dodapp.dodapp.overlays.FullScreenOverlay;
 import com.lphaindia.dodapp.dodapp.overlays.IconOverlay;
@@ -159,6 +161,8 @@ public class TapAccessibilityService extends AccessibilityService {
         //Log.d(AppConstants.TAG, " ServiceConnected");
         mContext = this;
 
+        Intent dodIntent = new Intent(getApplicationContext(), DodIntentService.class);
+        startService(dodIntent);
         mTracker = analyticsHelper.getTracker(AnalyticsHelper.TrackerName.APP_TRACKER, mContext);
         //send to analytics - acessibility enabled
         TapAnalytics.sendAnalyticsAccessibilityEnabled(mTracker);
