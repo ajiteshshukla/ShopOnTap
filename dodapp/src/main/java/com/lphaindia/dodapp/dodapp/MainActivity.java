@@ -18,6 +18,7 @@ import com.lphaindia.dodapp.dodapp.affiliateCategories.Category;
 import com.lphaindia.dodapp.dodapp.affiliateResources.AffiliateActivityResources;
 import com.lphaindia.dodapp.dodapp.affiliates.AffiliateCollection;
 import com.lphaindia.dodapp.dodapp.injectors.Injectors;
+import com.lphaindia.dodapp.dodapp.uiAdapters.AmazonRecyclerViewAdapter;
 import com.lphaindia.dodapp.dodapp.uiAdapters.FlipkartRecyclerViewAdapter;
 import com.lphaindia.dodapp.dodapp.uiAdapters.SnapdealRecyclerViewAdapter;
 
@@ -33,9 +34,11 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
 
     private List<Category> flipkartAffiliateCategories;
     private List<Category> snapdealAffiliateCategories;
+    private List<Category> amazonAffiliateCategories;
 
     private AffiliateActivityResources flipkartResources;
     private AffiliateActivityResources snapdealResources;
+    private AffiliateActivityResources amazonResources;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +58,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
         //register resources for affiliates
         registerResourcesFlipkart();
         registerResourcesSnapdeal();
+        registerResourcesAmazon();
 
     }
 
@@ -63,6 +67,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
         super.onResume();
         registerResourcesFlipkart();
         registerResourcesSnapdeal();
+        registerResourcesAmazon();
     }
 
     public List<String> getFlipkartCategoryList() {
@@ -79,6 +84,15 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
         snapdealAffiliateCategories = affiliateCollection.snapdeal.getCategoryList();
         for(int i = 0; i < snapdealAffiliateCategories.size(); i++) {
             categoryList.add(snapdealAffiliateCategories.get(i).getCategoryName());
+        }
+        return categoryList;
+    }
+
+    public List<String> getAmazonCategoryList() {
+        List<String> categoryList= new ArrayList<String>();
+        amazonAffiliateCategories = affiliateCollection.amazon.getCategoryList();
+        for(int i = 0; i < amazonAffiliateCategories.size(); i++) {
+            categoryList.add(amazonAffiliateCategories.get(i).getCategoryName());
         }
         return categoryList;
     }
@@ -121,16 +135,39 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
         snapdealResources = new AffiliateActivityResources(snapdealSpinner, snapdealDiscountSpinner, mRecyclerView);
     }
 
+    public void registerResourcesAmazon() {
+        Spinner amazonSpinner = (Spinner) findViewById(R.id.amazon_category_spinner);
+        ArrayAdapter amazonArrayAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item,
+                getAmazonCategoryList());
+        amazonArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        amazonSpinner.setAdapter(amazonArrayAdapter);
+        amazonSpinner.setOnItemSelectedListener(this);
+
+        Spinner amazonDiscountSpinner = (Spinner) findViewById(R.id.amazon_discount_spinner);
+        amazonDiscountSpinner.setOnItemSelectedListener(this);
+
+        RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.amazon_recycler_view);
+        mRecyclerView.setHasFixedSize(true);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this,
+                LinearLayoutManager.HORIZONTAL, false);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        amazonResources = new AffiliateActivityResources(amazonSpinner, amazonDiscountSpinner, mRecyclerView);
+    }
+
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         if (parent.getId() == R.id.flipkart_category_spinner) {
             handleFlipkartCategoryClick((String) parent.getItemAtPosition(position));
         } else if (parent.getId() == R.id.snapdeal_category_spinner) {
             handleSnapdealCategoryClick((String) parent.getItemAtPosition(position));
-        } else if (parent.getId() == R.id.flipkart_discount_spinner) {
+        } else if (parent.getId() == R.id.amazon_category_spinner) {
+            handleAmazonCategoryClick((String) parent.getItemAtPosition(position));
+        }else if (parent.getId() == R.id.flipkart_discount_spinner) {
             handleFlipkartCategoryClick((String) flipkartResources.spinner.getSelectedItem());
         } else if (parent.getId() == R.id.snapdeal_discount_spinner) {
             handleSnapdealCategoryClick((String) snapdealResources.spinner.getSelectedItem());
+        }else if (parent.getId() == R.id.amazon_discount_spinner) {
+            handleAmazonCategoryClick((String) amazonResources.spinner.getSelectedItem());
         }
     }
 
@@ -155,6 +192,20 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
         } else {
             try {
                 new NetworkRequest(category, AppConstants.AFFILIATE_COLLECTION_VALUE_FLIPKART, this)
+                        .execute(affiliateCollection);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void handleAmazonCategoryClick(String category) {
+        List<Product> products = affiliateCollection.amazon.getProductListFromCategory(category);
+        if (products != null && products.size() > 0) {
+            amazonPostExecute(category);
+        } else {
+            try {
+                new NetworkRequest(category, AppConstants.AFFILIATE_COLLECTION_VALUE_AMAZON, this)
                         .execute(affiliateCollection);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -189,6 +240,9 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
                     case AppConstants.AFFILIATE_COLLECTION_VALUE_SNAPDEAL:
                         params[0].snapdeal.populateCategorywithData(category);
                         break;
+                    case AppConstants.AFFILIATE_COLLECTION_VALUE_AMAZON:
+                        params[0].amazon.populateCategorywithData(category);
+                        break;
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -216,6 +270,9 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
                 case AppConstants.AFFILIATE_COLLECTION_VALUE_SNAPDEAL:
                     snapdealPostExecute(category);
                     break;
+                case AppConstants.AFFILIATE_COLLECTION_VALUE_AMAZON:
+                    amazonPostExecute(category);
+                    break;
             }
         }
     }
@@ -236,6 +293,15 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
         verifiedProductList = filterOnDiscount((float)(10 * position), verifiedProductList);
         RecyclerView.Adapter mAdapter = new SnapdealRecyclerViewAdapter(verifiedProductList, this);
         snapdealResources.recyclerView.setAdapter(mAdapter);
+    }
+
+    public void amazonPostExecute(String category) {
+        List<Product> products = affiliateCollection.amazon.getProductListFromCategory(category);
+        List<Product> verifiedProductList = checkProduct(products);
+        int position = amazonResources.discountSpinner.getSelectedItemPosition();
+        verifiedProductList = filterOnDiscount((float)(10 * position), verifiedProductList);
+        RecyclerView.Adapter mAdapter = new AmazonRecyclerViewAdapter(verifiedProductList, this);
+        amazonResources.recyclerView.setAdapter(mAdapter);
     }
 
     public List<Product> checkProduct(List<Product> products) {

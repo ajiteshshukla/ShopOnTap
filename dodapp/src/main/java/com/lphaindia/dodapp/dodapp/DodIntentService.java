@@ -3,6 +3,7 @@ package com.lphaindia.dodapp.dodapp;
 import android.app.IntentService;
 import android.content.Intent;
 import com.facebook.drawee.backends.pipeline.Fresco;
+import com.lphaindia.dodapp.dodapp.affiliates.Amazon;
 import com.lphaindia.dodapp.dodapp.affiliates.Flipkart;
 import com.lphaindia.dodapp.dodapp.affiliates.Snapdeal;
 import com.lphaindia.dodapp.dodapp.injectors.Injectors;
@@ -23,6 +24,9 @@ public class DodIntentService extends IntentService {
 
     @Inject
     Snapdeal snapdeal;
+
+    @Inject
+    Amazon amazon;
 
     @Inject
     Scheduler scheduler;
@@ -60,11 +64,13 @@ public class DodIntentService extends IntentService {
     public void checkForAffiliates() throws JSONException {
             snapdeal.pushCategoryList();
             flipkart.pushCategoryList();
+            amazon.pushCategoryList();
     }
 
     public void populateCategoryUrlLists() {
         flipkart.getCategoryList();
         snapdeal.getCategoryList();
+        amazon.getCategoryList();
     }
 
     public long getNextExpiry() {

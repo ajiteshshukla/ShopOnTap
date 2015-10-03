@@ -8,10 +8,12 @@ public class AffiliateCollection {
 
     public Flipkart flipkart;
     public Snapdeal snapdeal;
-    public static int size = 2;
+    public Amazon amazon;
+    public static int size = 3;
 
-    public AffiliateCollection(Flipkart flipkart, Snapdeal snapdeal) {
+    public AffiliateCollection(Flipkart flipkart, Snapdeal snapdeal, Amazon amazon) {
         this.flipkart = flipkart;
         this.snapdeal = snapdeal;
+        this.amazon = amazon;
     }
 }
