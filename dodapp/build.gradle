@@ -26,12 +26,23 @@ android {
         versionName "1.0"
     }
 
+    signingConfigs {
+        dev {
+            storeFile file("$rootProject.projectDir/dodapp.jks")
+            keyAlias "dodappkey"
+
+            storePassword "sharingan123@ISMT"
+            keyPassword "sharingan123@ISMT"
+        }
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_6
         targetCompatibility JavaVersion.VERSION_1_6
     }
     buildTypes {
         release {
+            signingConfig signingConfigs.dev
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
