@@ -2,7 +2,6 @@ package com.lphaindia.dodapp.dodapp.stringToProductAdapter;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.os.CountDownTimer;
 import com.lphaindia.dodapp.dodapp.AppConstants;
 import com.lphaindia.dodapp.dodapp.Product.Product;
 import com.lphaindia.dodapp.dodapp.accessibilityFeatures.TapAccessibilityService;
@@ -34,26 +33,6 @@ public class KeywordsToProducts extends AsyncTask<String, String, List<Product>>
         LoadingOverlay.getInstance(context).showOverlay();
 
         keywordsToProducts = this;
-        new CountDownTimer(10000, 500) {
-            public void onTick(long millisUntilFinished) {
-                // You can monitor the progress here as well by changing the onTick() time
-                if (LoadingOverlay.getInstance(context).isOverlayShown() == false) {
-                    keywordsToProducts.cancel(false);
-                }
-            }
-            public void onFinish() {
-                // stop async task if not in progress
-                if (keywordsToProducts.getStatus() == AsyncTask.Status.RUNNING) {
-                    keywordsToProducts.cancel(false);
-                    // Add any specific task you wish to do as your extended class variable works here as well.
-                    if (LoadingOverlay.getInstance(context).isOverlayShown()) {
-                        LoadingOverlay.getInstance(context).removeOverlay();
-                        if (TapAccessibilityService.isPackageWhiteListed())
-                            CarouselOverlay.getInstance(context).showOverlay(null);
-                    }
-                }
-            }
-        }.start();
     }
 
     @Override
@@ -89,6 +68,7 @@ public class KeywordsToProducts extends AsyncTask<String, String, List<Product>>
                         flipkartProductList = AffiliateCategoryAdapter.fetchProductsFromJson
                                 (flipkartJasonObject);
                     }
+
                     if (flipkartProductList != null &&
                             flipkartProductList.size() > 0) {
                         i = AppConstants.KEYWORD_DEPTH;

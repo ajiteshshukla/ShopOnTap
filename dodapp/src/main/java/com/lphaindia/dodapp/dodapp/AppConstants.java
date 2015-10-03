@@ -20,7 +20,7 @@ public final class AppConstants {
     public static final int AFFILIATE_COLLECTION_VALUE_FLIPKART = 0;
     public static final int AFFILIATE_COLLECTION_VALUE_SNAPDEAL = 1;
 
-    public static final int KEYWORD_DEPTH = 4;
+    public static final int KEYWORD_DEPTH = 3;
 
     public static final String myntrapkg = "com.myntra.android ";
     public static final String flipkartpkg = "com.flipkart.android ";

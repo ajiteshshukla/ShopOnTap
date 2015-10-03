@@ -17,34 +17,38 @@ public class AffiliateCategoryAdapter {
         JSONArray productListInfo = jsonObject.getJSONArray("List");
         if(productListInfo != null) {
             for (int i = 0; i < productListInfo.length(); i++) {
-                JSONObject productInfo = (JSONObject) productListInfo.get(i);
+                try {
+                    JSONObject productInfo = (JSONObject) productListInfo.get(i);
 
-                String title = productInfo.getString("title");
-                String productUrl = productInfo.getString("productUrl");
-                String productId = productInfo.getString("productId");
-                String brand = productInfo.getString("brand");
-                String color = productInfo.getString("color");
-                String sellingPrice = productInfo.getString("sellingPrice");
-                String maximumRetailPrice = productInfo.getString("maximumRetailPrice");
-                String imageUrl = productInfo.getString("imageUrl");
-                String discountPercentage = productInfo.getString("discountPercentage");
-                String currency = productInfo.getString("currency");
-                String categoryName = productInfo.getString("category");
-                String sizeUnit = productInfo.getString("sizeUnit");
+                    String title = productInfo.getString("title");
+                    String productUrl = productInfo.getString("productUrl");
+                    String productId = productInfo.getString("productId");
+                    String brand = productInfo.getString("brand");
+                    String color = productInfo.getString("color");
+                    String sellingPrice = productInfo.getString("sellingPrice");
+                    String maximumRetailPrice = productInfo.getString("maximumRetailPrice");
+                    String imageUrl = productInfo.getString("imageUrl");
+                    String discountPercentage = productInfo.getString("discountPercentage");
+                    String currency = productInfo.getString("currency");
+                    String categoryName = productInfo.getString("category");
+                    String sizeUnit = productInfo.getString("sizeUnit");
 
-                /*Log.d(AppConstants.TAG, "title: " + title);
-                Log.d(AppConstants.TAG, "productUrl: " + productUrl);
-                Log.d(AppConstants.TAG, "productBrand: " + brand);
-                Log.d(AppConstants.TAG, "discountPercentage: " + discountPercentage);
-                Log.d(AppConstants.TAG, "color: " + color);
-                Log.d(AppConstants.TAG, "sizeUnit: " + sizeUnit);
-                Log.d(AppConstants.TAG, "MRP: " + maximumRetailPrice);
-                Log.d(AppConstants.TAG, "SellingPrice: " + sellingPrice);
-                Log.d(AppConstants.TAG, "currency: " + currency);
-                Log.d(AppConstants.TAG, "imageurl: " + imageUrl);
-                Log.d(AppConstants.TAG, "================================ \n");*/
-                intermProducts.add(new Product(title, maximumRetailPrice, sellingPrice, discountPercentage, imageUrl,
-                        currency, brand, color, sizeUnit, productId, categoryName, productUrl));
+                    /*Log.d(AppConstants.TAG, "title: " + title);
+                    Log.d(AppConstants.TAG, "productUrl: " + productUrl);
+                    Log.d(AppConstants.TAG, "productBrand: " + brand);
+                    Log.d(AppConstants.TAG, "discountPercentage: " + discountPercentage);
+                    Log.d(AppConstants.TAG, "color: " + color);
+                    Log.d(AppConstants.TAG, "sizeUnit: " + sizeUnit);
+                    Log.d(AppConstants.TAG, "MRP: " + maximumRetailPrice);
+                    Log.d(AppConstants.TAG, "SellingPrice: " + sellingPrice);
+                    Log.d(AppConstants.TAG, "currency: " + currency);
+                    Log.d(AppConstants.TAG, "imageurl: " + imageUrl);
+                    Log.d(AppConstants.TAG, "================================ \n");*/
+                    intermProducts.add(new Product(title, maximumRetailPrice, sellingPrice, discountPercentage, imageUrl,
+                            currency, brand, color, sizeUnit, productId, categoryName, productUrl));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
         return intermProducts;
