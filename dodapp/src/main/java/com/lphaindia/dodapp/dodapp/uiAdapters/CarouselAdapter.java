@@ -147,7 +147,7 @@ public class CarouselAdapter extends RecyclerView.Adapter<CarouselAdapter.Vertic
             mCtxt = ctxt;
         }
         public void setImgProductImage(String productImage){
-            Picasso.with(mCtxt).load(productImage).into(mImgProductImage);
+            Picasso.with(mCtxt).load(productImage).resize(300, 200).into(mImgProductImage);
         }
         public void setUrl(String url){
             mUrl = url;
