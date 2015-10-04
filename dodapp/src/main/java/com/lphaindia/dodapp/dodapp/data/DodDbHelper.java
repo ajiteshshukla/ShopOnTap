@@ -19,6 +19,7 @@ public class DodDbHelper extends SQLiteOpenHelper {
 
     public static final String TABLE_FLIPKART = "tableflipkart";
     public static final String TABLE_SNAPDEAL = "tablesnapdeal";
+    public static final String TABLE_AMAZON = "tablesamazon";
 
     public static final String CATEGORY_ID = "categoryid";
     public static final String CATEGORY_NAME = "categoryname";
@@ -35,6 +36,11 @@ public class DodDbHelper extends SQLiteOpenHelper {
         );
 
         db.execSQL(" CREATE TABLE " + TABLE_SNAPDEAL + " ("
+                        + CATEGORY_ID + " INTEGER PRIMARY KEY, "
+                        + CATEGORY_NAME + " TEXT UNIQUE NOT NULL);"
+        );
+
+        db.execSQL(" CREATE TABLE " + TABLE_AMAZON + " ("
                         + CATEGORY_ID + " INTEGER PRIMARY KEY, "
                         + CATEGORY_NAME + " TEXT UNIQUE NOT NULL);"
         );

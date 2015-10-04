@@ -11,6 +11,7 @@ public final class AppConstants {
 
     public static final String AFFILIATE_FLIPKART = "flipkart";
     public static final String AFFILIATE_SNAPDEAL = "snapdeal";
+    public static final String AFFILIATE_AMAZON = "amazon";
 
     public static final String REQUEST_CATEGORY = "categorylist";
     public static final String REQUEST_PRODUCTS = "productlist";
@@ -19,6 +20,7 @@ public final class AppConstants {
 
     public static final int AFFILIATE_COLLECTION_VALUE_FLIPKART = 0;
     public static final int AFFILIATE_COLLECTION_VALUE_SNAPDEAL = 1;
+    public static final int AFFILIATE_COLLECTION_VALUE_AMAZON = 2;
 
     public static final int KEYWORD_DEPTH = 3;
 
