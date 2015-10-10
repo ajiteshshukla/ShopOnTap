@@ -12,7 +12,7 @@ public final class AppConstants {
     public static final String REQUEST_CATEGORY = "categorylist";
     public static final String REQUEST_PRODUCTS = "productlist";
     public static final String REQUEST_SEARCH = "keywordsearch";
-    public static final String REQUEST_URL = "http://192.168.1.2:8080/Tap/ShopOnTap";
+    public static final String REQUEST_URL = "http://192.168.1.6:8080/Tap/ShopOnTap";
 
     public static final int KEYWORD_DEPTH = 3;
 

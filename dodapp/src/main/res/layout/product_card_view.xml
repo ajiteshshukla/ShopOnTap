@@ -20,29 +20,36 @@
 
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:card="http://schemas.android.com/apk/res-auto"
                 android:layout_width="match_parent"
                 android:layout_height="300dp"
-    >
+        >
 
-    <ImageView
-        android:id="@+id/product_image"
-        android:layout_width="match_parent"
-        android:layout_height="225dp"/>
+    <!--<ImageView-->
+        <!--android:id="@+id/product_image"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="225dp"/>-->
 
-    <LinearLayout android:layout_width="match_parent" android:layout_height="25dp" android:orientation="horizontal"
-            android:layout_below="@id/product_image">
-        <TextView
-                android:id="@+id/product_text_price"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"/>
-        <TextView
-                android:id="@+id/product_text_affiliate"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"/>
-    </LinearLayout>
-
+    <!--<LinearLayout android:layout_width="match_parent" android:layout_height="25dp" android:orientation="horizontal"-->
+            <!--android:layout_below="@id/product_image">-->
+        <!--<TextView-->
+                <!--android:id="@+id/product_text_price"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_weight="1"/>-->
+        <!--<TextView-->
+                <!--android:id="@+id/product_text_affiliate"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_weight="1"/>-->
+    <!--</LinearLayout>-->
+    <it.gmariotti.cardslib.library.view.CardViewNative
+            android:id="@+id/carddemo_largeimage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            card:card_layout_resourceID="@layout/native_material_largeimage_text_card"
+            style="@style/card_external"
+            />
 
 </RelativeLayout>
 

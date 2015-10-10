@@ -114,12 +114,6 @@ public class ProductsActivity extends Activity {
             ArrayList<Card> cards = new ArrayList<Card>();
             for (int i = 0; i < products.size(); i++) {
                 final Product product = products.get(i);
-////                MaterialLargeImageCard card =
-////                        MaterialLargeImageCard.with(this)
-////                                .setTitle(product.title)
-////                                .setTextOverImage("ABC")
-////                                .useDrawableUrl(product.imageUrl)
-////                                .build();
                 ProductCard card = new ProductCard(this, product);
                 card.setOnClickListener(new Card.OnCardClickListener() {
                     @Override
@@ -136,7 +130,7 @@ public class ProductsActivity extends Activity {
                 cards.add(card);
             }
             mCardArrayAdapter.addAll(cards);
-            mCardArrayAdapter.notifyDataSetChanged();
+            //mCardArrayAdapter.notifyDataSetChanged();
         }
     }
 }

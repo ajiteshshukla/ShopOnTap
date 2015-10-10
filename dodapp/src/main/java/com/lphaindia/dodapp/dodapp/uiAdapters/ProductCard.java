@@ -11,6 +11,7 @@ import com.lphaindia.dodapp.dodapp.data.Product;
 import com.squareup.picasso.Picasso;
 import it.gmariotti.cardslib.library.cards.material.MaterialLargeImageCard;
 import it.gmariotti.cardslib.library.internal.Card;
+import it.gmariotti.cardslib.library.view.CardViewNative;
 
 /**
  * Created by aasha.medhi on 10/7/15.
@@ -25,14 +26,21 @@ public class ProductCard extends MaterialLargeImageCard {
     @Override
     public void setupInnerViewElements(ViewGroup parent, View view) {
         super.setupInnerViewElements(parent, view);
-        setTextOverImage(mProduct.title);
-        ImageView image = (ImageView) view.findViewById(R.id.product_image);
-        Picasso.with(mContext).load(mProduct.imageUrl).fit().into(image);
-
-        TextView textPrice = (TextView) view.findViewById(R.id.product_text_price);
-        textPrice.setText(mProduct.discountPercentage);
-
-        TextView textAffiliate = (TextView) view.findViewById(R.id.product_text_affiliate);
-        textAffiliate.setText(mProduct.affiliate);
+        MaterialLargeImageCard card =
+                        MaterialLargeImageCard.with(mContext)
+                                .setTitle(mProduct.sellingPrice)
+                                .setSubTitle(mProduct.sellingPrice)
+                                .setTextOverImage(mProduct.title)
+                                .useDrawableExternal(new MaterialLargeImageCard.DrawableExternal() {
+                                    @Override
+                                    public void setupInnerViewElements(ViewGroup parent, View viewImage) {
+                                        Picasso.with(mContext)
+                                                .load(mProduct.imageUrl)
+                                                .into((ImageView) viewImage);
+                                    }
+                                })
+                                .build();
+        CardViewNative cardView = (CardViewNative)view.findViewById(R.id.carddemo_largeimage);
+        cardView.setCard(card);
     }
 }

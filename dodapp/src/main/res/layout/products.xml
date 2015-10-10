@@ -8,17 +8,6 @@
     <it.gmariotti.cardslib.library.recyclerview.view.CardRecyclerView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:columnWidth="125dp"
-            android:numColumns="1"
-            android:verticalSpacing="8dp"
-            android:horizontalSpacing="8dp"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:stretchMode="columnWidth"
-            android:gravity="center"
-            android:scrollbarStyle="outsideOverlay"
-            android:clipToPadding="false"
             card:list_card_layout_resourceID="@layout/native_recyclerview_material_card_layout"
             android:id="@+id/products_grid"/>
-
 </RelativeLayout>
