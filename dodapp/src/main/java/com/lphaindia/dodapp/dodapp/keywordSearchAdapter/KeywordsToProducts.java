@@ -1,15 +1,14 @@
-package com.lphaindia.dodapp.dodapp.stringToProductAdapter;
+package com.lphaindia.dodapp.dodapp.keywordSearchAdapter;
 
 import android.content.Context;
 import android.os.AsyncTask;
 import com.lphaindia.dodapp.dodapp.AppConstants;
-import com.lphaindia.dodapp.dodapp.Product.Product;
 import com.lphaindia.dodapp.dodapp.accessibilityFeatures.TapAccessibilityService;
-import com.lphaindia.dodapp.dodapp.affiliateCategoryAdapter.AffiliateCategoryAdapter;
+import com.lphaindia.dodapp.dodapp.data.Product;
 import com.lphaindia.dodapp.dodapp.network.NetworkTask;
 import com.lphaindia.dodapp.dodapp.overlays.CarouselOverlay;
 import com.lphaindia.dodapp.dodapp.overlays.LoadingOverlay;
-import org.json.JSONObject;
+import com.lphaindia.dodapp.dodapp.utils.Utility;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,9 +63,8 @@ public class KeywordsToProducts extends AsyncTask<String, String, List<Product>>
                 if (searchUrl != null) {
                     dataFromFlipkartServer = networkTaskFlipkart.fetchDataFromUrl(searchUrl);
                     if (dataFromFlipkartServer != null) {
-                        JSONObject flipkartJasonObject = new JSONObject(dataFromFlipkartServer);
-                        flipkartProductList = AffiliateCategoryAdapter.fetchProductsFromJson
-                                (flipkartJasonObject);
+                        flipkartProductList = Utility.getProductListFromJSON
+                                (dataFromFlipkartServer);
                     }
 
                     if (flipkartProductList != null &&

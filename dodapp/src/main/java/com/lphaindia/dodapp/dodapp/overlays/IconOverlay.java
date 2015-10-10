@@ -15,7 +15,7 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.lphaindia.dodapp.dodapp.R;
 import com.lphaindia.dodapp.dodapp.accessibilityFeatures.TapAccessibilityService;
 import com.lphaindia.dodapp.dodapp.accessibilityFeatures.TapAnalytics;
-import com.lphaindia.dodapp.dodapp.stringToProductAdapter.KeywordsToProducts;
+import com.lphaindia.dodapp.dodapp.keywordSearchAdapter.KeywordsToProducts;
 
 /**
  * Created by aasha.medhi on 8/27/15.

@@ -1,0 +1,20 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:card="http://schemas.android.com/apk/res-auto"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+
+    <it.gmariotti.cardslib.library.view.CardGridView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:columnWidth="125dp"
+            android:numColumns="auto_fit"
+            android:stretchMode="columnWidth"
+            android:gravity="center"
+            android:scrollbarStyle="outsideOverlay"
+            android:clipToPadding="false"
+            card:list_card_layout_resourceID="@layout/native_list_card_thumbnail_layout"
+            android:id="@+id/category_grid"/>
+
+</RelativeLayout>
