@@ -48,38 +48,6 @@ public class ProductsActivity extends Activity {
         }
     }
 
-    public List<Product> checkProduct(List<Product> products) {
-        List<Product> newList = new ArrayList<Product>();
-        for (int i = 0; i < products.size(); i++) {
-            if (products.get(i).imageUrl != null
-                    && products.get(i).imageUrl.length() > 2
-                    && products.get(i).sellingPrice != null
-                    && products.get(i).sellingPrice.length() > 0
-                    && Float.valueOf(products.get(i).sellingPrice) > 0.0) {
-                //Log.d(AppConstants.TAG, "product satifies all criteria: " + products.get(i).toString());
-                newList.add(products.get(i));
-            } else {
-                //Log.d(AppConstants.TAG, "criteria failed: " + products.get(i).toString());
-            }
-        }
-        return newList;
-    }
-
-    public List<Product> filterOnDiscount(Float discount, List<Product> products) {
-        List<Product> newList = new ArrayList<Product>();
-        for (int i = 0; i < products.size(); i++) {
-            if (products.get(i).discountPercentage != null
-                    && products.get(i).discountPercentage.length() > 0
-                    && Float.valueOf(products.get(i).discountPercentage) >= discount) {
-                //Log.d(AppConstants.TAG, "product satifies all criteria: " + products.get(i).discountPercentage);
-                newList.add(products.get(i));
-            } else {
-                //Log.d(AppConstants.TAG, "criteria failed: " + products.get(i).toString());
-            }
-        }
-        return newList;
-    }
-
 
     class FetchProductsForCategory extends AsyncTask<Void, Void, String> {
 
@@ -130,7 +98,7 @@ public class ProductsActivity extends Activity {
                 cards.add(card);
             }
             mCardArrayAdapter.addAll(cards);
-            //mCardArrayAdapter.notifyDataSetChanged();
+            mCardArrayAdapter.notifyDataSetChanged();
         }
     }
 }

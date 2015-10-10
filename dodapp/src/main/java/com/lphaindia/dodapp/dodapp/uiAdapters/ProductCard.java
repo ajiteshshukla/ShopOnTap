@@ -26,16 +26,23 @@ public class ProductCard extends MaterialLargeImageCard {
     @Override
     public void setupInnerViewElements(ViewGroup parent, View view) {
         super.setupInnerViewElements(parent, view);
+        StringBuilder title = new StringBuilder();
+        if(Float.parseFloat(mProduct.discountPercentage) > 0) {
+            int discount = Math.round(Float.parseFloat(mProduct.discountPercentage));
+            title.append(mProduct.currency + " " + mProduct.sellingPrice + "    " + discount + "% OFF");
+        }
+        else {
+            title.append(mProduct.currency + " " + mProduct.sellingPrice);
+        }
         MaterialLargeImageCard card =
                         MaterialLargeImageCard.with(mContext)
-                                .setTitle(mProduct.sellingPrice)
-                                .setSubTitle(mProduct.sellingPrice)
-                                .setTextOverImage(mProduct.title)
+                                .setTitle(title.toString())
                                 .useDrawableExternal(new MaterialLargeImageCard.DrawableExternal() {
                                     @Override
                                     public void setupInnerViewElements(ViewGroup parent, View viewImage) {
                                         Picasso.with(mContext)
                                                 .load(mProduct.imageUrl)
+                                                .fit()
                                                 .into((ImageView) viewImage);
                                     }
                                 })
