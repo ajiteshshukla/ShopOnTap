@@ -31,10 +31,9 @@ public class ProductsActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.products);
-        //TODO undo
-//        Bundle b =getIntent().getExtras();
-//        String category = getIntent().getStringExtra(AppConstants.KEY_CATEGORY);
-//        new FetchProductsForCategory(category).execute();
+        Bundle b =getIntent().getExtras();
+        String category = getIntent().getStringExtra(AppConstants.KEY_CATEGORY);
+        new FetchProductsForCategory(category).execute();
         ArrayList<Card> cards = new ArrayList<Card>();
         mCardArrayAdapter = new CardArrayRecyclerViewAdapter(this, cards);
 
@@ -47,13 +46,6 @@ public class ProductsActivity extends Activity {
         if (mRecyclerView != null) {
             mRecyclerView.setAdapter(mCardArrayAdapter);
         }
-        //TODO remove
-        Product p = new Product();
-        p.title="ABC";
-        p.imageUrl = "http://images.nationalgeographic.com/wpf/media-live/photos/000/175/cache/television_17512_600x450.jpg";
-        List<Product> pList = new ArrayList<Product>();
-        pList.add(p);
-        renderProducts(pList);
     }
 
     public List<Product> checkProduct(List<Product> products) {
