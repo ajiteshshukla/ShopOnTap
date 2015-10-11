@@ -17,6 +17,7 @@ public class Product {
     public String category;
     public String productUrl;
     public String affiliate;
+    public String aspectRatio;
     public Product(){
 
     }

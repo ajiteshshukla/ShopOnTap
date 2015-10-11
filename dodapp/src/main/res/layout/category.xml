@@ -16,5 +16,9 @@
             android:clipToPadding="false"
             card:list_card_layout_resourceID="@layout/native_list_card_thumbnail_layout"
             android:id="@+id/category_grid"/>
-
+    <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true" />
 </RelativeLayout>

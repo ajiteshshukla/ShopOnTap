@@ -1,23 +1,25 @@
 package com.lphaindia.dodapp.dodapp;
 
 import android.app.Activity;
+import android.app.Notification;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
+import android.widget.AdapterView;
+import android.widget.ProgressBar;
 import com.lphaindia.dodapp.dodapp.data.Product;
 import com.lphaindia.dodapp.dodapp.network.NetworkTask;
-import com.lphaindia.dodapp.dodapp.uiAdapters.ProductCard;
+import com.lphaindia.dodapp.dodapp.uiAdapters.ProductCardAdapter;
 import com.lphaindia.dodapp.dodapp.utils.Utility;
-import it.gmariotti.cardslib.library.cards.material.MaterialLargeImageCard;
 import it.gmariotti.cardslib.library.internal.Card;
 import it.gmariotti.cardslib.library.recyclerview.internal.CardArrayRecyclerViewAdapter;
 import it.gmariotti.cardslib.library.recyclerview.view.CardRecyclerView;
-import it.gmariotti.cardslib.library.view.CardViewNative;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,26 +28,24 @@ import java.util.List;
  * Created by aasha.medhi on 10/8/15.
  */
 public class ProductsActivity extends Activity {
-    CardArrayRecyclerViewAdapter mCardArrayAdapter;
+    private RecyclerView mRecyclerView;
+    private ProductCardAdapter adapter;
+    private ProgressBar progressBar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.products);
         Bundle b =getIntent().getExtras();
         String category = getIntent().getStringExtra(AppConstants.KEY_CATEGORY);
-        new FetchProductsForCategory(category).execute();
-        ArrayList<Card> cards = new ArrayList<Card>();
-        mCardArrayAdapter = new CardArrayRecyclerViewAdapter(this, cards);
-
-        //Staggered grid view
-        CardRecyclerView mRecyclerView = (CardRecyclerView) findViewById(R.id.products_grid);
-        mRecyclerView.setHasFixedSize(false);
+        // Initialize recycler view
+        mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mRecyclerView.setHasFixedSize(false);
+        progressBar = (ProgressBar) findViewById(R.id.progress_bar);
+        progressBar.setVisibility(View.VISIBLE);
 
-        //Set the empty view
-        if (mRecyclerView != null) {
-            mRecyclerView.setAdapter(mCardArrayAdapter);
-        }
+        new FetchProductsForCategory(category).execute();
     }
 
 
@@ -54,6 +54,12 @@ public class ProductsActivity extends Activity {
         private String category;
         public FetchProductsForCategory(String category) {
             this.category = category;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            setProgressBarIndeterminateVisibility(true);
         }
 
         @Override
@@ -70,35 +76,18 @@ public class ProductsActivity extends Activity {
         @Override
         protected void onPostExecute(String datafromServer) {
             super.onPostExecute(datafromServer);
+            progressBar.setVisibility(View.GONE);
             List<Product> products = null;
             if (datafromServer != null) {
                 products = Utility.getProductListFromJSON(datafromServer);
+                renderProducts(products);
             }
-            renderProducts(products);
         }
     }
     private void renderProducts(final List<Product> products) {
         if (products != null && !products.isEmpty()) {
-            ArrayList<Card> cards = new ArrayList<Card>();
-            for (int i = 0; i < products.size(); i++) {
-                final Product product = products.get(i);
-                ProductCard card = new ProductCard(this, product);
-                card.setOnClickListener(new Card.OnCardClickListener() {
-                    @Override
-                    public void onClick(Card card, View view) {
-                        if(product.productUrl != null){
-                            Intent i = new Intent(Intent.ACTION_VIEW);
-                            i.setData(Uri.parse(product.productUrl));
-                            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            startActivity(i);
-                        }
-                    }
-                });
-                Log.e("AASHA", product.title);
-                cards.add(card);
-            }
-            mCardArrayAdapter.addAll(cards);
-            mCardArrayAdapter.notifyDataSetChanged();
+            adapter = new ProductCardAdapter(this, products);
+            mRecyclerView.setAdapter(adapter);
         }
     }
 }

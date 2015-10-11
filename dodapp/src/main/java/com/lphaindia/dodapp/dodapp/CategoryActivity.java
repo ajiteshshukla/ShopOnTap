@@ -8,6 +8,7 @@ import android.os.PersistableBundle;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
+import android.widget.ProgressBar;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.lphaindia.dodapp.dodapp.data.Category;
 import com.lphaindia.dodapp.dodapp.network.NetworkTask;
@@ -22,6 +23,7 @@ import java.util.List;
 
 
 public class CategoryActivity extends Activity {
+    private ProgressBar progressBar;
     @Override
     public void onCreate(Bundle savedInstanceState, PersistableBundle persistentState) {
         super.onCreate(savedInstanceState, persistentState);
@@ -36,6 +38,8 @@ public class CategoryActivity extends Activity {
             Intent intent = new Intent(getApplicationContext(), ScreenSlidePagerActivity.class);
             startActivity(intent);
         }
+        progressBar = (ProgressBar) findViewById(R.id.progress_bar);
+        progressBar.setVisibility(View.VISIBLE);
         new FetchCategories().execute();
     }
 
@@ -60,6 +64,12 @@ public class CategoryActivity extends Activity {
     class FetchCategories extends AsyncTask<Void, Void, String> {
 
         @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            setProgressBarIndeterminateVisibility(true);
+        }
+
+        @Override
         protected String doInBackground(Void... params) {
             String datafromServer = null;
             NetworkTask networkTask = new NetworkTask();
@@ -72,6 +82,7 @@ public class CategoryActivity extends Activity {
         @Override
         protected void onPostExecute(String datafromServer) {
             super.onPostExecute(datafromServer);
+            progressBar.setVisibility(View.GONE);
             if (datafromServer != null) {
                 List<Category> categories = Utility.getCategoryListFromJSON(datafromServer);
                 renderCategories(categories);
