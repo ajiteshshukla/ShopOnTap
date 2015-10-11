@@ -108,8 +108,11 @@ public class ProductCardAdapter extends RecyclerView.Adapter<ProductCardAdapter.
                 Point size = new Point();
                 display.getSize(size);
                 DisplayMetrics metrics = mCtxt.getResources().getDisplayMetrics();
-                float width = size.x/metrics.density;
-                mImgProductImage.getLayoutParams().height = Math.round(width / aspectRatio);
+                //float width = size.x/metrics.density;
+                float width = size.x;
+                int imageHeight = Math.round(width / aspectRatio);
+                if(imageHeight > 200)
+                    mImgProductImage.getLayoutParams().height = imageHeight;
             }
             Picasso.with(mCtxt).load(productImage).fit().into(mImgProductImage);
             mImgProductImage.requestLayout();
