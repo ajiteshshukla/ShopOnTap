@@ -6,7 +6,6 @@ import android.graphics.Point;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.*;
 import android.widget.AdapterView;
 import android.widget.ImageView;

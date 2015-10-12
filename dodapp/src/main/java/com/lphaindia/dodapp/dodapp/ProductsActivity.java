@@ -91,7 +91,6 @@ public class ProductsActivity extends Activity  implements SearchBox.SearchListe
                         + "&keywords=" + this.searchString.replaceAll(" ", "%20");
             }
             datafromServer = networkTask.fetchDataFromUrl(url);
-            Log.e(AppConstants.TAG, "" +datafromServer);
             return datafromServer;
         }
 

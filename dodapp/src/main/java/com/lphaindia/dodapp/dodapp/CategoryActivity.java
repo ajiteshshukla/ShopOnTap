@@ -126,7 +126,6 @@ public class CategoryActivity extends Activity implements SearchBox.SearchListen
             NetworkTask networkTask = new NetworkTask();
             String url = AppConstants.REQUEST_URL + "?requesttype=" + AppConstants.REQUEST_CATEGORY;
             datafromServer = networkTask.fetchDataFromUrl(url);
-            Log.e(AppConstants.TAG, "data " + datafromServer);
             return datafromServer;
         }
 
