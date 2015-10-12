@@ -68,7 +68,7 @@ public class ProductsActivity extends Activity  implements SearchBox.SearchListe
         private SEARCH_TYPE searchType;
         public FetchProducts(String searchString, SEARCH_TYPE type) {
             this.searchString = searchString;
-            this.searchType = searchType;
+            this.searchType = type;
         }
 
         @Override
