@@ -41,11 +41,15 @@ public class ProductCardAdapter extends RecyclerView.Adapter<ProductCardAdapter.
     public void onBindViewHolder(CustomViewHolder holder, int position) {
         Product product = mProductList.get(position);
         StringBuilder title = new StringBuilder();
-        if (Float.parseFloat(product.discountPercentage) > 0) {
-            int discount = Math.round(Float.parseFloat(product.discountPercentage));
-            title.append(product.currency + " " + product.sellingPrice + "          " + discount + "% OFF");
-        } else {
-            title.append(product.currency + " " + product.sellingPrice);
+        if(Float.parseFloat(product.sellingPrice) <= 0){
+            title.append("FREE");
+        }else {
+            if (Float.parseFloat(product.discountPercentage) > 0) {
+                int discount = Math.round(Float.parseFloat(product.discountPercentage));
+                title.append(product.currency + " " + product.sellingPrice + "          " + discount + "% OFF");
+            } else {
+                title.append(product.currency + " " + product.sellingPrice);
+            }
         }
         holder.setContext(mContext);
         holder.setImgProductImage(product.imageUrl);

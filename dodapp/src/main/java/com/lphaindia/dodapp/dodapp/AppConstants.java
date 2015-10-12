@@ -9,6 +9,7 @@ public final class AppConstants {
     public static final String TAG = "DodApp";
     public static final long TIME_DELAY = TimeUnit.MINUTES.toMillis(10);
     public static final String KEY_CATEGORY = "category";
+    public static final String KEY_SEARCH = "search";
     public static final String REQUEST_CATEGORY = "categorylist";
     public static final String REQUEST_PRODUCTS = "productlist";
     public static final String REQUEST_SEARCH = "keywordsearch";

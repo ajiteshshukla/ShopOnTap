@@ -6,14 +6,18 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.provider.Settings;
+import android.speech.RecognizerIntent;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.lphaindia.dodapp.dodapp.data.Category;
 import com.lphaindia.dodapp.dodapp.network.NetworkTask;
 import com.lphaindia.dodapp.dodapp.uiAdapters.CategoryCard;
 import com.lphaindia.dodapp.dodapp.utils.Utility;
+import com.quinny898.library.persistentsearch.SearchBox;
+import com.quinny898.library.persistentsearch.SearchResult;
 import it.gmariotti.cardslib.library.internal.Card;
 import it.gmariotti.cardslib.library.internal.CardGridArrayAdapter;
 import it.gmariotti.cardslib.library.view.CardGridView;
@@ -22,8 +26,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class CategoryActivity extends Activity {
+public class CategoryActivity extends Activity implements SearchBox.SearchListener{
     private ProgressBar progressBar;
+    SearchBox searchBox;
     @Override
     public void onCreate(Bundle savedInstanceState, PersistableBundle persistentState) {
         super.onCreate(savedInstanceState, persistentState);
@@ -38,6 +43,9 @@ public class CategoryActivity extends Activity {
             Intent intent = new Intent(getApplicationContext(), ScreenSlidePagerActivity.class);
             startActivity(intent);
         }
+        searchBox = (SearchBox)findViewById(R.id.searchbox);
+        searchBox.enableVoiceRecognition(this);
+        searchBox.setSearchListener(this);
         progressBar = (ProgressBar) findViewById(R.id.progress_bar);
         progressBar.setVisibility(View.VISIBLE);
         new FetchCategories().execute();
@@ -59,6 +67,49 @@ public class CategoryActivity extends Activity {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void onSearchOpened() {
+
+    }
+
+    @Override
+    public void onSearchCleared() {
+
+    }
+
+    @Override
+    public void onSearchClosed() {
+
+    }
+
+    @Override
+    public void onSearchTermChanged(String s) {
+
+    }
+
+    @Override
+    public void onSearch(String s) {
+        //Launch product activity with the search string name
+        Intent i=new Intent(CategoryActivity.this, ProductsActivity.class);
+        i.putExtra(AppConstants.KEY_SEARCH, s);
+        startActivity(i);
+    }
+
+    @Override
+    public void onResultClick(SearchResult searchResult) {
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 1234 && resultCode == RESULT_OK) {
+            ArrayList<String> matches = data
+                    .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+            searchBox.populateEditText(matches.get(0));
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     class FetchCategories extends AsyncTask<Void, Void, String> {
