@@ -2,17 +2,22 @@ package com.lphaindia.dodapp.dodapp.uiAdapters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Point;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
-import android.util.DisplayMetrics;
-import android.view.*;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ImageView;
 import android.widget.TextView;
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.drawee.drawable.ScalingUtils;
+import com.facebook.drawee.generic.GenericDraweeHierarchy;
+import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder;
+import com.facebook.drawee.interfaces.DraweeController;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.lphaindia.dodapp.dodapp.R;
 import com.lphaindia.dodapp.dodapp.data.Product;
-import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -40,9 +45,9 @@ public class ProductCardAdapter extends RecyclerView.Adapter<ProductCardAdapter.
     public void onBindViewHolder(CustomViewHolder holder, int position) {
         Product product = mProductList.get(position);
         StringBuilder title = new StringBuilder();
-        if(Float.parseFloat(product.sellingPrice) <= 0){
+        if (Float.parseFloat(product.sellingPrice) <= 0) {
             title.append("FREE");
-        }else {
+        } else {
             if (Float.parseFloat(product.discountPercentage) > 0) {
                 int discount = Math.round(Float.parseFloat(product.discountPercentage));
                 title.append(product.currency + " " + product.sellingPrice + "          " + discount + "% OFF");
@@ -50,11 +55,10 @@ public class ProductCardAdapter extends RecyclerView.Adapter<ProductCardAdapter.
                 title.append(product.currency + " " + product.sellingPrice);
             }
         }
-        holder.setContext(mContext);
+        holder.setAspectRatio(product.aspectRatio);
         holder.setImgProductImage(product.imageUrl);
         holder.setProductName(title.toString());
         holder.setProductLandingPage(product.productUrl);
-        holder.setAspectRatio(product.aspectRatio);
     }
 
     @Override
@@ -63,19 +67,17 @@ public class ProductCardAdapter extends RecyclerView.Adapter<ProductCardAdapter.
     }
 
 
-    public static class CustomViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class CustomViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private TextView mTextProductName;
-        private ImageView mImgProductImage;
+        private SimpleDraweeView mImgProductImage;
         private String mProductLandingPage;
         private String mAspectRatio;
-        private Context mCtxt;
-        private ProductCardAdapter mAdapter;
+
         public CustomViewHolder(View itemView, ProductCardAdapter adapter) {
             super(itemView);
             itemView.setOnClickListener(this);
-            mAdapter = adapter;
             mTextProductName = (TextView) itemView.findViewById(R.id.product_title);
-            mImgProductImage = (ImageView) itemView.findViewById(R.id.product_image);
+            mImgProductImage = (SimpleDraweeView) itemView.findViewById(R.id.product_image);
         }
 
         @Override
@@ -83,7 +85,7 @@ public class ProductCardAdapter extends RecyclerView.Adapter<ProductCardAdapter.
             Intent i = new Intent(Intent.ACTION_VIEW);
             i.setData(Uri.parse(mProductLandingPage));
             i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            mCtxt.startActivity(i);
+            mContext.startActivity(i);
         }
 
         public void setProductName(CharSequence productName) {
@@ -98,27 +100,18 @@ public class ProductCardAdapter extends RecyclerView.Adapter<ProductCardAdapter.
             mAspectRatio = aspectRatio;
         }
 
-        public void setContext(Context ctxt) {
-            mCtxt = ctxt;
-        }
-
         public void setImgProductImage(String productImage) {
-            if(mAspectRatio != null) {
+            if (mAspectRatio != null) {
                 float aspectRatio = Float.valueOf(mAspectRatio);
-                WindowManager windowManager = (WindowManager) mCtxt
-                        .getSystemService(Context.WINDOW_SERVICE);
-                Display display = windowManager.getDefaultDisplay();
-                Point size = new Point();
-                display.getSize(size);
-                DisplayMetrics metrics = mCtxt.getResources().getDisplayMetrics();
-                //float width = size.x/metrics.density;
-                float width = size.x;
-                int imageHeight = Math.round(width / aspectRatio);
-                if(imageHeight > 200)
-                    mImgProductImage.getLayoutParams().height = imageHeight;
+                mImgProductImage.setAspectRatio(aspectRatio);
+                GenericDraweeHierarchyBuilder builder =
+                        new GenericDraweeHierarchyBuilder(mContext.getResources());
+                GenericDraweeHierarchy hierarchy = builder
+                        .setActualImageScaleType(ScalingUtils.ScaleType.FIT_CENTER)
+                        .build();
+                mImgProductImage.setImageURI(Uri.parse(productImage));
+                mImgProductImage.setHierarchy(hierarchy);
             }
-            Picasso.with(mCtxt).load(productImage).fit().into(mImgProductImage);
-            mImgProductImage.requestLayout();
         }
     }
 }
