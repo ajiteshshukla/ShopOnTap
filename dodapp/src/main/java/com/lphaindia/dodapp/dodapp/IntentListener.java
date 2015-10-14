@@ -12,8 +12,6 @@ public class IntentListener extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         if (intent.getAction() == Intent.ACTION_BOOT_COMPLETED) {
-            Intent dodIntent = new Intent(context, DodIntentService.class);
-            context.startService(dodIntent);
             Intent tapAccessibilityService = new Intent(context, TapAccessibilityService.class);
             context.startService(tapAccessibilityService);
         }

@@ -12,6 +12,9 @@ apply plugin: 'android-apt'
 
 repositories {
     jcenter()
+    maven {
+        url "https://oss.sonatype.org/content/repositories/snapshots"
+    }
 }
 
 android {
@@ -68,6 +71,16 @@ dependencies {
     apt "com.google.dagger:dagger-compiler:2.0"
     provided 'javax.annotation:jsr250-api:1.0'
     provided 'org.projectlombok:lombok:1.16.2'
+
+    //Core card library
+    compile 'com.github.gabrielemariotti.cards:cardslib-core:2.1.0'
+    compile 'com.github.gabrielemariotti.cards:cardslib-cards:2.1.0'
+    compile 'com.github.gabrielemariotti.cards:cardslib-recyclerview:2.1.0'
+    compile 'com.github.gabrielemariotti.cards:cardslib-extra-staggeredgrid:2.1.0'
+    compile 'com.github.gabrielemariotti.cards:cardslib-extra-dragdrop:2.1.0'
+    compile 'com.google.code.gson:gson:1.7.2'
+    compile 'com.quinny898.library.persistentsearch:library:1.1.0-SNAPSHOT'
+
 }
 
 apt {

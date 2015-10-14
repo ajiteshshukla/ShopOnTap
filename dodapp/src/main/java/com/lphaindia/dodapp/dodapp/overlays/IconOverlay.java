@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.net.Uri;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -15,7 +16,7 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.lphaindia.dodapp.dodapp.R;
 import com.lphaindia.dodapp.dodapp.accessibilityFeatures.TapAccessibilityService;
 import com.lphaindia.dodapp.dodapp.accessibilityFeatures.TapAnalytics;
-import com.lphaindia.dodapp.dodapp.stringToProductAdapter.KeywordsToProducts;
+import com.lphaindia.dodapp.dodapp.keywordSearchAdapter.KeywordsToProducts;
 
 /**
  * Created by aasha.medhi on 8/27/15.
@@ -89,15 +90,7 @@ public class IconOverlay{
         params.gravity = Gravity.BOTTOM | Gravity.RIGHT;
         params.x = 0;
         params.y = 300;
-        //mOverlayView = new ImageView(mContext);
         draweeView = new SimpleDraweeView(mContext);
-        //draweeView.setImageResource(R.drawable.icon);
-        //mOverlayView.setImageResource(R.drawable.icon);
-        /*Uri uri = new Uri.Builder()
-                .scheme(UriUtil.LOCAL_RESOURCE_SCHEME) // "res"
-                .path(String.valueOf(R.drawable.icon))
-                .build();
-        ImageRequest imageRequest = ImageRequestBuilder.newBuilderWithSource(uri).build();*/
         DraweeController controller = Fresco.newDraweeControllerBuilder()
                 .setUri(Uri.parse("res:///" + R.drawable.icon))
                 .setAutoPlayAnimations(true)
@@ -112,7 +105,8 @@ public class IconOverlay{
             private WindowManager.LayoutParams paramsF = params;
             private float initialX;
             private float initialTouchX;
-
+            private int initialY;
+            private float initialTouchY;
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 switch (event.getAction()) {
@@ -120,12 +114,14 @@ public class IconOverlay{
                         initialX = event.getX();
                         break;
                     case MotionEvent.ACTION_UP:
+                        Point size = new Point();
+                        wm.getDefaultDisplay().getSize(size);
+                        initialY = paramsF.y;
+                        initialTouchY = event.getRawY();
                         initialTouchX = event.getX();
                         float deltaX = initialTouchX - initialX;
-                        if (Math.abs(deltaX) > 30)
+                        if (Math.abs(deltaX) > 100)
                         {
-                            Point size = new Point();
-                            wm.getDefaultDisplay().getSize(size);
                             //paramsF.x = size.x - mOverlayView.getWidth();
                             paramsF.x = size.x - draweeView.getWidth();
                             //mOverlayView.animate().translationX(paramsF.x);
@@ -142,9 +138,13 @@ public class IconOverlay{
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
-                            //TapAccessibilityService.generateKeywords();
-                            //TapAccessibilityService.sendKeywords();
                         }
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        size = new Point();
+                        wm.getDefaultDisplay().getSize(size);
+                        paramsF.y = size.y - (int)event.getRawY();
+                        wm.updateViewLayout(draweeView, paramsF);
                         break;
                 }
                 return false;
