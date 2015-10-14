@@ -69,7 +69,6 @@ public class FullscreenAdapter extends RecyclerView.Adapter<FullscreenAdapter.Ve
     @Override
     public void onBindViewHolder(VerticalItemHolder itemHolder, int position) {
         Product item = mProductList.get(position);
-        itemHolder.setContext(this.mCtxt);
         itemHolder.setImgProductImage(item.imageUrl);
         itemHolder.setProductName(item.title);
         itemHolder.setProductPrice(item.maximumRetailPrice);
@@ -84,18 +83,8 @@ public class FullscreenAdapter extends RecyclerView.Adapter<FullscreenAdapter.Ve
         return mProductList.size();
     }
 
-    public void setOnItemClickListener(AdapterView.OnItemClickListener onItemClickListener) {
-        mOnItemClickListener = onItemClickListener;
-    }
 
-    private void onItemHolderClick(VerticalItemHolder itemHolder) {
-        if (mOnItemClickListener != null) {
-            mOnItemClickListener.onItemClick(null, itemHolder.itemView,
-                    itemHolder.getAdapterPosition(), itemHolder.getItemId());
-        }
-    }
-
-    public static class VerticalItemHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class VerticalItemHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private TextView mTextProductName;
         private ImageView mImgProductImage;
         private Button mBtnProductPrice;
@@ -103,14 +92,11 @@ public class FullscreenAdapter extends RecyclerView.Adapter<FullscreenAdapter.Ve
         private TextView mTextOfferPrice;
         private TextView mTextMaxPrice;
         private String mUrl;
-        private FullscreenAdapter mAdapter;
         private LinearLayout mMaxPriceLayout;
         private LinearLayout mOfferPriceLayout;
-        private Context mCtxt;
         public VerticalItemHolder(View itemView, FullscreenAdapter adapter) {
             super(itemView);
             itemView.setOnClickListener(this);
-            mAdapter = adapter;
             mTextProductName = (TextView) itemView.findViewById(R.id.product_name);
             mImgProductImage = (ImageView) itemView.findViewById(R.id.product_image);
             mTextBrandName = (TextView)itemView.findViewById(R.id.product_brand);
@@ -120,25 +106,19 @@ public class FullscreenAdapter extends RecyclerView.Adapter<FullscreenAdapter.Ve
             mOfferPriceLayout = (LinearLayout)itemView.findViewById(R.id.layout_offer_price);
             mMaxPriceLayout = (LinearLayout)itemView.findViewById(R.id.layout_max_price);
             mBtnProductPrice = (Button) itemView.findViewById(R.id.product_price);
-            mBtnProductPrice.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if(mUrl != null){
-                        Intent i = new Intent(Intent.ACTION_VIEW);
-                        i.setData(Uri.parse(mUrl));
-                        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        mCtxt.startActivity(i);
-                        FullScreenOverlay.getInstance(mCtxt).removeOverlay();
-                        CarouselOverlay.getInstance(mCtxt).removeOverlay();
-                    }
-                }
-            });
             mTextBrandName = (TextView) itemView.findViewById(R.id.product_brand);
         }
 
         @Override
         public void onClick(View v) {
-            mAdapter.onItemHolderClick(this);
+            if(mUrl != null){
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse(mUrl));
+                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                mCtxt.startActivity(i);
+                FullScreenOverlay.getInstance(mCtxt).removeOverlay();
+                CarouselOverlay.getInstance(mCtxt).removeOverlay();
+            }
         }
 
         public void setProductPrice(CharSequence productPrice) {
@@ -166,9 +146,6 @@ public class FullscreenAdapter extends RecyclerView.Adapter<FullscreenAdapter.Ve
                 mMaxPriceLayout.setVisibility(View.VISIBLE);
                 mTextMaxPrice.setText(size);
             }
-        }
-        public void setContext(Context ctxt){
-            mCtxt = ctxt;
         }
         public void setImgProductImage(String productImage){
             Picasso.with(mCtxt).load(productImage).into(mImgProductImage);
