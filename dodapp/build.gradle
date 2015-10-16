@@ -81,6 +81,8 @@ dependencies {
     compile 'com.google.code.gson:gson:1.7.2'
     compile 'com.quinny898.library.persistentsearch:library:1.1.0-SNAPSHOT'
 
+    compile 'com.github.rey5137:material:1.2.1.6-SNAPSHOT'
+
 }
 
 apt {

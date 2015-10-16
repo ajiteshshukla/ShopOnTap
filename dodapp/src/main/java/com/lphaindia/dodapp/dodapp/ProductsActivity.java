@@ -2,7 +2,9 @@ package com.lphaindia.dodapp.dodapp;
 
 import android.app.Activity;
 import android.app.Notification;
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -20,6 +22,8 @@ import com.lphaindia.dodapp.dodapp.uiAdapters.ProductCardAdapter;
 import com.lphaindia.dodapp.dodapp.utils.Utility;
 import com.quinny898.library.persistentsearch.SearchBox;
 import com.quinny898.library.persistentsearch.SearchResult;
+import com.rey.material.widget.ProgressView;
+import com.rey.material.widget.Slider;
 import it.gmariotti.cardslib.library.internal.Card;
 import it.gmariotti.cardslib.library.recyclerview.internal.CardArrayRecyclerViewAdapter;
 import it.gmariotti.cardslib.library.recyclerview.view.CardRecyclerView;
@@ -30,16 +34,25 @@ import java.util.List;
 /**
  * Created by aasha.medhi on 10/8/15.
  */
-public class ProductsActivity extends Activity  implements SearchBox.SearchListener{
+public class ProductsActivity extends Activity  implements SearchBox.SearchListener, Slider.OnPositionChangeListener {
     private RecyclerView mRecyclerView;
     private ProductCardAdapter adapter;
-    private ProgressBar progressBar;
+    private ProgressDialog progressDialog;
+    private Slider slider;
+    private List<Product> mProducts;
     SearchBox searchBox;
 
-    enum SEARCH_TYPE{
+    @Override
+    public void onPositionChanged(Slider slider, boolean b, float v, float v1, int i, int i1) {
+        int value = slider.getValue();
+        renderProducts(mProducts, value);
+    }
+
+    enum SEARCH_TYPE {
         KEYWORD,
         CATEGORY
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,10 +62,23 @@ public class ProductsActivity extends Activity  implements SearchBox.SearchListe
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setHasFixedSize(false);
-        progressBar = (ProgressBar) findViewById(R.id.progress_bar);
         searchBox = (SearchBox)findViewById(R.id.searchbox);
         searchBox.enableVoiceRecognition(this);
         searchBox.setSearchListener(this);
+        searchBox.setHint("Keyword Search");
+        searchBox.setSaveEnabled(true);
+        searchBox.setMenuVisibility(View.INVISIBLE);
+        searchBox.setDrawerLogo(R.drawable.ic_undobar_undo);
+
+        slider = (Slider) findViewById(R.id.discount_slider);
+        slider.setOnPositionChangeListener(this);
+
+        mProducts = null;
+
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Fetching Products For You");
+        progressDialog.show();
+
         String category = getIntent().getStringExtra(AppConstants.KEY_CATEGORY);
         String searchKey = getIntent().getStringExtra(AppConstants.KEY_SEARCH);
         if(category != null) {
@@ -74,7 +100,7 @@ public class ProductsActivity extends Activity  implements SearchBox.SearchListe
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            progressBar.setVisibility(View.VISIBLE);
+            //progressBar.setVisibility(View.VISIBLE);
             setProgressBarIndeterminateVisibility(true);
         }
 
@@ -97,17 +123,33 @@ public class ProductsActivity extends Activity  implements SearchBox.SearchListe
         @Override
         protected void onPostExecute(String datafromServer) {
             super.onPostExecute(datafromServer);
-            progressBar.setVisibility(View.GONE);
+            //progressBar.setVisibility(View.GONE);
+            progressDialog.cancel();
             List<Product> products = null;
             if (datafromServer != null) {
                 products = Utility.getProductListFromJSON(datafromServer);
-                renderProducts(products);
+                mProducts = products;
+                renderProducts(mProducts, slider.getValue());
             }
         }
     }
-    private void renderProducts(final List<Product> products) {
-        if (products != null && !products.isEmpty()) {
-            adapter = new ProductCardAdapter(this, products);
+
+    private void renderProducts(final List<Product> products, int value) {
+        if (products == null || products.isEmpty()) {
+            return;
+        }
+        List<Product> filteredProducts = new ArrayList<Product>();
+        for (int i = 0; i < products.size(); i++) {
+            try {
+                if (Float.valueOf(products.get(i).discountPercentage) >= value) {
+                    filteredProducts.add(products.get(i));
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        if (filteredProducts != null && !filteredProducts.isEmpty()) {
+            adapter = new ProductCardAdapter(this, filteredProducts);
             mRecyclerView.setAdapter(adapter);
         }
     }
@@ -141,6 +183,7 @@ public class ProductsActivity extends Activity  implements SearchBox.SearchListe
     public void onResultClick(SearchResult searchResult) {
 
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 1234 && resultCode == RESULT_OK) {

@@ -12,8 +12,8 @@
              android:bottom="1dp"
             />
 
-    <corners android:bottomRightRadius="3dp"
-             android:bottomLeftRadius="3dp"
+    <corners android:bottomRightRadius="8dp"
+             android:bottomLeftRadius="8dp"
              android:topLeftRadius="3dp"
              android:topRightRadius="3dp"/>
 </shape>

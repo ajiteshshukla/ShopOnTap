@@ -16,7 +16,15 @@ buildscript {
 allprojects {
     repositories {
         jcenter()
-        maven { url 'https://jitpack.io' }
+        maven { url 'https://jitpack.io'
+            }
+        mavenCentral()
+        mavenLocal()
+    }
+    repositories {
+        jcenter()
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots"
+        }
         mavenCentral()
         mavenLocal()
     }
