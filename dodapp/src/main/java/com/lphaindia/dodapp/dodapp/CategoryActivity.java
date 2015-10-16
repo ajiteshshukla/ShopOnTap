@@ -95,27 +95,22 @@ public class CategoryActivity extends Activity implements SearchBox.SearchListen
 
     @Override
     public void onSearchOpened() {
-        Log.e("AASHA", "on search opened");
     }
 
     @Override
     public void onSearchCleared() {
-        Log.e("AASHA", "on search cleared");
     }
 
     @Override
     public void onSearchClosed() {
-        Log.e("AASHA", "on search closed");
     }
 
     @Override
     public void onSearchTermChanged(String s) {
-        Log.e("AASHA", "on search term");
     }
 
     @Override
     public void onSearch(String s) {
-        Log.e("AASHA", "on search ");
         //Launch product activity with the search string name
         Intent i=new Intent(CategoryActivity.this, ProductsActivity.class);
         i.putExtra(AppConstants.KEY_SEARCH, s);
@@ -124,12 +119,10 @@ public class CategoryActivity extends Activity implements SearchBox.SearchListen
 
     @Override
     public void onResultClick(SearchResult searchResult) {
-        Log.e("AASHA", "on search result");
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.e("AASHA", "on activity ");
         if (requestCode == 1234 && resultCode == RESULT_OK) {
             ArrayList<String> matches = data
                     .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
@@ -206,11 +199,5 @@ public class CategoryActivity extends Activity implements SearchBox.SearchListen
                 gridView.setAdapter(mCardArrayAdapter);
             }
         }
-    }
-
-    @Override
-    public void onBackPressed() {
-        Log.e("AASHA", "Back");
-        super.onBackPressed();
     }
 }
