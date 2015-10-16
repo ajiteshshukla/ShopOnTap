@@ -57,5 +57,11 @@
             android:layout_below="@+id/discountlayout"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"/>
+    <com.rey.material.widget.SnackBar
+            android:id="@+id/snackbarproduct"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:sb_backgroundColor="#00CC99"
+            app:sb_removeOnDismiss="true"/>
 
 </RelativeLayout>
