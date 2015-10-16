@@ -5,12 +5,12 @@
                                     android:layout_height="wrap_content"
                                     android:layout_margin="8dp"
         cardview:cardElevation="5dp"
-        cardview:cardCornerRadius="10dp">
+        cardview:cardCornerRadius="8dp"
+        cardview:cardBackgroundColor="#FFFFFF">
 
 <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-        >
+                android:layout_height="match_parent">
     <com.facebook.drawee.view.SimpleDraweeView
             android:id="@+id/product_image"
             android:layout_width="match_parent"
@@ -24,6 +24,7 @@
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_below="@id/product_image"
+            android:background="@drawable/border_cardbottom_fit"
             android:maxLines="2"
             android:fontFamily="Italic"
             android:textColor="#FFFFFF"
@@ -31,7 +32,6 @@
             android:paddingTop="10dp"
             android:paddingLeft="10dp"
             android:paddingBottom="10dp"
-            android:background="#00CC99"
             android:textStyle="italic"/>
 
 

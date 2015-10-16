@@ -1,13 +1,18 @@
 package com.lphaindia.dodapp.dodapp;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.provider.Settings;
 import android.speech.RecognizerIntent;
+import android.support.annotation.ColorInt;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -18,6 +23,7 @@ import com.lphaindia.dodapp.dodapp.uiAdapters.CategoryCard;
 import com.lphaindia.dodapp.dodapp.utils.Utility;
 import com.quinny898.library.persistentsearch.SearchBox;
 import com.quinny898.library.persistentsearch.SearchResult;
+import com.rey.material.widget.ProgressView;
 import it.gmariotti.cardslib.library.internal.Card;
 import it.gmariotti.cardslib.library.internal.CardGridArrayAdapter;
 import it.gmariotti.cardslib.library.view.CardGridView;
@@ -26,12 +32,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class CategoryActivity extends Activity implements SearchBox.SearchListener{
-    private ProgressBar progressBar;
+public class CategoryActivity extends Activity implements SearchBox.SearchListener {
     SearchBox searchBox;
+    private ProgressDialog progressDialog;
     @Override
     public void onCreate(Bundle savedInstanceState, PersistableBundle persistentState) {
-        super.onCreate(savedInstanceState, persistentState);
+        super.onCreate(savedInstanceState, null);
     }
 
     @Override
@@ -46,8 +52,14 @@ public class CategoryActivity extends Activity implements SearchBox.SearchListen
         searchBox = (SearchBox)findViewById(R.id.searchbox);
         searchBox.enableVoiceRecognition(this);
         searchBox.setSearchListener(this);
-        progressBar = (ProgressBar) findViewById(R.id.progress_bar);
-        progressBar.setVisibility(View.VISIBLE);
+        searchBox.setHint("Keyword Search");
+        searchBox.setSaveEnabled(true);
+        searchBox.setMenuVisibility(View.INVISIBLE);
+
+        progressDialog = new ProgressDialog(this);
+        //progressView.setVisibility(View.VISIBLE);
+        progressDialog.setMessage("Fetching Trending Categories");
+        progressDialog.show();
         new FetchCategories().execute();
     }
 
@@ -132,7 +144,8 @@ public class CategoryActivity extends Activity implements SearchBox.SearchListen
         @Override
         protected void onPostExecute(String datafromServer) {
             super.onPostExecute(datafromServer);
-            progressBar.setVisibility(View.GONE);
+            //progressBar.setVisibility(View.GONE);
+            progressDialog.cancel();
             if (datafromServer != null) {
                 List<Category> categories = Utility.getCategoryListFromJSON(datafromServer);
                 renderCategories(categories);

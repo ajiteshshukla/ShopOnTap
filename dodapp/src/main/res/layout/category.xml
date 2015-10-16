@@ -1,13 +1,14 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:card="http://schemas.android.com/apk/res-auto"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:background="#CEF6E3">
 
     <com.quinny898.library.persistentsearch.SearchBox
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/searchbox"
-            />
+            android:id="@+id/searchbox"/>
 
     <it.gmariotti.cardslib.library.view.CardGridView
             android:layout_width="match_parent"
@@ -21,9 +22,5 @@
             card:list_card_layout_resourceID="@layout/native_list_card_thumbnail_layout"
             android:layout_below="@id/searchbox"
             android:id="@+id/category_grid"/>
-    <ProgressBar
-            android:id="@+id/progress_bar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true" />
+
 </RelativeLayout>
