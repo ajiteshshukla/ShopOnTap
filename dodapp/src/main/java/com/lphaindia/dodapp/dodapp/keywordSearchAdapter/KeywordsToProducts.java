@@ -62,7 +62,6 @@ public class KeywordsToProducts extends AsyncTask<String, String, List<Product>>
                 //Log.d(AppConstants.TAG, "inside loop");
                 String searchUrl = createSearchUrlForFlipkart(i);
                 if (searchUrl != null) {
-                    Log.e("AASHA", "Search url" + searchUrl);
                     dataFromFlipkartServer = networkTaskFlipkart.fetchDataFromUrl(searchUrl);
                     if (dataFromFlipkartServer != null) {
                         flipkartProductList = Utility.getProductListFromJSON

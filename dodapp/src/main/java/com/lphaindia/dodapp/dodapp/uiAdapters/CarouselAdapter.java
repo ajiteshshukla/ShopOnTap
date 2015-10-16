@@ -22,7 +22,6 @@ import com.lphaindia.dodapp.dodapp.accessibilityFeatures.TapAccessibilityService
 import com.lphaindia.dodapp.dodapp.accessibilityFeatures.TapAnalytics;
 import com.lphaindia.dodapp.dodapp.data.Product;
 import com.lphaindia.dodapp.dodapp.overlays.CarouselOverlay;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 

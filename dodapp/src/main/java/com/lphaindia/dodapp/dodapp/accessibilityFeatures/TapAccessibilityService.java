@@ -178,7 +178,6 @@ public class TapAccessibilityService extends AccessibilityService {
         if(AppConstants.isFrescoInitialized == false){
             Fresco.initialize(this);
             AppConstants.isFrescoInitialized = true;
-            Log.e("AASHA", "fresco init 1");
         }
     }
 

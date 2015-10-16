@@ -67,7 +67,6 @@ public class ProductsActivity extends Activity  implements SearchBox.SearchListe
         searchBox = (SearchBox)findViewById(R.id.searchbox);
         searchBox.enableVoiceRecognition(this);
         searchBox.setSearchListener(this);
-        searchBox.setHint("Keyword Search");
         searchBox.setSaveEnabled(true);
         searchBox.setMenuVisibility(View.INVISIBLE);
         searchBox.setDrawerLogo(R.drawable.ic_undobar_undo);
