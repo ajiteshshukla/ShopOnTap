@@ -59,7 +59,6 @@ public class ScreenSlidePageFragment3 extends Fragment implements View.OnClickLi
         } else {
             intent = new Intent(context, CategoryActivity.class);
         }
-
         context.startActivity(intent);
     }
 }

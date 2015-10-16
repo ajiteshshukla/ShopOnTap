@@ -79,7 +79,6 @@ public class ProductsActivity extends Activity  implements SearchBox.SearchListe
 
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Fetching Products For You");
-        progressDialog.show();
 
         snackBar = (SnackBar) findViewById(R.id.snackbarproduct);
         snackBar.actionTextColor(Color.WHITE);
@@ -110,6 +109,7 @@ public class ProductsActivity extends Activity  implements SearchBox.SearchListe
         protected void onPreExecute() {
             super.onPreExecute();
             //progressBar.setVisibility(View.VISIBLE);
+            progressDialog.show();
             setProgressBarIndeterminateVisibility(true);
             if (snackBar.isShown()) {
                 snackBar.dismiss();

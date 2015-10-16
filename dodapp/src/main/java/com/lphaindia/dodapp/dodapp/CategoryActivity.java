@@ -61,7 +61,6 @@ public class CategoryActivity extends Activity implements SearchBox.SearchListen
         progressDialog = new ProgressDialog(this);
         //progressView.setVisibility(View.VISIBLE);
         progressDialog.setMessage("Fetching Trending Categories");
-        progressDialog.show();
 
         snackBar = (SnackBar) findViewById(R.id.snackbar);
         snackBar.actionTextColor(Color.WHITE);
@@ -140,6 +139,7 @@ public class CategoryActivity extends Activity implements SearchBox.SearchListen
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            progressDialog.show();
             setProgressBarIndeterminateVisibility(true);
             if (snackBar.isShown()) {
                 snackBar.dismiss();
