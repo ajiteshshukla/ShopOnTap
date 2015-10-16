@@ -90,7 +90,8 @@ public class FullscreenAdapter extends RecyclerView.Adapter<FullscreenAdapter.Cu
         }
         holder.setAspectRatio(product.aspectRatio);
         holder.setImgProductImage(product.imageUrl);
-        holder.setProductName(title.toString());
+        holder.setProductPrice(title.toString());
+        holder.setProductName(product.title);
         holder.setProductLandingPage(product.productUrl);
     }
 
@@ -102,6 +103,7 @@ public class FullscreenAdapter extends RecyclerView.Adapter<FullscreenAdapter.Cu
 
     public class CustomViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private TextView mTextProductName;
+        private TextView mTextProductPrice;
         private SimpleDraweeView mImgProductImage;
         private String mProductLandingPage;
         private String mAspectRatio;
@@ -110,6 +112,7 @@ public class FullscreenAdapter extends RecyclerView.Adapter<FullscreenAdapter.Cu
             super(itemView);
             itemView.setOnClickListener(this);
             mTextProductName = (TextView) itemView.findViewById(R.id.product_title);
+            mTextProductPrice = (TextView) itemView.findViewById(R.id.product_price);
             mImgProductImage = (SimpleDraweeView) itemView.findViewById(R.id.product_image);
         }
 
@@ -119,6 +122,10 @@ public class FullscreenAdapter extends RecyclerView.Adapter<FullscreenAdapter.Cu
             i.setData(Uri.parse(mProductLandingPage));
             i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             mCtxt.startActivity(i);
+        }
+
+        public void setProductPrice(CharSequence productPrice) {
+            mTextProductPrice.setText(productPrice);
         }
 
         public void setProductName(CharSequence productName) {
@@ -135,7 +142,6 @@ public class FullscreenAdapter extends RecyclerView.Adapter<FullscreenAdapter.Cu
 
         public void setImgProductImage(String productImage) {
             if (mAspectRatio != null) {
-                Log.e("AASHA", "aspect ration not null");
                 float aspectRatio = Float.valueOf(mAspectRatio);
                 mImgProductImage.setAspectRatio(aspectRatio);
                 GenericDraweeHierarchyBuilder builder =

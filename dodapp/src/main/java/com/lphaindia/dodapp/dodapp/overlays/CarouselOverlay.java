@@ -157,11 +157,6 @@ public class CarouselOverlay implements AdapterView.OnItemClickListener{
     }
 
 
-    protected int getDefaultItemCount() {
-        return 40;
-    }
-
-
     protected CarouselAdapter getAdapter() {
         return new CarouselAdapter(mContext);
     }

@@ -13,6 +13,10 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.content.Context;
+import com.facebook.drawee.drawable.ScalingUtils;
+import com.facebook.drawee.generic.GenericDraweeHierarchy;
+import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.lphaindia.dodapp.dodapp.R;
 import com.lphaindia.dodapp.dodapp.accessibilityFeatures.TapAccessibilityService;
 import com.lphaindia.dodapp.dodapp.accessibilityFeatures.TapAnalytics;
@@ -74,11 +78,9 @@ public class CarouselAdapter extends RecyclerView.Adapter<CarouselAdapter.Vertic
     @Override
     public void onBindViewHolder(VerticalItemHolder itemHolder, int position) {
         Product item = mProductList.get(position);
-        itemHolder.setContext(this.mCtxt);
+        itemHolder.setAspectRatio(item.aspectRatio);
         itemHolder.setImgProductImage(item.imageUrl);
-        itemHolder.setProductName(item.title);
         itemHolder.setProductPrice(item.sellingPrice);
-        itemHolder.setBrandName(item.brand);
         itemHolder.setUrl(item.productUrl);
     }
 
@@ -98,20 +100,17 @@ public class CarouselAdapter extends RecyclerView.Adapter<CarouselAdapter.Vertic
         }
     }
 
-    public static class VerticalItemHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        private TextView mTextProductName;
-        private ImageView mImgProductImage;
+    public class VerticalItemHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        private SimpleDraweeView mImgProductImage;
         private Button mBtnProductPrice;
-        private TextView mTextBrandName;
         private String mUrl;
         private CarouselAdapter mAdapter;
-        private Context mCtxt;
+        private String mAspectRatio;
         public VerticalItemHolder(View itemView, CarouselAdapter adapter) {
             super(itemView);
             itemView.setOnClickListener(this);
             mAdapter = adapter;
-            mTextProductName = (TextView) itemView.findViewById(R.id.product_name);
-            mImgProductImage = (ImageView) itemView.findViewById(R.id.product_image);
+            mImgProductImage = (SimpleDraweeView) itemView.findViewById(R.id.product_image);
             mBtnProductPrice = (Button) itemView.findViewById(R.id.product_price);
             mBtnProductPrice.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -126,7 +125,7 @@ public class CarouselAdapter extends RecyclerView.Adapter<CarouselAdapter.Vertic
                     }
                 }
             });
-            mTextBrandName = (TextView) itemView.findViewById(R.id.product_brand);
+
         }
 
         @Override
@@ -137,17 +136,23 @@ public class CarouselAdapter extends RecyclerView.Adapter<CarouselAdapter.Vertic
         public void setProductPrice(CharSequence productPrice) {
             mBtnProductPrice.setText(productPrice);
         }
-        public void setProductName(CharSequence productName) {
-            mTextProductName.setText(productName);
+
+        public void setAspectRatio(String aspectRatio) {
+            mAspectRatio = aspectRatio;
         }
-        public void setBrandName(CharSequence brandName) {
-            mTextBrandName.setText(brandName);
-        }
-        public void setContext(Context ctxt){
-            mCtxt = ctxt;
-        }
+
         public void setImgProductImage(String productImage){
-            Picasso.with(mCtxt).load(productImage).resize(300, 200).into(mImgProductImage);
+            if (mAspectRatio != null) {
+                float aspectRatio = Float.valueOf(mAspectRatio);
+                mImgProductImage.setAspectRatio(aspectRatio);
+                GenericDraweeHierarchyBuilder builder =
+                        new GenericDraweeHierarchyBuilder(mCtxt.getResources());
+                GenericDraweeHierarchy hierarchy = builder
+                        .setActualImageScaleType(ScalingUtils.ScaleType.FIT_CENTER)
+                        .build();
+                mImgProductImage.setImageURI(Uri.parse(productImage));
+                mImgProductImage.setHierarchy(hierarchy);
+            }
         }
         public void setUrl(String url){
             mUrl = url;
