@@ -17,6 +17,8 @@ public final class AppConstants {
 
     public static final int KEYWORD_DEPTH = 3;
 
+    public static boolean isFrescoInitialized = false;
+
     public static final String myntrapkg = "com.myntra.android ";
     public static final String flipkartpkg = "com.flipkart.android ";
     public static final String jabongpkg = "com.jabong.android ";

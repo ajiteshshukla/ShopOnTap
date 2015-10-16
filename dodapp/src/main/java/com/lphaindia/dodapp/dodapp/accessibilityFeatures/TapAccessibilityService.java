@@ -4,11 +4,14 @@ import android.accessibilityservice.AccessibilityService;
 import android.accessibilityservice.AccessibilityServiceInfo;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
+import com.facebook.drawee.backends.pipeline.Fresco;
 import com.google.android.gms.analytics.Tracker;
 import com.lphaindia.dodapp.dodapp.Analytics.AnalyticsHelper;
+import com.lphaindia.dodapp.dodapp.AppConstants;
 import com.lphaindia.dodapp.dodapp.overlays.CarouselOverlay;
 import com.lphaindia.dodapp.dodapp.overlays.FullScreenOverlay;
 import com.lphaindia.dodapp.dodapp.overlays.IconOverlay;
@@ -172,6 +175,11 @@ public class TapAccessibilityService extends AccessibilityService {
                 | AccessibilityServiceInfo.FLAG_RETRIEVE_INTERACTIVE_WINDOWS
                 | AccessibilityServiceInfo.FLAG_INCLUDE_NOT_IMPORTANT_VIEWS;
         setServiceInfo(info);
+        if(AppConstants.isFrescoInitialized == false){
+            Fresco.initialize(this);
+            AppConstants.isFrescoInitialized = true;
+            Log.e("AASHA", "fresco init 1");
+        }
     }
 
     @Override

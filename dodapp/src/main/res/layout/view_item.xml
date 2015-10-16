@@ -6,7 +6,7 @@
         android:layout_height="240dp"
         android:padding="5dp"
         android:maxWidth="120dp"
-        android:background="@drawable/border">
+        android:background="@drawable/borderswipe">
 
         <ImageView
                 android:id="@+id/product_image"
@@ -49,7 +49,7 @@
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="#FFF"
                 android:paddingBottom="5dp"
-                android:background="#00CC99"
+                android:background="@drawable/border_cardbottom_fit"
                 android:layout_centerInParent="true"/>
 
 </com.lphaindia.dodapp.dodapp.uiAdapters.CardView>
