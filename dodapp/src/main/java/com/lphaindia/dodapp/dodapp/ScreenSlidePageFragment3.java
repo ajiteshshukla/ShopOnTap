@@ -18,6 +18,7 @@ import com.facebook.drawee.view.SimpleDraweeView;
  * Created by ajitesh.shukla on 9/10/15.
  */
 public class ScreenSlidePageFragment3 extends Fragment implements View.OnClickListener{
+    private Button nextButton;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -32,16 +33,33 @@ public class ScreenSlidePageFragment3 extends Fragment implements View.OnClickLi
         draweeView.setController(controller);
         draweeView.setMaxWidth(200);
         draweeView.setMaxHeight(320);
-        Button nextButton = (Button) rootView.findViewById(R.id.cont);
+        nextButton = (Button) rootView.findViewById(R.id.cont);
+        if (ScreenSlidePagerActivity.AccessibilityExplored == true) {
+            nextButton.setText("GO TO APP");
+        }
         nextButton.setOnClickListener(this);
         return rootView;
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        if (ScreenSlidePagerActivity.AccessibilityExplored == true) {
+            nextButton.setText("GO TO APP");
+        }
+    }
+
+    @Override
     public void onClick(View v) {
-        ScreenSlidePagerActivity.AccessibilityExplored = true;
-        Intent intent = new Intent(android.provider.Settings.ACTION_ACCESSIBILITY_SETTINGS);
+        Intent intent;
         Context context = v.getContext();
+        if (ScreenSlidePagerActivity.AccessibilityExplored == false) {
+            intent = new Intent(android.provider.Settings.ACTION_ACCESSIBILITY_SETTINGS);
+            ScreenSlidePagerActivity.AccessibilityExplored = true;
+        } else {
+            intent = new Intent(context, CategoryActivity.class);
+        }
+
         context.startActivity(intent);
     }
 }

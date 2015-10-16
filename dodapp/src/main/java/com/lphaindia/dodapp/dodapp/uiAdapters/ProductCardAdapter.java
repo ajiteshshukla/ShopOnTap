@@ -48,11 +48,14 @@ public class ProductCardAdapter extends RecyclerView.Adapter<ProductCardAdapter.
         if (Float.parseFloat(product.sellingPrice) <= 0) {
             title.append("FREE");
         } else {
+            String sellingPrice = product.sellingPrice;
+            if (sellingPrice.contains("."))
+                sellingPrice = sellingPrice.substring(0, sellingPrice.indexOf("."));
             if (Float.parseFloat(product.discountPercentage) > 0) {
                 int discount = Math.round(Float.parseFloat(product.discountPercentage));
-                title.append(product.currency + " " + product.sellingPrice + "          " + discount + "% OFF");
+                title.append(product.currency + " " + sellingPrice + "          " + discount + "% OFF");
             } else {
-                title.append(product.currency + " " + product.sellingPrice);
+                title.append(product.currency + " " + sellingPrice);
             }
         }
         holder.setAspectRatio(product.aspectRatio);

@@ -24,6 +24,7 @@ import com.quinny898.library.persistentsearch.SearchBox;
 import com.quinny898.library.persistentsearch.SearchResult;
 import com.rey.material.widget.ProgressView;
 import com.rey.material.widget.Slider;
+import com.rey.material.widget.SnackBar;
 import it.gmariotti.cardslib.library.internal.Card;
 import it.gmariotti.cardslib.library.recyclerview.internal.CardArrayRecyclerViewAdapter;
 import it.gmariotti.cardslib.library.recyclerview.view.CardRecyclerView;
@@ -40,6 +41,7 @@ public class ProductsActivity extends Activity  implements SearchBox.SearchListe
     private ProgressDialog progressDialog;
     private Slider slider;
     private List<Product> mProducts;
+    private SnackBar snackBar;
     SearchBox searchBox;
 
     @Override
@@ -79,6 +81,13 @@ public class ProductsActivity extends Activity  implements SearchBox.SearchListe
         progressDialog.setMessage("Fetching Products For You");
         progressDialog.show();
 
+        snackBar = (SnackBar) findViewById(R.id.snackbarproduct);
+        snackBar.actionTextColor(Color.WHITE);
+        snackBar.text("Something went wrong!! Unable to connect.");
+        snackBar.textColor(Color.WHITE);
+        snackBar.setVisibility(View.INVISIBLE);
+        snackBar.dismiss();
+
         String category = getIntent().getStringExtra(AppConstants.KEY_CATEGORY);
         String searchKey = getIntent().getStringExtra(AppConstants.KEY_SEARCH);
         if(category != null) {
@@ -102,6 +111,9 @@ public class ProductsActivity extends Activity  implements SearchBox.SearchListe
             super.onPreExecute();
             //progressBar.setVisibility(View.VISIBLE);
             setProgressBarIndeterminateVisibility(true);
+            if (snackBar.isShown()) {
+                snackBar.dismiss();
+            }
         }
 
         @Override
@@ -127,9 +139,18 @@ public class ProductsActivity extends Activity  implements SearchBox.SearchListe
             progressDialog.cancel();
             List<Product> products = null;
             if (datafromServer != null) {
-                products = Utility.getProductListFromJSON(datafromServer);
-                mProducts = products;
-                renderProducts(mProducts, slider.getValue());
+                try {
+                    products = Utility.getProductListFromJSON(datafromServer);
+                    mProducts = products;
+                    renderProducts(mProducts, slider.getValue());
+                    if (snackBar.isShown()) {
+                        snackBar.dismiss();
+                    }
+                } catch (Exception e) {
+                    snackBar.show();
+                }
+            } else {
+                snackBar.show();
             }
         }
     }

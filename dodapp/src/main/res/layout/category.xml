@@ -22,5 +22,11 @@
             card:list_card_layout_resourceID="@layout/native_list_card_thumbnail_layout"
             android:layout_below="@id/searchbox"
             android:id="@+id/category_grid"/>
+    <com.rey.material.widget.SnackBar
+            android:id="@+id/snackbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:sb_backgroundColor="#00CC99"
+            app:sb_removeOnDismiss="true"/>
 
 </RelativeLayout>

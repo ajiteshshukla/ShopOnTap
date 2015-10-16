@@ -24,6 +24,7 @@ import com.lphaindia.dodapp.dodapp.utils.Utility;
 import com.quinny898.library.persistentsearch.SearchBox;
 import com.quinny898.library.persistentsearch.SearchResult;
 import com.rey.material.widget.ProgressView;
+import com.rey.material.widget.SnackBar;
 import it.gmariotti.cardslib.library.internal.Card;
 import it.gmariotti.cardslib.library.internal.CardGridArrayAdapter;
 import it.gmariotti.cardslib.library.view.CardGridView;
@@ -35,6 +36,7 @@ import java.util.List;
 public class CategoryActivity extends Activity implements SearchBox.SearchListener {
     SearchBox searchBox;
     private ProgressDialog progressDialog;
+    private SnackBar snackBar;
     @Override
     public void onCreate(Bundle savedInstanceState, PersistableBundle persistentState) {
         super.onCreate(savedInstanceState, null);
@@ -45,7 +47,7 @@ public class CategoryActivity extends Activity implements SearchBox.SearchListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.category);
         Fresco.initialize(this);
-        if (isAccessibilityEnabled() == false) {
+        if (isAccessibilityEnabled() == false && ScreenSlidePagerActivity.AccessibilityExplored == false) {
             Intent intent = new Intent(getApplicationContext(), ScreenSlidePagerActivity.class);
             startActivity(intent);
         }
@@ -60,6 +62,15 @@ public class CategoryActivity extends Activity implements SearchBox.SearchListen
         //progressView.setVisibility(View.VISIBLE);
         progressDialog.setMessage("Fetching Trending Categories");
         progressDialog.show();
+
+        snackBar = (SnackBar) findViewById(R.id.snackbar);
+        snackBar.actionTextColor(Color.WHITE);
+        snackBar.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+        snackBar.text("Something went wrong!! Unable to connect.");
+        snackBar.textColor(Color.WHITE);
+        snackBar.setVisibility(View.INVISIBLE);
+        snackBar.dismiss();
+
         new FetchCategories().execute();
     }
 
@@ -130,6 +141,9 @@ public class CategoryActivity extends Activity implements SearchBox.SearchListen
         protected void onPreExecute() {
             super.onPreExecute();
             setProgressBarIndeterminateVisibility(true);
+            if (snackBar.isShown()) {
+                snackBar.dismiss();
+            }
         }
 
         @Override
@@ -147,8 +161,22 @@ public class CategoryActivity extends Activity implements SearchBox.SearchListen
             //progressBar.setVisibility(View.GONE);
             progressDialog.cancel();
             if (datafromServer != null) {
-                List<Category> categories = Utility.getCategoryListFromJSON(datafromServer);
-                renderCategories(categories);
+                try {
+                    List<Category> categories = Utility.getCategoryListFromJSON(datafromServer);
+                    if (categories != null && !categories.isEmpty()) {
+                        renderCategories(categories);
+                        if (snackBar.isShown()) {
+                            snackBar.dismiss();
+                        }
+                    } else {
+                        snackBar.show();
+                    }
+                } catch(Exception e) {
+                    snackBar.show();
+                    e.printStackTrace();
+                }
+            } else {
+                snackBar.show();
             }
         }
     }
@@ -176,5 +204,4 @@ public class CategoryActivity extends Activity implements SearchBox.SearchListen
             }
         }
     }
-
 }
