@@ -2,6 +2,7 @@ package com.lphaindia.dodapp.dodapp.keywordSearchAdapter;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 import com.lphaindia.dodapp.dodapp.AppConstants;
 import com.lphaindia.dodapp.dodapp.accessibilityFeatures.TapAccessibilityService;
 import com.lphaindia.dodapp.dodapp.data.Product;

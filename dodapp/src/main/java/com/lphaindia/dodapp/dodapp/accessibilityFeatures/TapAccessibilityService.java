@@ -4,11 +4,14 @@ import android.accessibilityservice.AccessibilityService;
 import android.accessibilityservice.AccessibilityServiceInfo;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
+import com.facebook.drawee.backends.pipeline.Fresco;
 import com.google.android.gms.analytics.Tracker;
 import com.lphaindia.dodapp.dodapp.Analytics.AnalyticsHelper;
+import com.lphaindia.dodapp.dodapp.AppConstants;
 import com.lphaindia.dodapp.dodapp.overlays.CarouselOverlay;
 import com.lphaindia.dodapp.dodapp.overlays.FullScreenOverlay;
 import com.lphaindia.dodapp.dodapp.overlays.IconOverlay;
@@ -23,8 +26,7 @@ import java.util.List;
 public class TapAccessibilityService extends AccessibilityService {
 
     public static String pkgName = null;
-    public static String whiteListedPkgNames = "com.quikr com.olx.southasia com.snapdeal.main com.flipkart.android " +
-            "com.myntra.android com.jabong.android ";
+    public static List<String> whiteListedPkgNames = new ArrayList<String>();
 
     private AnalyticsHelper analyticsHelper = new AnalyticsHelper();
     public static Tracker mTracker;
@@ -64,6 +66,8 @@ public class TapAccessibilityService extends AccessibilityService {
         if(pkgName != null && pkgName != "" && whiteListedPkgNames.contains(pkgName)) {
             //We will get that pullable overlay only on the whitelisted packages this way
             IconOverlay.getInstance(mContext).showOverlay();
+            Log.d("dodapp", pkgName);
+            Log.d("dodapp", "from position 3");
             if (LoadingOverlay.getInstance(mContext).isOverlayShown()) {
                 LoadingOverlay.getInstance(mContext).removeOverlay();
             }
@@ -135,11 +139,13 @@ public class TapAccessibilityService extends AccessibilityService {
             if(CarouselOverlay.getInstance(mContext).isOverlayShown()) {
                 status =  CarouselOverlay.getInstance(mContext).removeOverlay();
                 IconOverlay.getInstance(mContext).showOverlay();
+                Log.d("dodapp", "from position 1");
                 return  status;
             }
             if(LoadingOverlay.getInstance(mContext).isOverlayShown()) {
                 status =  LoadingOverlay.getInstance(mContext).removeOverlay();
                 IconOverlay.getInstance(mContext).showOverlay();
+                Log.d("dodapp", "from position 2");
                 return  status;
             }
         }
@@ -164,6 +170,13 @@ public class TapAccessibilityService extends AccessibilityService {
         //send to analytics - acessibility enabled
         TapAnalytics.sendAnalyticsAccessibilityEnabled(mTracker);
 
+        whiteListedPkgNames.add("com.quikr");
+        whiteListedPkgNames.add("com.olx.southasia");
+        whiteListedPkgNames.add("com.snapdeal.main");
+        whiteListedPkgNames.add("com.flipkart.android");
+        whiteListedPkgNames.add("com.myntra.android");
+        whiteListedPkgNames.add("com.jabong.android");
+
         AccessibilityServiceInfo info = new AccessibilityServiceInfo();
         info.eventTypes = AccessibilityEvent.TYPES_ALL_MASK;
         info.notificationTimeout = 100;
@@ -172,6 +185,10 @@ public class TapAccessibilityService extends AccessibilityService {
                 | AccessibilityServiceInfo.FLAG_RETRIEVE_INTERACTIVE_WINDOWS
                 | AccessibilityServiceInfo.FLAG_INCLUDE_NOT_IMPORTANT_VIEWS;
         setServiceInfo(info);
+        if(AppConstants.isFrescoInitialized == false){
+            Fresco.initialize(this);
+            AppConstants.isFrescoInitialized = true;
+        }
     }
 
     @Override

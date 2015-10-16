@@ -46,18 +46,19 @@ public class CategoryActivity extends Activity implements SearchBox.SearchListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.category);
-        Fresco.initialize(this);
         if (isAccessibilityEnabled() == false && ScreenSlidePagerActivity.AccessibilityExplored == false) {
             Intent intent = new Intent(getApplicationContext(), ScreenSlidePagerActivity.class);
             startActivity(intent);
         }
+        if(AppConstants.isFrescoInitialized == false){
+            Fresco.initialize(this);
+            AppConstants.isFrescoInitialized = true;
+        }
         searchBox = (SearchBox)findViewById(R.id.searchbox);
         searchBox.enableVoiceRecognition(this);
         searchBox.setSearchListener(this);
-        searchBox.setHint("Keyword Search");
         searchBox.setSaveEnabled(true);
         searchBox.setMenuVisibility(View.INVISIBLE);
-
         progressDialog = new ProgressDialog(this);
         //progressView.setVisibility(View.VISIBLE);
         progressDialog.setMessage("Fetching Trending Categories");
@@ -93,22 +94,18 @@ public class CategoryActivity extends Activity implements SearchBox.SearchListen
 
     @Override
     public void onSearchOpened() {
-
     }
 
     @Override
     public void onSearchCleared() {
-
     }
 
     @Override
     public void onSearchClosed() {
-
     }
 
     @Override
     public void onSearchTermChanged(String s) {
-
     }
 
     @Override
@@ -121,7 +118,6 @@ public class CategoryActivity extends Activity implements SearchBox.SearchListen
 
     @Override
     public void onResultClick(SearchResult searchResult) {
-
     }
 
     @Override
