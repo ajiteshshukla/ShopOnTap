@@ -82,7 +82,7 @@ public class IconOverlay{
 
         // Create System overlay video
         final WindowManager.LayoutParams params = new WindowManager.LayoutParams(
-                150, 150,
+                90, 90,
                 WindowManager.LayoutParams.TYPE_SYSTEM_ALERT,
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
                         | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,

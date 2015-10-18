@@ -18,6 +18,7 @@ import android.widget.AdapterView;
 import android.widget.ProgressBar;
 import com.lphaindia.dodapp.dodapp.data.Product;
 import com.lphaindia.dodapp.dodapp.network.NetworkTask;
+import com.lphaindia.dodapp.dodapp.overlays.IconOverlay;
 import com.lphaindia.dodapp.dodapp.uiAdapters.ProductCardAdapter;
 import com.lphaindia.dodapp.dodapp.utils.Utility;
 import com.quinny898.library.persistentsearch.SearchBox;
@@ -92,6 +93,14 @@ public class ProductsActivity extends Activity  implements SearchBox.SearchListe
             new FetchProducts(category, SEARCH_TYPE.CATEGORY).execute();
         }else if(searchKey != null){
             new FetchProducts(searchKey, SEARCH_TYPE.KEYWORD).execute();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (IconOverlay.getInstance(this).isOverlayShown()) {
+            IconOverlay.getInstance(this).removeOverlay();
         }
     }
 

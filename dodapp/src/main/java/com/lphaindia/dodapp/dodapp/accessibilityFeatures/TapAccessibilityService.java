@@ -4,6 +4,7 @@ import android.accessibilityservice.AccessibilityService;
 import android.accessibilityservice.AccessibilityServiceInfo;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.accessibility.AccessibilityEvent;
@@ -40,7 +41,7 @@ public class TapAccessibilityService extends AccessibilityService {
         //if a new view is clicked or the window state is changed clear the old list
         if (event.getEventType() == AccessibilityEvent.TYPE_VIEW_CLICKED ||
                 event.getEventType() == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
-            //Log.d(AppConstants.TAG, event.getClassName().toString());
+            //Log.d("dodapp", " " + event.getPackageName());
             updateOverlayOnWindowChange(event);
         }
 
@@ -66,8 +67,8 @@ public class TapAccessibilityService extends AccessibilityService {
         if(pkgName != null && pkgName != "" && whiteListedPkgNames.contains(pkgName)) {
             //We will get that pullable overlay only on the whitelisted packages this way
             IconOverlay.getInstance(mContext).showOverlay();
-            Log.d("dodapp", pkgName);
-            Log.d("dodapp", "from position 3");
+            //Log.d("dodapp", pkgName);
+            //Log.d("dodapp", "from position 3");
             if (LoadingOverlay.getInstance(mContext).isOverlayShown()) {
                 LoadingOverlay.getInstance(mContext).removeOverlay();
             }
@@ -139,13 +140,13 @@ public class TapAccessibilityService extends AccessibilityService {
             if(CarouselOverlay.getInstance(mContext).isOverlayShown()) {
                 status =  CarouselOverlay.getInstance(mContext).removeOverlay();
                 IconOverlay.getInstance(mContext).showOverlay();
-                Log.d("dodapp", "from position 1");
+                //Log.d("dodapp", "from position 1");
                 return  status;
             }
             if(LoadingOverlay.getInstance(mContext).isOverlayShown()) {
                 status =  LoadingOverlay.getInstance(mContext).removeOverlay();
                 IconOverlay.getInstance(mContext).showOverlay();
-                Log.d("dodapp", "from position 2");
+                //Log.d("dodapp", "from position 2");
                 return  status;
             }
         }

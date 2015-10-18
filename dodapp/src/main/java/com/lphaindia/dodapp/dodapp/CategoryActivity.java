@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.lphaindia.dodapp.dodapp.data.Category;
 import com.lphaindia.dodapp.dodapp.network.NetworkTask;
+import com.lphaindia.dodapp.dodapp.overlays.IconOverlay;
 import com.lphaindia.dodapp.dodapp.uiAdapters.CategoryCard;
 import com.lphaindia.dodapp.dodapp.utils.Utility;
 import com.quinny898.library.persistentsearch.SearchBox;
@@ -50,7 +51,7 @@ public class CategoryActivity extends Activity implements SearchBox.SearchListen
             Intent intent = new Intent(getApplicationContext(), ScreenSlidePagerActivity.class);
             startActivity(intent);
         }
-        if(AppConstants.isFrescoInitialized == false){
+        if(AppConstants.isFrescoInitialized == false) {
             Fresco.initialize(this);
             AppConstants.isFrescoInitialized = true;
         }
@@ -73,7 +74,6 @@ public class CategoryActivity extends Activity implements SearchBox.SearchListen
 
         new FetchCategories().execute();
     }
-
 
     public boolean isAccessibilityEnabled() {
         int accessibilityEnabled = 0;
