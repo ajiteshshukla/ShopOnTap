@@ -38,6 +38,10 @@ public class TapAccessibilityService extends AccessibilityService {
 
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
+        //Check API level
+        if(Build.VERSION.SDK_INT < 18) {
+            return;
+        }
         //if a new view is clicked or the window state is changed clear the old list
         if (event.getEventType() == AccessibilityEvent.TYPE_VIEW_CLICKED ||
                 event.getEventType() == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
@@ -132,6 +136,10 @@ public class TapAccessibilityService extends AccessibilityService {
 
     @Override
     protected boolean onKeyEvent(KeyEvent event) {
+        //Check API level
+        if(Build.VERSION.SDK_INT < 18) {
+            return super.onKeyEvent(event);
+        }
         if(event.getKeyCode() == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
             boolean status;
             if(FullScreenOverlay.getInstance(mContext).isOverlayShown()){
@@ -164,6 +172,10 @@ public class TapAccessibilityService extends AccessibilityService {
 
     @Override
     protected void onServiceConnected() {
+        //Check API level
+        if(Build.VERSION.SDK_INT < 18) {
+            return;
+        }
         //Log.d(AppConstants.TAG, " ServiceConnected");
         mContext = this;
 
