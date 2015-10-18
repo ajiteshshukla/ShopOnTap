@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
+import com.crittercism.app.Crittercism;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.lphaindia.dodapp.dodapp.data.Category;
 import com.lphaindia.dodapp.dodapp.network.NetworkTask;
@@ -47,6 +48,7 @@ public class CategoryActivity extends Activity implements SearchBox.SearchListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.category);
+        Crittercism.initialize(getApplicationContext(), "56238617d224ac0a00ed409b");
         if (isAccessibilityEnabled() == false && ScreenSlidePagerActivity.AccessibilityExplored == false) {
             Intent intent = new Intent(getApplicationContext(), ScreenSlidePagerActivity.class);
             startActivity(intent);
