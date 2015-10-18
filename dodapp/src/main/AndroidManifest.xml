@@ -31,9 +31,17 @@
             </intent-filter>
         </activity>
         <activity android:name=".ProductsActivity"
-                  android:theme="@android:style/Theme.DeviceDefault.Light.NoActionBar"
+                  android:theme="@style/Theme.AppCompat.Light"
                   android:screenOrientation="portrait"
-                  android:configChanges="orientation|keyboardHidden"/>
+                  android:configChanges="orientation|keyboardHidden"
+                android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+            <meta-data android:name="android.app.searchable"
+                       android:resource="@xml/searchable"
+                       android:value=".ProductsActivity"/>
+        </activity>
 
         <activity android:name=".ScreenSlidePagerActivity"
                   android:theme="@android:style/Theme.DeviceDefault.Light.NoActionBar"
