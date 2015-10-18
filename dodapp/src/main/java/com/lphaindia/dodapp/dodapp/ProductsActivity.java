@@ -13,10 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
+import android.view.*;
 import android.widget.SearchView;
 import com.lphaindia.dodapp.dodapp.data.Product;
 import com.lphaindia.dodapp.dodapp.data.SubCategory;
@@ -32,6 +29,8 @@ import com.rey.material.widget.SnackBar;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.view.Menu.NONE;
+
 /**
  * Created by aasha.medhi on 10/8/15.
  */
@@ -43,6 +42,7 @@ public class ProductsActivity extends AppCompatActivity implements  Slider.OnPos
     private List<Product> mProducts;
     private List<SubCategory> mSubCategories;
     private SnackBar snackBar;
+    private boolean isMenuPrepared = false;
     SearchView searchView;
 
     @Override
@@ -144,8 +144,10 @@ public class ProductsActivity extends AppCompatActivity implements  Slider.OnPos
                 try {
                     mProducts = Utility.getProductListFromJSON(datafromServer);
                     mSubCategories = Utility.getSubCategoryListFromJSON(datafromServer);
+                    if(mSubCategories != null && !mSubCategories.isEmpty() && !isMenuPrepared){
+                        invalidateOptionsMenu();
+                    }
                     renderProducts(mProducts, slider.getValue());
-                    renderSubCategories(mSubCategories);
                     if (snackBar.isShown()) {
                         snackBar.dismiss();
                     }
@@ -155,12 +157,6 @@ public class ProductsActivity extends AppCompatActivity implements  Slider.OnPos
             } else {
                 snackBar.show();
             }
-        }
-    }
-
-    private void renderSubCategories(final List<SubCategory> subCategories) {
-        if (subCategories != null && !subCategories.isEmpty()) {
-
         }
     }
 
@@ -186,6 +182,7 @@ public class ProductsActivity extends AppCompatActivity implements  Slider.OnPos
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        Log.e("AASHA", "on create");
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_menu, menu);
         // Associate searchable configuration with the SearchView
@@ -201,6 +198,28 @@ public class ProductsActivity extends AppCompatActivity implements  Slider.OnPos
 
     }
 
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        Log.e("AASHA", "on prepare");
+        if(mSubCategories != null && !mSubCategories.isEmpty() && !isMenuPrepared) {
+            SubMenu searchMenuItem = menu.findItem(R.id.subcategory_menu).getSubMenu();
+            searchMenuItem.clear();
+            for(int index = 0; index < mSubCategories.size(); index++) {
+                final String subCategory = mSubCategories.get(index).getSubCategoryName();
+                MenuItem item = searchMenuItem.add(subCategory);
+                item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        new FetchProducts(subCategory, SEARCH_TYPE.CATEGORY).execute();
+                        return true;
+                    }
+                });
+            }
+            isMenuPrepared = true;
+            return true;
+        }
+        return false;
+    }
 
     @Override
     protected void onNewIntent(Intent intent) {
