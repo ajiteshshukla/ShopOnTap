@@ -15,6 +15,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.*;
 import android.widget.SearchView;
+import android.widget.Toast;
 import com.lphaindia.dodapp.dodapp.data.Product;
 import com.lphaindia.dodapp.dodapp.data.SubCategory;
 import com.lphaindia.dodapp.dodapp.network.NetworkTask;
@@ -147,7 +148,11 @@ public class ProductsActivity extends AppCompatActivity implements  Slider.OnPos
                     if(mSubCategories != null && !mSubCategories.isEmpty() && !isMenuPrepared){
                         invalidateOptionsMenu();
                     }
-                    renderProducts(mProducts, slider.getValue());
+                    if(mProducts != null && !mProducts.isEmpty()) {
+                        renderProducts(mProducts, slider.getValue());
+                    }else{
+                        Toast.makeText(ProductsActivity.this, "Cannot find products related to your search", Toast.LENGTH_LONG).show();
+                    }
                     if (snackBar.isShown()) {
                         snackBar.dismiss();
                     }
@@ -182,7 +187,6 @@ public class ProductsActivity extends AppCompatActivity implements  Slider.OnPos
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        Log.e("AASHA", "on create");
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_menu, menu);
         // Associate searchable configuration with the SearchView
@@ -200,13 +204,12 @@ public class ProductsActivity extends AppCompatActivity implements  Slider.OnPos
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        Log.e("AASHA", "on prepare");
         if(mSubCategories != null && !mSubCategories.isEmpty() && !isMenuPrepared) {
             SubMenu searchMenuItem = menu.findItem(R.id.subcategory_menu).getSubMenu();
             searchMenuItem.clear();
             for(int index = 0; index < mSubCategories.size(); index++) {
                 final String subCategory = mSubCategories.get(index).getSubCategoryName();
-                MenuItem item = searchMenuItem.add(subCategory);
+                MenuItem item = searchMenuItem.add(0, index, index, subCategory);
                 item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
