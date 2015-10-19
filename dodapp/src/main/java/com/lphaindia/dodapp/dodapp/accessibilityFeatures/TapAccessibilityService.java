@@ -40,6 +40,7 @@ public class TapAccessibilityService extends AccessibilityService {
     public void onAccessibilityEvent(AccessibilityEvent event) {
         //Check API level
         if(Build.VERSION.SDK_INT < 18) {
+            //Log.d("dodapp ", "build version: " + Build.VERSION.SDK_INT );
             return;
         }
         //if a new view is clicked or the window state is changed clear the old list
@@ -174,9 +175,10 @@ public class TapAccessibilityService extends AccessibilityService {
     protected void onServiceConnected() {
         //Check API level
         if(Build.VERSION.SDK_INT < 18) {
+            //Log.d("dodapp ", "build version: " + Build.VERSION.SDK_INT );
             return;
         }
-        //Log.d(AppConstants.TAG, " ServiceConnected");
+        Log.d(AppConstants.TAG, " ServiceConnected");
         mContext = this;
 
         mTracker = analyticsHelper.getTracker(AnalyticsHelper.TrackerName.APP_TRACKER, mContext);
