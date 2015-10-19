@@ -84,6 +84,7 @@ public class ProductsActivity extends AppCompatActivity implements  Slider.OnPos
         String category = getIntent().getStringExtra(AppConstants.KEY_CATEGORY);
         String searchKey = getIntent().getStringExtra(AppConstants.KEY_SEARCH);
         if (category != null) {
+            setTitle(category);
             new FetchProducts(category, SEARCH_TYPE.CATEGORY).execute();
         } else if (searchKey != null) {
             new FetchProducts(searchKey, SEARCH_TYPE.KEYWORD).execute();
