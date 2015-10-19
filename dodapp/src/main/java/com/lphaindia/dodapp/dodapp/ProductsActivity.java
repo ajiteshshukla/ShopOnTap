@@ -144,8 +144,9 @@ public class ProductsActivity extends AppCompatActivity implements  Slider.OnPos
             if (datafromServer != null) {
                 try {
                     mProducts = Utility.getProductListFromJSON(datafromServer);
-                    mSubCategories = Utility.getSubCategoryListFromJSON(datafromServer);
-                    if(mSubCategories != null && !mSubCategories.isEmpty() && !isMenuPrepared){
+                    List<SubCategory> subCategoryList = Utility.getSubCategoryListFromJSON(datafromServer);
+                    if(subCategoryList != null && !subCategoryList.isEmpty()){
+                        mSubCategories = subCategoryList;
                         invalidateOptionsMenu();
                     }
                     if(mProducts != null && !mProducts.isEmpty()) {
@@ -196,15 +197,17 @@ public class ProductsActivity extends AppCompatActivity implements  Slider.OnPos
         searchView = (SearchView) MenuItemCompat.getActionView(searchMenuItem);
         searchView.setSearchableInfo(
                 searchManager.getSearchableInfo(getComponentName()));
-        searchView.setIconified(false);
         searchView.clearFocus();
+        searchMenuItem
+                .setShowAsAction(MenuItemCompat.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW
+                        | MenuItemCompat.SHOW_AS_ACTION_ALWAYS);
         return true;
 
     }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        if(mSubCategories != null && !mSubCategories.isEmpty() && !isMenuPrepared) {
+        if(mSubCategories != null && !mSubCategories.isEmpty()) {
             SubMenu searchMenuItem = menu.findItem(R.id.subcategory_menu).getSubMenu();
             searchMenuItem.clear();
             for(int index = 0; index < mSubCategories.size(); index++) {
@@ -218,7 +221,6 @@ public class ProductsActivity extends AppCompatActivity implements  Slider.OnPos
                     }
                 });
             }
-            isMenuPrepared = true;
             return true;
         }
         return false;
