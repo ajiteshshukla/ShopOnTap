@@ -20,10 +20,25 @@
             android:paddingTop="10dp"/>
 
     <TextView
-            android:id="@+id/product_title"
+            android:id="@+id/product_name"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_below="@id/product_image"
+            android:background="@drawable/product_title_background"
+            android:maxLines="2"
+            android:fontFamily="Italic"
+            android:textColor="#FFFFFF"
+            android:textSize="17dp"
+            android:paddingTop="10dp"
+            android:paddingLeft="10dp"
+            android:paddingBottom="10dp"
+            android:textStyle="italic"/>
+
+    <TextView
+            android:id="@+id/product_cost"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_below="@id/product_name"
             android:background="@drawable/border_cardbottom_fit"
             android:maxLines="2"
             android:fontFamily="Italic"

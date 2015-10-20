@@ -58,9 +58,15 @@ public class ProductCardAdapter extends RecyclerView.Adapter<ProductCardAdapter.
                 title.append(product.currency + " " + sellingPrice);
             }
         }
+        String productTitle = product.title;
+        if (productTitle.length() > 45) {
+            productTitle = productTitle.substring(0, 42);
+            productTitle = productTitle.concat("...");
+        }
+        holder.setProductName(productTitle);
         holder.setAspectRatio(product.aspectRatio);
         holder.setImgProductImage(product.imageUrl);
-        holder.setProductName(title.toString());
+        holder.setProductCost(title.toString());
         holder.setProductLandingPage(product.productUrl);
     }
 
@@ -72,6 +78,7 @@ public class ProductCardAdapter extends RecyclerView.Adapter<ProductCardAdapter.
 
     public class CustomViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private TextView mTextProductName;
+        private TextView mTextProductCost;
         private SimpleDraweeView mImgProductImage;
         private String mProductLandingPage;
         private String mAspectRatio;
@@ -79,7 +86,8 @@ public class ProductCardAdapter extends RecyclerView.Adapter<ProductCardAdapter.
         public CustomViewHolder(View itemView, ProductCardAdapter adapter) {
             super(itemView);
             itemView.setOnClickListener(this);
-            mTextProductName = (TextView) itemView.findViewById(R.id.product_title);
+            mTextProductName = (TextView) itemView.findViewById(R.id.product_name);
+            mTextProductCost = (TextView) itemView.findViewById(R.id.product_cost);
             mImgProductImage = (SimpleDraweeView) itemView.findViewById(R.id.product_image);
         }
 
@@ -94,6 +102,8 @@ public class ProductCardAdapter extends RecyclerView.Adapter<ProductCardAdapter.
         public void setProductName(CharSequence productName) {
             mTextProductName.setText(productName);
         }
+
+        public void setProductCost(CharSequence productCost) { mTextProductCost.setText(productCost); }
 
         public void setProductLandingPage(String productLandingPage) {
             mProductLandingPage = productLandingPage;

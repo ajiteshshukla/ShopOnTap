@@ -193,11 +193,13 @@ public class ProductsActivity extends AppCompatActivity implements  Slider.OnPos
         SearchManager searchManager =
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         MenuItem searchMenuItem = menu.findItem(R.id.search);
+        searchMenuItem.setEnabled(true);
         searchView = (SearchView) MenuItemCompat.getActionView(searchMenuItem);
         searchView.setSearchableInfo(
                 searchManager.getSearchableInfo(getComponentName()));
-        searchView.setIconified(false);
+        //searchView.setIconified(false);
         searchView.clearFocus();
+        //searchView.setIconifiedByDefault(false);
         return true;
 
     }
