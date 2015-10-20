@@ -43,7 +43,6 @@ public class ProductsActivity extends AppCompatActivity implements  Slider.OnPos
     private List<Product> mProducts;
     private List<SubCategory> mSubCategories;
     private SnackBar snackBar;
-    private boolean isMenuPrepared = false;
     SearchView searchView;
 
     @Override
@@ -145,9 +144,8 @@ public class ProductsActivity extends AppCompatActivity implements  Slider.OnPos
             if (datafromServer != null) {
                 try {
                     mProducts = Utility.getProductListFromJSON(datafromServer);
-                    List<SubCategory> subCategoryList = Utility.getSubCategoryListFromJSON(datafromServer);
-                    if(subCategoryList != null && !subCategoryList.isEmpty()){
-                        mSubCategories = subCategoryList;
+                    mSubCategories = Utility.getSubCategoryListFromJSON(datafromServer);
+                    if(mSubCategories != null && !mSubCategories.isEmpty()){
                         invalidateOptionsMenu();
                     }
                     if(mProducts != null && !mProducts.isEmpty()) {
