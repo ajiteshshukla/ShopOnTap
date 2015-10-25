@@ -1,48 +1,49 @@
 package com.lphaindia.dodapp.dodapp;
 
-import android.app.Activity;
-import android.app.Notification;
 import android.app.ProgressDialog;
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ProgressBar;
+import android.view.*;
+import android.widget.SearchView;
+import android.widget.Toast;
 import com.lphaindia.dodapp.dodapp.data.Product;
+import com.lphaindia.dodapp.dodapp.data.SubCategory;
 import com.lphaindia.dodapp.dodapp.network.NetworkTask;
+import com.lphaindia.dodapp.dodapp.overlays.IconOverlay;
 import com.lphaindia.dodapp.dodapp.uiAdapters.ProductCardAdapter;
 import com.lphaindia.dodapp.dodapp.utils.Utility;
 import com.quinny898.library.persistentsearch.SearchBox;
 import com.quinny898.library.persistentsearch.SearchResult;
-import com.rey.material.widget.ProgressView;
 import com.rey.material.widget.Slider;
 import com.rey.material.widget.SnackBar;
-import it.gmariotti.cardslib.library.internal.Card;
-import it.gmariotti.cardslib.library.recyclerview.internal.CardArrayRecyclerViewAdapter;
-import it.gmariotti.cardslib.library.recyclerview.view.CardRecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.view.Menu.NONE;
+
 /**
  * Created by aasha.medhi on 10/8/15.
  */
-public class ProductsActivity extends Activity  implements SearchBox.SearchListener, Slider.OnPositionChangeListener {
+public class ProductsActivity extends AppCompatActivity implements  Slider.OnPositionChangeListener {
     private RecyclerView mRecyclerView;
     private ProductCardAdapter adapter;
     private ProgressDialog progressDialog;
     private Slider slider;
     private List<Product> mProducts;
+    private List<SubCategory> mSubCategories;
     private SnackBar snackBar;
-    SearchBox searchBox;
+    SearchView searchView;
 
     @Override
     public void onPositionChanged(Slider slider, boolean b, float v, float v1, int i, int i1) {
@@ -59,18 +60,11 @@ public class ProductsActivity extends Activity  implements SearchBox.SearchListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.products);
-        Bundle b =getIntent().getExtras();
-         // Initialize recycler view
+        Bundle b = getIntent().getExtras();
+        // Initialize recycler view
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setHasFixedSize(false);
-        searchBox = (SearchBox)findViewById(R.id.searchbox);
-        searchBox.enableVoiceRecognition(this);
-        searchBox.setSearchListener(this);
-        searchBox.setSaveEnabled(true);
-        searchBox.setMenuVisibility(View.INVISIBLE);
-        searchBox.setDrawerLogo(R.drawable.ic_undobar_undo);
-
         slider = (Slider) findViewById(R.id.discount_slider);
         slider.setOnPositionChangeListener(this);
 
@@ -78,7 +72,6 @@ public class ProductsActivity extends Activity  implements SearchBox.SearchListe
 
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Fetching Products For You");
-        progressDialog.show();
 
         snackBar = (SnackBar) findViewById(R.id.snackbarproduct);
         snackBar.actionTextColor(Color.WHITE);
@@ -89,10 +82,20 @@ public class ProductsActivity extends Activity  implements SearchBox.SearchListe
 
         String category = getIntent().getStringExtra(AppConstants.KEY_CATEGORY);
         String searchKey = getIntent().getStringExtra(AppConstants.KEY_SEARCH);
-        if(category != null) {
+        if (category != null) {
+            setTitle(category);
             new FetchProducts(category, SEARCH_TYPE.CATEGORY).execute();
-        }else if(searchKey != null){
+        } else if (searchKey != null) {
             new FetchProducts(searchKey, SEARCH_TYPE.KEYWORD).execute();
+        }
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (IconOverlay.getInstance(this).isOverlayShown()) {
+            IconOverlay.getInstance(this).removeOverlay();
         }
     }
 
@@ -100,6 +103,7 @@ public class ProductsActivity extends Activity  implements SearchBox.SearchListe
 
         private String searchString;
         private SEARCH_TYPE searchType;
+
         public FetchProducts(String searchString, SEARCH_TYPE type) {
             this.searchString = searchString;
             this.searchType = type;
@@ -109,6 +113,7 @@ public class ProductsActivity extends Activity  implements SearchBox.SearchListe
         protected void onPreExecute() {
             super.onPreExecute();
             //progressBar.setVisibility(View.VISIBLE);
+            progressDialog.show();
             setProgressBarIndeterminateVisibility(true);
             if (snackBar.isShown()) {
                 snackBar.dismiss();
@@ -120,10 +125,10 @@ public class ProductsActivity extends Activity  implements SearchBox.SearchListe
             String datafromServer = null;
             NetworkTask networkTask = new NetworkTask();
             String url = null;
-            if(searchType == SEARCH_TYPE.CATEGORY) {
+            if (searchType == SEARCH_TYPE.CATEGORY) {
                 url = AppConstants.REQUEST_URL + "?requesttype=" + AppConstants.REQUEST_PRODUCTS
                         + "&categoryname=" + this.searchString.replaceAll(" ", "%20");
-            }else{
+            } else {
                 url = AppConstants.REQUEST_URL + "?requesttype=" + AppConstants.REQUEST_SEARCH
                         + "&keywords=" + this.searchString.replaceAll(" ", "%20");
             }
@@ -136,12 +141,18 @@ public class ProductsActivity extends Activity  implements SearchBox.SearchListe
             super.onPostExecute(datafromServer);
             //progressBar.setVisibility(View.GONE);
             progressDialog.cancel();
-            List<Product> products = null;
             if (datafromServer != null) {
                 try {
-                    products = Utility.getProductListFromJSON(datafromServer);
-                    mProducts = products;
-                    renderProducts(mProducts, slider.getValue());
+                    mProducts = Utility.getProductListFromJSON(datafromServer);
+                    mSubCategories = Utility.getSubCategoryListFromJSON(datafromServer);
+                    if(mSubCategories != null && !mSubCategories.isEmpty()){
+                        invalidateOptionsMenu();
+                    }
+                    if(mProducts != null && !mProducts.isEmpty()) {
+                        renderProducts(mProducts, slider.getValue());
+                    }else{
+                        Toast.makeText(ProductsActivity.this, "Cannot find products related to your search", Toast.LENGTH_LONG).show();
+                    }
                     if (snackBar.isShown()) {
                         snackBar.dismiss();
                     }
@@ -175,43 +186,57 @@ public class ProductsActivity extends Activity  implements SearchBox.SearchListe
     }
 
     @Override
-    public void onSearchOpened() {
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_menu, menu);
+        // Associate searchable configuration with the SearchView
+        SearchManager searchManager =
+                (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        MenuItem searchMenuItem = menu.findItem(R.id.search);
+        searchView = (SearchView) MenuItemCompat.getActionView(searchMenuItem);
+        searchView.setSearchableInfo(
+                searchManager.getSearchableInfo(getComponentName()));
+        searchView.clearFocus();
+        searchMenuItem
+                .setShowAsAction(MenuItemCompat.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW
+                        | MenuItemCompat.SHOW_AS_ACTION_ALWAYS);
+        return true;
 
     }
 
     @Override
-    public void onSearchCleared() {
-
-    }
-
-    @Override
-    public void onSearchClosed() {
-
-    }
-
-    @Override
-    public void onSearchTermChanged(String s) {
-
-    }
-
-    @Override
-    public void onSearch(String s) {
-        new FetchProducts(s, SEARCH_TYPE.KEYWORD).execute();
-    }
-
-    @Override
-    public void onResultClick(SearchResult searchResult) {
-
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 1234 && resultCode == RESULT_OK) {
-            ArrayList<String> matches = data
-                    .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-            searchBox.populateEditText(matches.get(0));
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        if(mSubCategories != null && !mSubCategories.isEmpty()) {
+            SubMenu searchMenuItem = menu.findItem(R.id.subcategory_menu).getSubMenu();
+            searchMenuItem.clear();
+            for(int index = 0; index < mSubCategories.size(); index++) {
+                final String subCategory = mSubCategories.get(index).getSubCategoryName();
+                MenuItem item = searchMenuItem.add(0, index, index, subCategory);
+                item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        new FetchProducts(subCategory, SEARCH_TYPE.CATEGORY).execute();
+                        return true;
+                    }
+                });
+            }
+            return true;
         }
-        super.onActivityResult(requestCode, resultCode, data);
+        return false;
     }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        setIntent(intent);
+        handleIntent(intent);
+    }
+
+    private void handleIntent(Intent intent) {
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            String query = intent.getStringExtra(SearchManager.QUERY);
+            searchView.setQuery(query, false);
+            searchView.clearFocus();
+            new FetchProducts(query, SEARCH_TYPE.KEYWORD).execute();
+        }
+    }
 }

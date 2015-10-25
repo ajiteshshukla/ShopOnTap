@@ -1,21 +1,21 @@
 package com.lphaindia.dodapp.dodapp;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.provider.Settings;
 import android.speech.RecognizerIntent;
-import android.support.annotation.ColorInt;
-import android.util.Log;
-import android.view.ContextMenu;
-import android.view.MenuItem;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
-import android.widget.ProgressBar;
-import android.widget.Toast;
+import com.crittercism.app.Crittercism;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.lphaindia.dodapp.dodapp.data.Category;
 import com.lphaindia.dodapp.dodapp.network.NetworkTask;
@@ -23,7 +23,6 @@ import com.lphaindia.dodapp.dodapp.uiAdapters.CategoryCard;
 import com.lphaindia.dodapp.dodapp.utils.Utility;
 import com.quinny898.library.persistentsearch.SearchBox;
 import com.quinny898.library.persistentsearch.SearchResult;
-import com.rey.material.widget.ProgressView;
 import com.rey.material.widget.SnackBar;
 import it.gmariotti.cardslib.library.internal.Card;
 import it.gmariotti.cardslib.library.internal.CardGridArrayAdapter;
@@ -46,27 +45,33 @@ public class CategoryActivity extends Activity implements SearchBox.SearchListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.category);
-        if (isAccessibilityEnabled() == false && ScreenSlidePagerActivity.AccessibilityExplored == false) {
+
+        Crittercism.initialize(getApplicationContext(), "56238617d224ac0a00ed409b");
+
+        if (isAccessibilityEnabled() == false
+                && ScreenSlidePagerActivity.AccessibilityExplored == false) {
             Intent intent = new Intent(getApplicationContext(), ScreenSlidePagerActivity.class);
             startActivity(intent);
+        } else if (isAccessibilityEnabled() == true
+                && Build.VERSION.SDK_INT >= 23) {
+            displayDialogForAndroidM();
         }
-        if(AppConstants.isFrescoInitialized == false){
+
+        if (AppConstants.isFrescoInitialized == false) {
             Fresco.initialize(this);
             AppConstants.isFrescoInitialized = true;
         }
+
         searchBox = (SearchBox)findViewById(R.id.searchbox);
         searchBox.enableVoiceRecognition(this);
         searchBox.setSearchListener(this);
         searchBox.setSaveEnabled(true);
         searchBox.setMenuVisibility(View.INVISIBLE);
         progressDialog = new ProgressDialog(this);
-        //progressView.setVisibility(View.VISIBLE);
         progressDialog.setMessage("Fetching Trending Categories");
-        progressDialog.show();
 
         snackBar = (SnackBar) findViewById(R.id.snackbar);
         snackBar.actionTextColor(Color.WHITE);
-        snackBar.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
         snackBar.text("Something went wrong!! Unable to connect.");
         snackBar.textColor(Color.WHITE);
         snackBar.setVisibility(View.INVISIBLE);
@@ -74,7 +79,6 @@ public class CategoryActivity extends Activity implements SearchBox.SearchListen
 
         new FetchCategories().execute();
     }
-
 
     public boolean isAccessibilityEnabled() {
         int accessibilityEnabled = 0;
@@ -136,6 +140,7 @@ public class CategoryActivity extends Activity implements SearchBox.SearchListen
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            progressDialog.show();
             setProgressBarIndeterminateVisibility(true);
             if (snackBar.isShown()) {
                 snackBar.dismiss();
@@ -198,6 +203,35 @@ public class CategoryActivity extends Activity implements SearchBox.SearchListen
             if (gridView != null) {
                 gridView.setAdapter(mCardArrayAdapter);
             }
+        }
+    }
+
+    @TargetApi(23)
+    public void displayDialogForAndroidM() {
+        if (!Settings.canDrawOverlays(this)) {
+            AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+            alertDialog.setTitle("Enable Draw Overlay");
+            alertDialog.setMessage("Please enable overlay settings for ShopOnTap to browse similar " +
+                    "products across different shopping apps");
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                            Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                                    Uri.parse("package:" + getPackageName()));
+                            startActivity(intent);
+                        }
+                    });
+            alertDialog.show();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (isAccessibilityEnabled() == true
+                && Build.VERSION.SDK_INT >= 23) {
+            displayDialogForAndroidM();
         }
     }
 }

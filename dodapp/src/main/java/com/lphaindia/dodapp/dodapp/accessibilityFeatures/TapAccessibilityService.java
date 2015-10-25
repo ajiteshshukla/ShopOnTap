@@ -4,6 +4,8 @@ import android.accessibilityservice.AccessibilityService;
 import android.accessibilityservice.AccessibilityServiceInfo;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.accessibility.AccessibilityEvent;
@@ -26,8 +28,7 @@ import java.util.List;
 public class TapAccessibilityService extends AccessibilityService {
 
     public static String pkgName = null;
-    public static String whiteListedPkgNames = "com.quikr com.olx.southasia com.snapdeal.main com.flipkart.android " +
-            "com.myntra.android com.jabong.android ";
+    public static List<String> whiteListedPkgNames = new ArrayList<String>();
 
     private AnalyticsHelper analyticsHelper = new AnalyticsHelper();
     public static Tracker mTracker;
@@ -38,10 +39,20 @@ public class TapAccessibilityService extends AccessibilityService {
 
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
+        //Check API level
+        if(Build.VERSION.SDK_INT < 18) {
+            //Log.d("dodapp ", "build version: " + Build.VERSION.SDK_INT );
+            return;
+        } else if (Build.VERSION.SDK_INT >= 23) {
+            if (!Settings.canDrawOverlays(this)) {
+                return;
+            }
+        }
+
         //if a new view is clicked or the window state is changed clear the old list
         if (event.getEventType() == AccessibilityEvent.TYPE_VIEW_CLICKED ||
                 event.getEventType() == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
-            //Log.d(AppConstants.TAG, event.getClassName().toString());
+            //Log.d("dodapp", " " + event.getPackageName());
             updateOverlayOnWindowChange(event);
         }
 
@@ -67,6 +78,8 @@ public class TapAccessibilityService extends AccessibilityService {
         if(pkgName != null && pkgName != "" && whiteListedPkgNames.contains(pkgName)) {
             //We will get that pullable overlay only on the whitelisted packages this way
             IconOverlay.getInstance(mContext).showOverlay();
+            //Log.d("dodapp", pkgName);
+            //Log.d("dodapp", "from position 3");
             if (LoadingOverlay.getInstance(mContext).isOverlayShown()) {
                 LoadingOverlay.getInstance(mContext).removeOverlay();
             }
@@ -130,6 +143,15 @@ public class TapAccessibilityService extends AccessibilityService {
 
     @Override
     protected boolean onKeyEvent(KeyEvent event) {
+        //Check API level
+        if(Build.VERSION.SDK_INT < 18) {
+            return super.onKeyEvent(event);
+        } else if (Build.VERSION.SDK_INT >= 23) {
+            if (!Settings.canDrawOverlays(this)) {
+                return super.onKeyEvent(event);
+            }
+        }
+
         if(event.getKeyCode() == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
             boolean status;
             if(FullScreenOverlay.getInstance(mContext).isOverlayShown()){
@@ -138,11 +160,13 @@ public class TapAccessibilityService extends AccessibilityService {
             if(CarouselOverlay.getInstance(mContext).isOverlayShown()) {
                 status =  CarouselOverlay.getInstance(mContext).removeOverlay();
                 IconOverlay.getInstance(mContext).showOverlay();
+                //Log.d("dodapp", "from position 1");
                 return  status;
             }
             if(LoadingOverlay.getInstance(mContext).isOverlayShown()) {
                 status =  LoadingOverlay.getInstance(mContext).removeOverlay();
                 IconOverlay.getInstance(mContext).showOverlay();
+                //Log.d("dodapp", "from position 2");
                 return  status;
             }
         }
@@ -160,12 +184,20 @@ public class TapAccessibilityService extends AccessibilityService {
 
     @Override
     protected void onServiceConnected() {
-        //Log.d(AppConstants.TAG, " ServiceConnected");
+
+        Log.d(AppConstants.TAG, " ServiceConnected");
         mContext = this;
 
         mTracker = analyticsHelper.getTracker(AnalyticsHelper.TrackerName.APP_TRACKER, mContext);
         //send to analytics - acessibility enabled
         TapAnalytics.sendAnalyticsAccessibilityEnabled(mTracker);
+
+        whiteListedPkgNames.add("com.quikr");
+        whiteListedPkgNames.add("com.olx.southasia");
+        whiteListedPkgNames.add("com.snapdeal.main");
+        whiteListedPkgNames.add("com.flipkart.android");
+        whiteListedPkgNames.add("com.myntra.android");
+        whiteListedPkgNames.add("com.jabong.android");
 
         AccessibilityServiceInfo info = new AccessibilityServiceInfo();
         info.eventTypes = AccessibilityEvent.TYPES_ALL_MASK;

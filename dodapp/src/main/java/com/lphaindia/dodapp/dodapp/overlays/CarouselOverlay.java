@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.PixelFormat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -105,6 +106,7 @@ public class CarouselOverlay implements AdapterView.OnItemClickListener{
             @Override
             public void onClick(View v) {
                 removeOverlay();
+                Log.d("dodapp", "from position 4");
                 IconOverlay.getInstance(mContext).showOverlay();
             }
         });
@@ -115,6 +117,7 @@ public class CarouselOverlay implements AdapterView.OnItemClickListener{
             removeOverlay();
             Toast.makeText(mContext, "Sorry we could'nt find anything matching the product title !!!",
                     Toast.LENGTH_LONG).show();
+            Log.d("dodapp", "from position 5");
             IconOverlay.getInstance(mContext).showOverlay();
             TapAnalytics.sendAnalyticsNullList(TapAccessibilityService.mTracker);
            return;

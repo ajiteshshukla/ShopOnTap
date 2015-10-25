@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.lphaindia.dodapp.dodapp.data.Category;
 import com.lphaindia.dodapp.dodapp.data.Product;
+import com.lphaindia.dodapp.dodapp.data.SubCategory;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -24,6 +25,19 @@ public class Utility {
             JSONArray productListInfo = new JSONObject(productListJSON).getJSONArray("List");
             List<Product> products = gson.fromJson(productListInfo.toString(), type);
             return products;
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+    public static List<SubCategory> getSubCategoryListFromJSON(String productListJSON) {
+        try {
+            Gson gson = new GsonBuilder().create();
+            Type type = new TypeToken<List<SubCategory>>() {
+            }.getType();
+            JSONArray subCategoryListInfo = new JSONObject(productListJSON).getJSONArray("subCategoryList");
+            List<SubCategory> subCategories = gson.fromJson(subCategoryListInfo.toString(), type);
+            return subCategories;
         }catch (Exception e){
             e.printStackTrace();
             return null;
