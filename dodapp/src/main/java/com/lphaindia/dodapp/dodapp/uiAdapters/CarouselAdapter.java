@@ -77,10 +77,10 @@ public class CarouselAdapter extends RecyclerView.Adapter<CarouselAdapter.Vertic
     @Override
     public void onBindViewHolder(VerticalItemHolder itemHolder, int position) {
         Product item = mProductList.get(position);
-        itemHolder.setAspectRatio(item.aspectRatio);
-        itemHolder.setImgProductImage(item.imageUrl);
+        itemHolder.setImgProductImage(item.imageUrl, item.aspectRatio);
         itemHolder.setProductPrice(item.sellingPrice);
         itemHolder.setUrl(item.productUrl);
+        itemHolder.setProductMerchant(item.affiliate);
     }
 
     @Override
@@ -102,15 +102,16 @@ public class CarouselAdapter extends RecyclerView.Adapter<CarouselAdapter.Vertic
     public class VerticalItemHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private SimpleDraweeView mImgProductImage;
         private Button mBtnProductPrice;
+        private TextView mTxtMerchantName;
         private String mUrl;
         private CarouselAdapter mAdapter;
-        private String mAspectRatio;
         public VerticalItemHolder(View itemView, CarouselAdapter adapter) {
             super(itemView);
             itemView.setOnClickListener(this);
             mAdapter = adapter;
             mImgProductImage = (SimpleDraweeView) itemView.findViewById(R.id.product_image);
             mBtnProductPrice = (Button) itemView.findViewById(R.id.product_price);
+            mTxtMerchantName = (TextView)itemView.findViewById(R.id.product_merchant);
             mBtnProductPrice.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -133,16 +134,14 @@ public class CarouselAdapter extends RecyclerView.Adapter<CarouselAdapter.Vertic
         }
 
         public void setProductPrice(CharSequence productPrice) {
-            mBtnProductPrice.setText(productPrice);
+                mBtnProductPrice.setText("₹ " +productPrice);
         }
-
-        public void setAspectRatio(String aspectRatio) {
-            mAspectRatio = aspectRatio;
+        public void setProductMerchant(String merchant) {
+            mTxtMerchantName.setText(merchant.toUpperCase());
         }
-
-        public void setImgProductImage(String productImage){
-            if (mAspectRatio != null) {
-                float aspectRatio = Float.valueOf(mAspectRatio);
+        public void setImgProductImage(String productImage, String aspectRatioStr){
+            if (aspectRatioStr != null) {
+                float aspectRatio = Float.valueOf(aspectRatioStr);
                 mImgProductImage.setAspectRatio(aspectRatio);
                 GenericDraweeHierarchyBuilder builder =
                         new GenericDraweeHierarchyBuilder(mCtxt.getResources());
