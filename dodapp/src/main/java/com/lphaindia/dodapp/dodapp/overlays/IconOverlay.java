@@ -21,24 +21,27 @@ import com.lphaindia.dodapp.dodapp.keywordSearchAdapter.KeywordsToProducts;
 /**
  * Created by aasha.medhi on 8/27/15.
  */
-public class IconOverlay{
+public class IconOverlay {
     private static IconOverlay mInstance = null;
     //ImageView mOverlayView;
     DraweeView draweeView;
     private static Context mContext;
-    public static IconOverlay getInstance(Context ctxt){
-        if(null == mInstance) {
-            if(ctxt == null)
+
+    public static IconOverlay getInstance(Context ctxt) {
+        if (null == mInstance) {
+            if (ctxt == null)
                 return null;
             mContext = ctxt;
             mInstance = new IconOverlay();
         }
         return mInstance;
     }
-    private IconOverlay(){
+
+    private IconOverlay() {
 
     }
-    public boolean removeOverlay(){
+
+    public boolean removeOverlay() {
         // Remove view from WindowManager
         if (isOverlayShown()) {
             try {
@@ -55,10 +58,11 @@ public class IconOverlay{
         }
         return false;
     }
+
     public boolean showOverlay() {
         boolean isSuccess = false;
         //if (mOverlayView != null) {
-        if(draweeView != null) {
+        if (draweeView != null) {
             //Log.w("TAG", "Cannot recreate overlay");
             return isSuccess;
         }
@@ -68,10 +72,12 @@ public class IconOverlay{
         createOverlay(draweeView != null);
         return true;
     }
-    public boolean isOverlayShown(){
+
+    public boolean isOverlayShown() {
         //return (mOverlayView != null);
         return (draweeView != null);
     }
+
     /**
      * Create video overlay
      *
@@ -103,34 +109,18 @@ public class IconOverlay{
         //mOverlayView.setOnTouchListener(new View.OnTouchListener() {
         draweeView.setOnTouchListener(new View.OnTouchListener() {
             private WindowManager.LayoutParams paramsF = params;
-            private float initialX;
-            private float initialTouchX;
-            private int initialY;
+            private boolean isMoved = false;
+            private float initialY;
             private float initialTouchY;
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
-                        initialX = event.getX();
+                        initialY = event.getY();
+                        isMoved = false;
                         break;
                     case MotionEvent.ACTION_UP:
-                        Point size = new Point();
-                        wm.getDefaultDisplay().getSize(size);
-                        initialY = paramsF.y;
-                        initialTouchY = event.getRawY();
-                        initialTouchX = event.getX();
-                        float deltaX = initialTouchX - initialX;
-                        if (Math.abs(deltaX) > 100)
-                        {
-                            //paramsF.x = size.x - mOverlayView.getWidth();
-                            paramsF.x = size.x - draweeView.getWidth();
-                            //mOverlayView.animate().translationX(paramsF.x);
-                            draweeView.animate().translationX(paramsF.x);
-                            //wm.updateViewLayout(mOverlayView, paramsF);
-                            wm.updateViewLayout(draweeView, paramsF);
-                            //send to analytics - swipe event
-                            //TapAnalytics.sendAnalyticsSwipeOnIcon(TapAccessibilityService.mTracker);
-                            //Remove icon and fetch results from server
+                        if(isMoved == false) {
                             TapAnalytics.sendAnalyticsSwipeOnIcon(TapAccessibilityService.mTracker);
                             removeOverlay();
                             try {
@@ -141,10 +131,17 @@ public class IconOverlay{
                         }
                         break;
                     case MotionEvent.ACTION_MOVE:
-                        size = new Point();
-                        wm.getDefaultDisplay().getSize(size);
-                        paramsF.y = size.y - (int)event.getRawY();
-                        wm.updateViewLayout(draweeView, paramsF);
+                        initialTouchY = event.getY();
+                        float deltaY = initialTouchY - initialY;
+                        if (Math.abs(deltaY) > 100) {
+                            isMoved = true;
+                        }
+                        if(isMoved == true){
+                            Point size = new Point();
+                            wm.getDefaultDisplay().getSize(size);
+                            paramsF.y = size.y - (int) event.getRawY();
+                            wm.updateViewLayout(draweeView, paramsF);
+                        }
                         break;
                 }
                 return false;
