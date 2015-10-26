@@ -64,8 +64,7 @@ public class ProductCardAdapter extends RecyclerView.Adapter<ProductCardAdapter.
             productTitle = productTitle.concat("...");
         }
         holder.setProductName(productTitle);
-        holder.setAspectRatio(product.aspectRatio);
-        holder.setImgProductImage(product.imageUrl);
+        holder.setImgProductImage(product.imageUrl, product.aspectRatio);
         holder.setProductCost(title.toString());
         holder.setProductLandingPage(product.productUrl);
     }
@@ -81,7 +80,6 @@ public class ProductCardAdapter extends RecyclerView.Adapter<ProductCardAdapter.
         private TextView mTextProductCost;
         private SimpleDraweeView mImgProductImage;
         private String mProductLandingPage;
-        private String mAspectRatio;
 
         public CustomViewHolder(View itemView, ProductCardAdapter adapter) {
             super(itemView);
@@ -109,13 +107,9 @@ public class ProductCardAdapter extends RecyclerView.Adapter<ProductCardAdapter.
             mProductLandingPage = productLandingPage;
         }
 
-        public void setAspectRatio(String aspectRatio) {
-            mAspectRatio = aspectRatio;
-        }
-
-        public void setImgProductImage(String productImage) {
-            if (mAspectRatio != null) {
-                float aspectRatio = Float.valueOf(mAspectRatio);
+        public void setImgProductImage(String productImage, String aspectRatioStr) {
+            if (aspectRatioStr != null) {
+                float aspectRatio = Float.valueOf(aspectRatioStr);
                 mImgProductImage.setAspectRatio(aspectRatio);
                 GenericDraweeHierarchyBuilder builder =
                         new GenericDraweeHierarchyBuilder(mContext.getResources());

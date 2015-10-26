@@ -135,8 +135,6 @@
         <item name="android:paddingTop">@dimen/carddemo_keyline_1_minus_8dp</item>
         <item name="android:paddingBottom">@dimen/carddemo_keyline_1_minus_8dp</item>
     </style>
-    <style name="spinner_style" >
-        <item name="android:background">@drawable/spinner_bg</item>
-    </style>
+
 
 </resources>

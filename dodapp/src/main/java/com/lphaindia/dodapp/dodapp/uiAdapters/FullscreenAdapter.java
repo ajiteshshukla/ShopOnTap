@@ -2,8 +2,10 @@ package com.lphaindia.dodapp.dodapp.uiAdapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -70,25 +72,12 @@ public class FullscreenAdapter extends RecyclerView.Adapter<FullscreenAdapter.Cu
     @Override
     public void onBindViewHolder(CustomViewHolder holder, int position) {
         Product product = mProductList.get(position);
-        StringBuilder title = new StringBuilder();
-        if (Float.parseFloat(product.sellingPrice) <= 0) {
-            title.append("FREE");
-        } else {
-            String sellingPrice = product.sellingPrice;
-            if (sellingPrice.contains("."))
-                sellingPrice = sellingPrice.substring(0, sellingPrice.indexOf("."));
-            if (Float.parseFloat(product.discountPercentage) > 0) {
-                int discount = Math.round(Float.parseFloat(product.discountPercentage));
-                title.append(product.currency + " " + sellingPrice + "          " + discount + "% OFF");
-            } else {
-                title.append(product.currency + " " + sellingPrice);
-            }
-        }
-        holder.setAspectRatio(product.aspectRatio);
-        holder.setImgProductImage(product.imageUrl);
-        holder.setProductPrice(title.toString());
+        holder.setImgProductImage(product.imageUrl, product.aspectRatio);
+        holder.setProductPrice(product.sellingPrice);
         holder.setProductName(product.title);
         holder.setProductLandingPage(product.productUrl);
+        holder.setDiscount(product.discountPercentage, product.maximumRetailPrice);
+        holder.setProductMerchant(product.affiliate);
     }
 
     @Override
@@ -101,14 +90,19 @@ public class FullscreenAdapter extends RecyclerView.Adapter<FullscreenAdapter.Cu
         private TextView mTextProductName;
         private TextView mTextProductPrice;
         private SimpleDraweeView mImgProductImage;
+        private TextView mTextDiscount;
+        private TextView mTextProductMrp;
         private String mProductLandingPage;
-        private String mAspectRatio;
+        private TextView mTxtMerchantName;
 
         public CustomViewHolder(View itemView) {
             super(itemView);
             itemView.setOnClickListener(this);
             mTextProductName = (TextView) itemView.findViewById(R.id.product_title);
             mTextProductPrice = (TextView) itemView.findViewById(R.id.product_price);
+            mTextDiscount = (TextView) itemView.findViewById(R.id.product_discount);
+            mTextProductMrp = (TextView) itemView.findViewById(R.id.product_mrp);
+            mTxtMerchantName = (TextView) itemView.findViewById(R.id.product_merchant);
             mImgProductImage = (SimpleDraweeView) itemView.findViewById(R.id.product_image);
         }
 
@@ -120,10 +114,32 @@ public class FullscreenAdapter extends RecyclerView.Adapter<FullscreenAdapter.Cu
             mCtxt.startActivity(i);
         }
 
-        public void setProductPrice(CharSequence productPrice) {
-            mTextProductPrice.setText(productPrice);
+        public void setProductPrice(String productPrice) {
+            StringBuilder title = new StringBuilder();
+            if (Float.parseFloat(productPrice) <= 0) {
+                title.append("FREE");
+            } else {
+                title.append("₹ " + productPrice);
+            }
+            mTextProductPrice.setText(title.toString());
         }
 
+        public void setProductMerchant(String merchant) {
+            mTxtMerchantName.setText(merchant.toUpperCase());
+        }
+
+        public void setDiscount(String discount, String mrp){
+            if (Float.parseFloat(discount) > 0) {
+                mTextDiscount.setVisibility(View.VISIBLE);
+                mTextProductMrp.setVisibility(View.VISIBLE);
+                mTextDiscount.setText(discount + "% OFF");
+                mTextProductMrp.setText("₹ " + mrp);
+                mTextProductMrp.setPaintFlags(mTextProductMrp.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            } else {
+                mTextDiscount.setVisibility(View.GONE);
+                mTextProductMrp.setVisibility(View.GONE);
+            }
+        }
         public void setProductName(CharSequence productName) {
             mTextProductName.setText(productName);
         }
@@ -132,14 +148,11 @@ public class FullscreenAdapter extends RecyclerView.Adapter<FullscreenAdapter.Cu
             mProductLandingPage = productLandingPage;
         }
 
-        public void setAspectRatio(String aspectRatio) {
-            mAspectRatio = aspectRatio;
-        }
-
-        public void setImgProductImage(String productImage) {
-            if (mAspectRatio != null) {
-                float aspectRatio = Float.valueOf(mAspectRatio);
+        public void setImgProductImage(String productImage, String aspectRatiostr) {
+            if (aspectRatiostr != null) {
+                float aspectRatio = Float.valueOf(aspectRatiostr);
                 mImgProductImage.setAspectRatio(aspectRatio);
+            }
                 GenericDraweeHierarchyBuilder builder =
                         new GenericDraweeHierarchyBuilder(mCtxt.getResources());
                 GenericDraweeHierarchy hierarchy = builder
@@ -147,7 +160,7 @@ public class FullscreenAdapter extends RecyclerView.Adapter<FullscreenAdapter.Cu
                         .build();
                 mImgProductImage.setImageURI(Uri.parse(productImage));
                 mImgProductImage.setHierarchy(hierarchy);
-            }
+
         }
     }
 }
