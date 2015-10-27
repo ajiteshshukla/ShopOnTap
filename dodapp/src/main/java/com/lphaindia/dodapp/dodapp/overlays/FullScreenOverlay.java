@@ -25,8 +25,6 @@ public class FullScreenOverlay{
     private static FullScreenOverlay mInstance = null;
     RelativeLayout mOverlayView;
     private RecyclerView mList;
-    private RecyclerView mFullScreenList;
-    private TextView mNoItemsTextView;
     private FullscreenAdapter mAdapter;
     private List<Product> mItems;
     private static Context mContext;

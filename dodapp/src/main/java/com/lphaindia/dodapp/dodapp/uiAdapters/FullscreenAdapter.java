@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.graphics.Paint;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -73,10 +72,9 @@ public class FullscreenAdapter extends RecyclerView.Adapter<FullscreenAdapter.Cu
     public void onBindViewHolder(CustomViewHolder holder, int position) {
         Product product = mProductList.get(position);
         holder.setImgProductImage(product.imageUrl, product.aspectRatio);
-        holder.setProductPrice(product.sellingPrice);
+        holder.setProductPrice(product.sellingPrice, product.discountPercentage, product.maximumRetailPrice);
         holder.setProductName(product.title);
         holder.setProductLandingPage(product.productUrl);
-        holder.setDiscount(product.discountPercentage, product.maximumRetailPrice);
         holder.setProductMerchant(product.affiliate);
     }
 
@@ -89,20 +87,18 @@ public class FullscreenAdapter extends RecyclerView.Adapter<FullscreenAdapter.Cu
     public class CustomViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private TextView mTextProductName;
         private TextView mTextProductPrice;
-        private SimpleDraweeView mImgProductImage;
-        private TextView mTextDiscount;
         private TextView mTextProductMrp;
+        private SimpleDraweeView mImgProductImage;
         private String mProductLandingPage;
-        private TextView mTxtMerchantName;
+        private SimpleDraweeView mLogoMerchantName;
 
         public CustomViewHolder(View itemView) {
             super(itemView);
             itemView.setOnClickListener(this);
             mTextProductName = (TextView) itemView.findViewById(R.id.product_title);
             mTextProductPrice = (TextView) itemView.findViewById(R.id.product_price);
-            mTextDiscount = (TextView) itemView.findViewById(R.id.product_discount);
+            mLogoMerchantName = (SimpleDraweeView) itemView.findViewById(R.id.product_merchant);
             mTextProductMrp = (TextView) itemView.findViewById(R.id.product_mrp);
-            mTxtMerchantName = (TextView) itemView.findViewById(R.id.product_merchant);
             mImgProductImage = (SimpleDraweeView) itemView.findViewById(R.id.product_image);
         }
 
@@ -114,32 +110,36 @@ public class FullscreenAdapter extends RecyclerView.Adapter<FullscreenAdapter.Cu
             mCtxt.startActivity(i);
         }
 
-        public void setProductPrice(String productPrice) {
+        public void setProductPrice(String productPrice, String discount, String mrp) {
             StringBuilder title = new StringBuilder();
             if (Float.parseFloat(productPrice) <= 0) {
                 title.append("FREE");
             } else {
-                title.append("₹ " + productPrice);
+                if (Float.parseFloat(discount) > 0) {
+                    mTextProductMrp.setVisibility(View.VISIBLE);
+                    mTextProductMrp.setText("₹ " + mrp);
+                    mTextProductMrp.setPaintFlags(mTextProductMrp.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                    title.append(productPrice);
+                }else{
+                    mTextProductMrp.setVisibility(View.GONE);
+                    title.append("₹ " + productPrice);
+                }
+
             }
             mTextProductPrice.setText(title.toString());
         }
 
         public void setProductMerchant(String merchant) {
-            mTxtMerchantName.setText(merchant.toUpperCase());
+            GenericDraweeHierarchyBuilder builder =
+                    new GenericDraweeHierarchyBuilder(mCtxt.getResources());
+            GenericDraweeHierarchy hierarchy = builder
+                    .setActualImageScaleType(ScalingUtils.ScaleType.FIT_CENTER)
+                    .build();
+            String hardcoded = "http://techclones.com/wp-content/uploads/2014/11/Flipkart-app.png";
+            mLogoMerchantName.setImageURI(Uri.parse(hardcoded));
+            mLogoMerchantName.setHierarchy(hierarchy);
         }
 
-        public void setDiscount(String discount, String mrp){
-            if (Float.parseFloat(discount) > 0) {
-                mTextDiscount.setVisibility(View.VISIBLE);
-                mTextProductMrp.setVisibility(View.VISIBLE);
-                mTextDiscount.setText(discount + "% OFF");
-                mTextProductMrp.setText("₹ " + mrp);
-                mTextProductMrp.setPaintFlags(mTextProductMrp.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-            } else {
-                mTextDiscount.setVisibility(View.GONE);
-                mTextProductMrp.setVisibility(View.GONE);
-            }
-        }
         public void setProductName(CharSequence productName) {
             mTextProductName.setText(productName);
         }
@@ -153,13 +153,13 @@ public class FullscreenAdapter extends RecyclerView.Adapter<FullscreenAdapter.Cu
                 float aspectRatio = Float.valueOf(aspectRatiostr);
                 mImgProductImage.setAspectRatio(aspectRatio);
             }
-                GenericDraweeHierarchyBuilder builder =
-                        new GenericDraweeHierarchyBuilder(mCtxt.getResources());
-                GenericDraweeHierarchy hierarchy = builder
-                        .setActualImageScaleType(ScalingUtils.ScaleType.FIT_CENTER)
-                        .build();
-                mImgProductImage.setImageURI(Uri.parse(productImage));
-                mImgProductImage.setHierarchy(hierarchy);
+            GenericDraweeHierarchyBuilder builder =
+                    new GenericDraweeHierarchyBuilder(mCtxt.getResources());
+            GenericDraweeHierarchy hierarchy = builder
+                    .setActualImageScaleType(ScalingUtils.ScaleType.FIT_CENTER)
+                    .build();
+            mImgProductImage.setImageURI(Uri.parse(productImage));
+            mImgProductImage.setHierarchy(hierarchy);
 
         }
     }
