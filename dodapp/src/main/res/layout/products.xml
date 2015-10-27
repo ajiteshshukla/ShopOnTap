@@ -1,12 +1,12 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:background="@color/light_primary">
     <LinearLayout
             android:id="@+id/discountlayout"
-            android:layout_height="70dp"
+            android:layout_height="60dp"
             android:layout_width="match_parent"
-            android:background="@drawable/border"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp">
         <TextView
@@ -15,11 +15,9 @@
                 android:layout_width="0dp"
                 android:paddingTop="28dp"
                 android:paddingLeft="8dp"
-                android:textColor="#FFFFFF"
-                android:textStyle="italic"
+                android:textColor="@color/text_primary"
                 android:text="Discount "
-                android:textSize="@dimen/abc_text_size_title_material"
-                android:fontFamily="@string/abc_action_bar_home_description"/>
+                android:textSize="@dimen/abc_text_size_title_material"/>
         <com.rey.material.widget.Slider
                 android:id="@+id/discount_slider"
                 android:layout_weight="70"
@@ -32,11 +30,10 @@
                 app:sl_maxValue="80"
                 app:sl_value="0"
                 app:sl_stepValue="5"
-                app:sl_primaryColor="#FFFFFF"
-                app:sl_secondaryColor="#FFFFFF"
+                app:sl_primaryColor="@color/primary"
+                app:sl_secondaryColor="@color/primary"
                 app:sl_discreteMode="true"
-                app:sl_textColor="#00CC99"
-                android:layout_below="@+id/searchbox"/>
+                app:sl_textColor="#FFF"/>
     </LinearLayout>
 
     <LinearLayout android:layout_height="5dp"
@@ -48,13 +45,14 @@
             android:layout_height="match_parent"
             android:layout_centerInParent="true"
             android:layout_below="@+id/discountlayout"
+            android:paddingTop="10dp"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"/>
     <com.rey.material.widget.SnackBar
             android:id="@+id/snackbarproduct"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:sb_backgroundColor="#00CC99"
+            app:sb_backgroundColor="@color/light_primary"
             app:sb_removeOnDismiss="true"/>
 
 </RelativeLayout>
