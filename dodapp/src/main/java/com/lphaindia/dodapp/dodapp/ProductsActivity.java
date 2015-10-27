@@ -7,12 +7,10 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.speech.RecognizerIntent;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.*;
 import android.widget.SearchView;
 import android.widget.Toast;
@@ -22,15 +20,11 @@ import com.lphaindia.dodapp.dodapp.network.NetworkTask;
 import com.lphaindia.dodapp.dodapp.overlays.IconOverlay;
 import com.lphaindia.dodapp.dodapp.uiAdapters.ProductCardAdapter;
 import com.lphaindia.dodapp.dodapp.utils.Utility;
-import com.quinny898.library.persistentsearch.SearchBox;
-import com.quinny898.library.persistentsearch.SearchResult;
 import com.rey.material.widget.Slider;
 import com.rey.material.widget.SnackBar;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static android.view.Menu.NONE;
 
 /**
  * Created by aasha.medhi on 10/8/15.
@@ -188,7 +182,7 @@ public class ProductsActivity extends AppCompatActivity implements  Slider.OnPos
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main_menu, menu);
+        inflater.inflate(R.menu.products_menu, menu);
         // Associate searchable configuration with the SearchView
         SearchManager searchManager =
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);

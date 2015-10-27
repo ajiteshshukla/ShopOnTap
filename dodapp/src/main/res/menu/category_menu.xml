@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item android:id="@+id/subcategory_menu"
-          android:title="Subcategories"
-          android:icon="@drawable/menu"
+    <item android:id="@+id/menu"
+          android:title="Menu"
+          android:icon="@drawable/ic_menu"
           app:showAsAction="always">
         <menu>
-            <item android:id="@+id/item1"
-                  android:title="Placeholder"
+            <item android:id="@+id/Help"
+                  android:title="Help"
                   android:titleCondensed="false">
             </item>
         </menu>

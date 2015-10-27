@@ -1,8 +1,9 @@
 package com.lphaindia.dodapp.dodapp;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.app.ProgressDialog;
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -12,17 +13,17 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.provider.Settings;
-import android.speech.RecognizerIntent;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AlertDialog;
-import android.view.View;
+import android.support.v7.app.AppCompatActivity;
+import android.view.*;
+import android.widget.SearchView;
 import com.crittercism.app.Crittercism;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.lphaindia.dodapp.dodapp.data.Category;
 import com.lphaindia.dodapp.dodapp.network.NetworkTask;
 import com.lphaindia.dodapp.dodapp.uiAdapters.CategoryCard;
 import com.lphaindia.dodapp.dodapp.utils.Utility;
-import com.quinny898.library.persistentsearch.SearchBox;
-import com.quinny898.library.persistentsearch.SearchResult;
 import com.rey.material.widget.SnackBar;
 import it.gmariotti.cardslib.library.internal.Card;
 import it.gmariotti.cardslib.library.internal.CardGridArrayAdapter;
@@ -32,10 +33,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class CategoryActivity extends Activity implements SearchBox.SearchListener {
-    SearchBox searchBox;
+public class CategoryActivity extends AppCompatActivity {
+
     private ProgressDialog progressDialog;
     private SnackBar snackBar;
+    SearchView searchView;
+
     @Override
     public void onCreate(Bundle savedInstanceState, PersistableBundle persistentState) {
         super.onCreate(savedInstanceState, null);
@@ -62,11 +65,6 @@ public class CategoryActivity extends Activity implements SearchBox.SearchListen
             AppConstants.isFrescoInitialized = true;
         }
 
-        searchBox = (SearchBox)findViewById(R.id.searchbox);
-        searchBox.enableVoiceRecognition(this);
-        searchBox.setSearchListener(this);
-        searchBox.setSaveEnabled(true);
-        searchBox.setMenuVisibility(View.INVISIBLE);
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Fetching Trending Categories");
 
@@ -95,44 +93,6 @@ public class CategoryActivity extends Activity implements SearchBox.SearchListen
             return true;
         }
         return false;
-    }
-
-    @Override
-    public void onSearchOpened() {
-    }
-
-    @Override
-    public void onSearchCleared() {
-    }
-
-    @Override
-    public void onSearchClosed() {
-    }
-
-    @Override
-    public void onSearchTermChanged(String s) {
-    }
-
-    @Override
-    public void onSearch(String s) {
-        //Launch product activity with the search string name
-        Intent i=new Intent(CategoryActivity.this, ProductsActivity.class);
-        i.putExtra(AppConstants.KEY_SEARCH, s);
-        startActivity(i);
-    }
-
-    @Override
-    public void onResultClick(SearchResult searchResult) {
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 1234 && resultCode == RESULT_OK) {
-            ArrayList<String> matches = data
-                    .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-            searchBox.populateEditText(matches.get(0));
-        }
-        super.onActivityResult(requestCode, resultCode, data);
     }
 
     class FetchCategories extends AsyncTask<Void, Void, String> {
@@ -172,7 +132,7 @@ public class CategoryActivity extends Activity implements SearchBox.SearchListen
                     } else {
                         snackBar.show();
                     }
-                } catch(Exception e) {
+                } catch (Exception e) {
                     snackBar.show();
                     e.printStackTrace();
                 }
@@ -191,7 +151,7 @@ public class CategoryActivity extends Activity implements SearchBox.SearchListen
                     @Override
                     public void onClick(Card card, View view) {
                         //Launch product activity with the category name
-                        Intent i=new Intent(CategoryActivity.this, ProductsActivity.class);
+                        Intent i = new Intent(CategoryActivity.this, ProductsActivity.class);
                         i.putExtra(AppConstants.KEY_CATEGORY, ((CategoryCard) card).getCategory().getName());
                         startActivity(i);
                     }
@@ -229,9 +189,74 @@ public class CategoryActivity extends Activity implements SearchBox.SearchListen
     @Override
     public void onResume() {
         super.onResume();
-        if (isAccessibilityEnabled() == true
-                && Build.VERSION.SDK_INT >= 23) {
-            displayDialogForAndroidM();
+        if (isAccessibilityEnabled() == true) {
+            if (Build.VERSION.SDK_INT >= 23) {
+                displayDialogForAndroidM();
+            }
+            invalidateOptionsMenu();
         }
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.category_menu, menu);
+        // Associate searchable configuration with the SearchView
+        SearchManager searchManager =
+                (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        MenuItem searchMenuItem = menu.findItem(R.id.search);
+        searchView = (SearchView) MenuItemCompat.getActionView(searchMenuItem);
+        searchView.setSearchableInfo(
+                searchManager.getSearchableInfo(getComponentName()));
+        searchView.clearFocus();
+        searchMenuItem
+                .setShowAsAction(MenuItemCompat.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW
+                        | MenuItemCompat.SHOW_AS_ACTION_ALWAYS);
+        return true;
+
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        SubMenu searchMenuItem = menu.findItem(R.id.menu).getSubMenu();
+        searchMenuItem.clear();
+        if (isAccessibilityEnabled() == false) {
+            MenuItem itemEnableAccesibility = searchMenuItem.add(0, 0, 0, "Enable Accesibility");
+            itemEnableAccesibility.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    Intent intent = new Intent(android.provider.Settings.ACTION_ACCESSIBILITY_SETTINGS);
+                    CategoryActivity.this.startActivity(intent);
+                    return true;
+                }
+            });
+        }
+        MenuItem itemHelp = searchMenuItem.add(0, 0, 0, "View Tutorial");
+        itemHelp.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+
+                return true;
+            }
+        });
+        return true;
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        setIntent(intent);
+        handleIntent(intent);
+    }
+
+    private void handleIntent(Intent intent) {
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            String query = intent.getStringExtra(SearchManager.QUERY);
+            searchView.setQuery(query, false);
+            searchView.clearFocus();
+            Intent i = new Intent(CategoryActivity.this, ProductsActivity.class);
+            i.putExtra(AppConstants.KEY_SEARCH, query);
+            startActivity(i);
+        }
+    }
+
 }

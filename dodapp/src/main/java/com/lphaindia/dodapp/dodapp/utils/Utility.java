@@ -30,12 +30,12 @@ public class Utility {
             return null;
         }
     }
-    public static List<SubCategory> getSubCategoryListFromJSON(String productListJSON) {
+    public static List<SubCategory> getSubCategoryListFromJSON(String subcategoryListJSON) {
         try {
             Gson gson = new GsonBuilder().create();
             Type type = new TypeToken<List<SubCategory>>() {
             }.getType();
-            JSONArray subCategoryListInfo = new JSONObject(productListJSON).getJSONArray("subCategoryList");
+            JSONArray subCategoryListInfo = new JSONObject(subcategoryListJSON).getJSONArray("subCategoryList");
             List<SubCategory> subCategories = gson.fromJson(subCategoryListInfo.toString(), type);
             return subCategories;
         }catch (Exception e){
