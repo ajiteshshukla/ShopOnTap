@@ -20,7 +20,7 @@
             android:id="@+id/snackbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:sb_backgroundColor="@color/light_primary"
+            app:sb_backgroundColor="@color/primary"
             app:sb_removeOnDismiss="true"/>
 
 </RelativeLayout>
