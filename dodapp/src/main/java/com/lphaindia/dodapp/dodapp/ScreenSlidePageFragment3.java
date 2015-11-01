@@ -31,8 +31,8 @@ public class ScreenSlidePageFragment3 extends Fragment implements View.OnClickLi
                 .setAutoPlayAnimations(true)
                 .build();
         draweeView.setController(controller);
-        draweeView.setMaxWidth(200);
-        draweeView.setMaxHeight(320);
+        draweeView.setMaxWidth(235);
+        draweeView.setMaxHeight(380);
         nextButton = (Button) rootView.findViewById(R.id.cont);
         if (ScreenSlidePagerActivity.AccessibilityExplored == true) {
             nextButton.setText("GO TO APP");

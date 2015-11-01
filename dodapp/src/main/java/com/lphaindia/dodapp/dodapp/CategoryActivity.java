@@ -235,7 +235,8 @@ public class CategoryActivity extends AppCompatActivity {
         itemHelp.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-
+                Intent intent = new Intent(CategoryActivity.this, TutorialActivity.class);
+                CategoryActivity.this.startActivity(intent);
                 return true;
             }
         });

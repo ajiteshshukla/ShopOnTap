@@ -3,5 +3,9 @@
     <string name="app_name">ShopOnTap</string>
     <string name="getting_similar_items">Hang On ! We are getting similar products for you</string>
     <string name="noitems">No items to display</string>
+    <string name="accessibilitydesc">ShopOnTap uses accessibility data to analyze and fetch similar products
+        for users across different E-Commerce applications. ShopOnTap collects product name and description.
 
+        ShopOnTap does not collect any personal data of the users.
+        Please enable accessibility to enjoy complete functionality of ShopOnTap</string>
 </resources>

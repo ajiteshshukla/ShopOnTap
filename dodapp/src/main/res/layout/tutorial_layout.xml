@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                android:background="#F5F6CE"
+                android:minHeight="1000dp">
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/tutorialcontent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+        <LinearLayout android:layout_width="match_parent"
+                      android:layout_height="match_parent"
+                      android:orientation="vertical">
+        <TextView style="?android:textAppearanceMedium"
+                  android:padding="16dp"
+                  android:lineSpacingMultiplier="1"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:textSize="@dimen/abc_text_size_title_material"
+                  android:textStyle="italic"
+                  android:text="How To Use ShopOnTap"/>
+        <TextView style="?android:textAppearanceMedium"
+                  android:padding="16dp"
+                  android:lineSpacingMultiplier="1.2"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:textSize="@dimen/abc_text_size_subhead_material"
+                  android:textStyle="italic"
+                  android:text="Please view the following demo: "/>
+        <RelativeLayout android:layout_height="500dp"
+                        android:layout_width="match_parent">
+            <ImageView android:id="@+id/tutorialbase"
+                       android:layout_height="match_parent"
+                       android:layout_width="match_parent"
+                       android:layout_centerHorizontal="true"
+                       android:src="@drawable/nexusbg"/>
+            <com.facebook.drawee.view.SimpleDraweeView android:id="@+id/tutorialintrogif_holder"
+                                                       android:layout_gravity="center"
+                                                       android:layout_height="415dp"
+                                                       android:layout_width="235dp"
+                                                       android:layout_centerInParent="true"/>
+        </RelativeLayout>
+            <TextView android:layout_height="10dp"
+                    android:layout_width="match_parent">
+            </TextView>
+        </LinearLayout>
+    </ScrollView>
+
+</RelativeLayout>

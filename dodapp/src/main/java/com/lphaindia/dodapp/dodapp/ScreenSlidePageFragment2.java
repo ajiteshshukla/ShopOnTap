@@ -25,12 +25,12 @@ public class ScreenSlidePageFragment2 extends Fragment implements View.OnClickLi
 
         DraweeView draweeView = (SimpleDraweeView) rootView.findViewById(R.id.introgif_holder);
         DraweeController controller = Fresco.newDraweeControllerBuilder()
-                .setUri(Uri.parse("res:///" + R.drawable.intro_gif_final))
+                .setUri(Uri.parse("res:///" + R.drawable.secondfraggif))
                 .setAutoPlayAnimations(true)
                 .build();
         draweeView.setController(controller);
-        draweeView.setMaxWidth(200);
-        draweeView.setMaxHeight(320);
+        draweeView.setMaxWidth(235);
+        draweeView.setMaxHeight(380);
         Button nextButton = (Button) rootView.findViewById(R.id.next2);
         nextButton.setOnClickListener(this);
         return rootView;

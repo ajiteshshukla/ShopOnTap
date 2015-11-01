@@ -3,7 +3,6 @@ package com.lphaindia.dodapp.dodapp.accessibilityFeatures;
 import android.accessibilityservice.AccessibilityService;
 import android.accessibilityservice.AccessibilityServiceInfo;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Build;
 import android.provider.Settings;
 import android.util.Log;
@@ -42,6 +41,7 @@ public class TapAccessibilityService extends AccessibilityService {
         //Check API level
         if(Build.VERSION.SDK_INT < 18) {
             //Log.d("dodapp ", "build version: " + Build.VERSION.SDK_INT );
+            //Log.d("dodapp", " " + event.getPackageName());
             return;
         } else if (Build.VERSION.SDK_INT >= 23) {
             if (!Settings.canDrawOverlays(this)) {
@@ -82,6 +82,12 @@ public class TapAccessibilityService extends AccessibilityService {
             //Log.d("dodapp", "from position 3");
             if (LoadingOverlay.getInstance(mContext).isOverlayShown()) {
                 LoadingOverlay.getInstance(mContext).removeOverlay();
+            }
+            if (FullScreenOverlay.getInstance(mContext).isOverlayShown()) {
+                FullScreenOverlay.getInstance(mContext).removeOverlay();
+            }
+            if (CarouselOverlay.getInstance(mContext).isOverlayShown()) {
+                CarouselOverlay.getInstance(mContext).removeOverlay();
             }
         } else {
             IconOverlay.getInstance(mContext).removeOverlay();

@@ -88,17 +88,17 @@ public class IconOverlay {
 
         // Create System overlay video
         final WindowManager.LayoutParams params = new WindowManager.LayoutParams(
-                90, 90,
+                90, 120,
                 WindowManager.LayoutParams.TYPE_SYSTEM_ALERT,
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
                         | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
                 PixelFormat.TRANSLUCENT);
         params.gravity = Gravity.BOTTOM | Gravity.RIGHT;
-        params.x = 0;
+        params.x = 10;
         params.y = 300;
         draweeView = new SimpleDraweeView(mContext);
         DraweeController controller = Fresco.newDraweeControllerBuilder()
-                .setUri(Uri.parse("res:///" + R.drawable.icon))
+                .setUri(Uri.parse("res:///" + R.drawable.sot4))
                 .setAutoPlayAnimations(true)
                 .build();
         draweeView.setController(controller);
