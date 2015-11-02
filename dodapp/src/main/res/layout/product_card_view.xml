@@ -9,7 +9,6 @@
                                     cardview:cardCornerRadius="8dp"
                                     cardview:cardBackgroundColor="#FFF"
                                     android:background="@drawable/border_cardbottom_fit"
-                                    android:foregroundTint="@color/accent"
                                     cardview:cardUseCompatPadding="true">
     <RelativeLayout
             android:layout_width="match_parent"
