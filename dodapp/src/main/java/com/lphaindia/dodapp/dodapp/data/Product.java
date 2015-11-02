@@ -18,8 +18,26 @@ public class Product {
     public String productUrl;
     public String affiliate;
     public String aspectRatio;
+    public String affiliateLogo;
+    public String description;
     public Product(){
 
+    }
+
+    public String getAffiliateLogo() {
+        return affiliateLogo;
+    }
+
+    public void setAffiliateLogo(String affiliateLogo) {
+        this.affiliateLogo = affiliateLogo;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     @Override

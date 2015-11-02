@@ -76,7 +76,7 @@ public class FullscreenAdapter extends RecyclerView.Adapter<FullscreenAdapter.Cu
         holder.setProductPrice(product.sellingPrice, product.discountPercentage, product.maximumRetailPrice);
         holder.setProductName(product.title);
         holder.setProductLandingPage(product.productUrl);
-        holder.setProductMerchant(product.affiliate);
+        holder.setMerchantLogo(product.affiliateLogo);
     }
 
     @Override
@@ -131,14 +131,13 @@ public class FullscreenAdapter extends RecyclerView.Adapter<FullscreenAdapter.Cu
             mTextProductPrice.setText(title.toString());
         }
 
-        public void setProductMerchant(String merchant) {
+        public void setMerchantLogo(String merchant) {
             GenericDraweeHierarchyBuilder builder =
                     new GenericDraweeHierarchyBuilder(mCtxt.getResources());
             GenericDraweeHierarchy hierarchy = builder
                     .setActualImageScaleType(ScalingUtils.ScaleType.FIT_CENTER)
                     .build();
-            String hardcoded = "http://techclones.com/wp-content/uploads/2014/11/Flipkart-app.png";
-            mLogoMerchantName.setImageURI(Uri.parse(hardcoded));
+            mLogoMerchantName.setImageURI(Uri.parse(merchant));
             mLogoMerchantName.setHierarchy(hierarchy);
         }
 

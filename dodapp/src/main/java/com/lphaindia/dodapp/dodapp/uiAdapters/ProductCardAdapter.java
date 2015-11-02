@@ -5,17 +5,14 @@ import android.content.Intent;
 import android.graphics.Paint;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.TextView;
-import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.drawee.generic.GenericDraweeHierarchy;
 import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder;
-import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.lphaindia.dodapp.dodapp.R;
 import com.lphaindia.dodapp.dodapp.data.Product;
@@ -49,7 +46,7 @@ public class ProductCardAdapter extends RecyclerView.Adapter<ProductCardAdapter.
         holder.setProductPrice(product.sellingPrice, product.discountPercentage, product.maximumRetailPrice);
         holder.setProductName(product.title);
         holder.setProductLandingPage(product.productUrl);
-        holder.setProductMerchant(product.affiliate);
+        holder.setProductMerchantLogo(product.affiliateLogo);
     }
 
     @Override
@@ -108,14 +105,13 @@ public class ProductCardAdapter extends RecyclerView.Adapter<ProductCardAdapter.
             mTextProductPrice.setText(title.toString());
         }
 
-        public void setProductMerchant(String merchant) {
+        public void setProductMerchantLogo(String merchant) {
             GenericDraweeHierarchyBuilder builder =
                     new GenericDraweeHierarchyBuilder(mCtxt.getResources());
             GenericDraweeHierarchy hierarchy = builder
                     .setActualImageScaleType(ScalingUtils.ScaleType.FIT_CENTER)
                     .build();
-            String hardcoded = "http://techclones.com/wp-content/uploads/2014/11/Flipkart-app.png";
-            mLogoMerchantName.setImageURI(Uri.parse(hardcoded));
+            mLogoMerchantName.setImageURI(Uri.parse(merchant));
             mLogoMerchantName.setHierarchy(hierarchy);
         }
 
