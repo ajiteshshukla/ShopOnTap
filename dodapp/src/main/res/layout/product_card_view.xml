@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
                                     xmlns:cardview="http://schemas.android.com/apk/res-auto"
+                                    xmlns:app="http://schemas.android.com/tools"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:layout_margin="8dp"
@@ -8,7 +9,8 @@
                                     cardview:cardCornerRadius="8dp"
                                     cardview:cardBackgroundColor="#FFF"
                                     android:background="@drawable/border_cardbottom_fit"
-                                    android:foregroundTint="@color/accent">
+                                    android:foregroundTint="@color/accent"
+                                    cardview:cardUseCompatPadding="true">
     <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -53,9 +55,10 @@
                 android:layout_below="@id/header"/>
 
         <RelativeLayout android:layout_width="match_parent"
-                      android:layout_height="60dp"
-                      android:background="@color/dark_primary"
-                      android:layout_alignParentBottom="true">
+                        android:layout_height="60dp"
+                        android:background="@color/dark_primary"
+                        android:layout_below="@+id/product_image"
+                        android:layout_alignParentBottom="true">
 
             <TextView
                     android:id="@+id/product_mrp"

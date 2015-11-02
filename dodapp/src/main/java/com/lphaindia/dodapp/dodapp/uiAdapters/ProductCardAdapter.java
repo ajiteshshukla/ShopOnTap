@@ -106,13 +106,15 @@ public class ProductCardAdapter extends RecyclerView.Adapter<ProductCardAdapter.
         }
 
         public void setProductMerchantLogo(String merchant) {
-            GenericDraweeHierarchyBuilder builder =
-                    new GenericDraweeHierarchyBuilder(mCtxt.getResources());
-            GenericDraweeHierarchy hierarchy = builder
-                    .setActualImageScaleType(ScalingUtils.ScaleType.FIT_CENTER)
-                    .build();
-            mLogoMerchantName.setImageURI(Uri.parse(merchant));
-            mLogoMerchantName.setHierarchy(hierarchy);
+            if(merchant != null) {
+                GenericDraweeHierarchyBuilder builder =
+                        new GenericDraweeHierarchyBuilder(mCtxt.getResources());
+                GenericDraweeHierarchy hierarchy = builder
+                        .setActualImageScaleType(ScalingUtils.ScaleType.FIT_CENTER)
+                        .build();
+                mLogoMerchantName.setImageURI(Uri.parse(merchant));
+                mLogoMerchantName.setHierarchy(hierarchy);
+            }
         }
 
         public void setProductName(CharSequence productName) {

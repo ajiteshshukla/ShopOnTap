@@ -132,13 +132,15 @@ public class FullscreenAdapter extends RecyclerView.Adapter<FullscreenAdapter.Cu
         }
 
         public void setMerchantLogo(String merchant) {
-            GenericDraweeHierarchyBuilder builder =
-                    new GenericDraweeHierarchyBuilder(mCtxt.getResources());
-            GenericDraweeHierarchy hierarchy = builder
-                    .setActualImageScaleType(ScalingUtils.ScaleType.FIT_CENTER)
-                    .build();
-            mLogoMerchantName.setImageURI(Uri.parse(merchant));
-            mLogoMerchantName.setHierarchy(hierarchy);
+            if(merchant != null) {
+                GenericDraweeHierarchyBuilder builder =
+                        new GenericDraweeHierarchyBuilder(mCtxt.getResources());
+                GenericDraweeHierarchy hierarchy = builder
+                        .setActualImageScaleType(ScalingUtils.ScaleType.FIT_CENTER)
+                        .build();
+                mLogoMerchantName.setImageURI(Uri.parse(merchant));
+                mLogoMerchantName.setHierarchy(hierarchy);
+            }
         }
 
         public void setProductName(CharSequence productName) {
