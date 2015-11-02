@@ -13,7 +13,7 @@ public final class AppConstants {
     public static final String REQUEST_CATEGORY = "categorylist";
     public static final String REQUEST_PRODUCTS = "productlist";
     public static final String REQUEST_SEARCH = "keywordsearch";
-    public static final String REQUEST_URL = "http://10.14.123.252:8080/Tap/ShopOnTap";
+    public static final String REQUEST_URL = "http://shopontapserver.bitnamiapp.com/Tap/ShopOnTap";
 
     public static final int KEYWORD_DEPTH = 3;
 
