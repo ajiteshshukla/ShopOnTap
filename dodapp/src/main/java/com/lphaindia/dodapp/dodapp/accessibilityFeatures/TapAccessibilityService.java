@@ -66,6 +66,20 @@ public class TapAccessibilityService extends AccessibilityService {
     }
 
     public void updateOverlayOnWindowChange(AccessibilityEvent event) {
+        if (event.getPackageName() == null) {
+            IconOverlay.getInstance(mContext).removeOverlay();
+            if (LoadingOverlay.getInstance(mContext).isOverlayShown()) {
+                LoadingOverlay.getInstance(mContext).removeOverlay();
+            }
+            if (CarouselOverlay.getInstance(mContext).isOverlayShown()) {
+                CarouselOverlay.getInstance(mContext).removeOverlay();
+            }
+            if (FullScreenOverlay.getInstance(mContext).isOverlayShown()) {
+                FullScreenOverlay.getInstance(mContext).removeOverlay();
+            }
+            return;
+        }
+
         if (event.getPackageName().toString().contains(mContext.getPackageName())) {
             if (LoadingOverlay.getInstance(mContext).isOverlayShown()) {
                 LoadingOverlay.getInstance(mContext).removeOverlay();
