@@ -34,16 +34,63 @@
                        android:layout_width="match_parent"
                        android:layout_centerHorizontal="true"
                        android:src="@drawable/nexusbg"/>
-            <com.facebook.drawee.view.SimpleDraweeView android:id="@+id/tutorialintrogif_holder"
-                                                       android:layout_gravity="center"
-                                                       android:layout_height="415dp"
-                                                       android:layout_width="235dp"
-                                                       android:layout_centerInParent="true"/>
+            <ImageView android:id="@+id/intro_background"
+                       android:src="@drawable/secondfragmentnew"
+                       android:layout_gravity="center"
+                       android:layout_height="415dp"
+                       android:layout_width="235dp"
+                       android:visibility="visible"
+                       android:layout_centerInParent="true"/>
+            <ImageView android:id="@+id/app_background"
+                       android:src="@drawable/myntraprod"
+                       android:layout_gravity="center"
+                       android:layout_height="415dp"
+                       android:layout_width="235dp"
+                       android:visibility="invisible"
+                       android:layout_centerInParent="true"/>
+            <ImageView android:id="@+id/myntra_suggestion"
+                       android:src="@drawable/myntraprodsuggestion"
+                       android:layout_gravity="center"
+                       android:layout_height="415dp"
+                       android:layout_width="235dp"
+                       android:visibility="invisible"
+                       android:layout_centerInParent="true"/>
+            <ImageView android:id="@+id/myntralogo"
+                       android:src="@drawable/myntramainlogo"
+                       android:paddingLeft="100dp"
+                       android:paddingRight="100dp"
+                       android:layout_gravity="center"
+                       android:layout_height="80dp"
+                       android:layout_width="match_parent"
+                       android:visibility="invisible"
+                       android:layout_centerInParent="true"/>
+            <ImageView android:id="@+id/sot_small"
+                       android:src="@drawable/sot_small"
+                       android:layout_gravity="center"
+                       android:layout_height="150dp"
+                       android:layout_width="150dp"
+                       android:visibility="invisible"
+                       android:layout_alignParentRight="true"
+                       android:layout_alignParentBottom="true"
+                       android:paddingRight="75dp"
+                       android:paddingBottom="100dp"/>
         </RelativeLayout>
             <TextView android:layout_height="10dp"
                     android:layout_width="match_parent">
             </TextView>
         </LinearLayout>
     </ScrollView>
+    <RelativeLayout android:id="@+id/footer2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true">
+
+        <Button android:id="@+id/next2"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#FFFFFF"
+                android:background="#3399FF"
+                android:text="REPEAT TUTORIAL" />
+    </RelativeLayout>
 
 </RelativeLayout>

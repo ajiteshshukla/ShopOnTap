@@ -13,17 +13,19 @@ import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.DraweeView;
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.lphaindia.dodapp.dodapp.animation.MyBounceAnimator;
 
 /**
  * Created by ajitesh.shukla on 9/10/15.
  */
 public class ScreenSlidePageFragment3 extends Fragment implements View.OnClickListener{
     private Button nextButton;
+    private static ViewGroup rootView = null;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        ViewGroup rootView = (ViewGroup) inflater.inflate(
+        rootView = (ViewGroup) inflater.inflate(
                 R.layout.fragment_screen_slide_page3, container, false);
         DraweeView draweeView = (SimpleDraweeView) rootView.findViewById(R.id.accessibilitygif_holder);
         DraweeController controller = Fresco.newDraweeControllerBuilder()
@@ -39,6 +41,16 @@ public class ScreenSlidePageFragment3 extends Fragment implements View.OnClickLi
         }
         nextButton.setOnClickListener(this);
         return rootView;
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (rootView != null && isVisibleToUser) {
+            MyBounceAnimator.stopAllAnimations();
+            ScreenSlidePageFragment.removeViews();
+            ScreenSlidePageFragment2.removeViews();
+        }
     }
 
     @Override

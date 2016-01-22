@@ -25,4 +25,5 @@ public final class AppConstants {
     public static final String snapdealpkg = "com.snapdeal.main ";
     public static final String quikrpkg = "com.quikr ";
     public static final String olxpkg = "com.olx.southasia ";
+    public static final String amazonpkg = "in.amazon.mShop.android.shopping";
 }

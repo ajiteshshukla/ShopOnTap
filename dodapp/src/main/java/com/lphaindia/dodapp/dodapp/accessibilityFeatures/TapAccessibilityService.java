@@ -5,8 +5,6 @@ import android.accessibilityservice.AccessibilityServiceInfo;
 import android.content.Context;
 import android.os.Build;
 import android.provider.Settings;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 import com.facebook.drawee.backends.pipeline.Fresco;
@@ -27,7 +25,13 @@ import java.util.List;
 public class TapAccessibilityService extends AccessibilityService {
 
     public static String pkgName = null;
+    public static String className = null;
+    public static String contentDescription = null;
+    public static String text = null;
+
     public static List<String> whiteListedPkgNames = new ArrayList<String>();
+    public static List<String> whiteListedClassNames = new ArrayList<String>();
+    public static String whiteListedText = null;
 
     private AnalyticsHelper analyticsHelper = new AnalyticsHelper();
     public static Tracker mTracker;
@@ -53,6 +57,8 @@ public class TapAccessibilityService extends AccessibilityService {
         if (event.getEventType() == AccessibilityEvent.TYPE_VIEW_CLICKED ||
                 event.getEventType() == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
             //Log.d("dodapp", " " + event.getPackageName());
+            //Log.d(AppConstants.TAG, " " + event.getContentDescription());
+            //Log.d(AppConstants.TAG, " " + event.toString());
             updateOverlayOnWindowChange(event);
         }
 
@@ -62,6 +68,7 @@ public class TapAccessibilityService extends AccessibilityService {
                 event.getEventType() == AccessibilityEvent.TYPE_VIEW_SCROLLED ||
                 event.getEventType() == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
             fetchScreenData(event);
+            //Log.d(AppConstants.TAG, " " + activityDataList.toString());
         }
     }
 
@@ -89,8 +96,19 @@ public class TapAccessibilityService extends AccessibilityService {
         clearList();
         //Log.d(AppConstants.TAG, String.valueOf(event.getPackageName()));
         pkgName = String.valueOf(event.getPackageName());
-        if(pkgName != null && pkgName != "" && whiteListedPkgNames.contains(pkgName)) {
+        className = String.valueOf(event.getClassName());
+        contentDescription = String.valueOf(event.getContentDescription());
+        text = String.valueOf(event.getText());
+
+        boolean matchPackage = (pkgName != null && pkgName != "" && whiteListedPkgNames.contains(pkgName));
+        boolean matchClassName = (className != null && className != "" && whiteListedClassNames.contains(className));
+        boolean matchContentDescription = (contentDescription != null && contentDescription != ""
+                && whiteListedClassNames.contains(contentDescription));
+        boolean matchText = (text != null && text != "" && whiteListedText.contains(text));
+
+        //if(pkgName != null && pkgName != "" && whiteListedPkgNames.contains(pkgName)) {
             //We will get that pullable overlay only on the whitelisted packages this way
+        if(matchPackage && (matchClassName || matchContentDescription || matchText)) {
             IconOverlay.getInstance(mContext).showOverlay();
             //Log.d("dodapp", pkgName);
             //Log.d("dodapp", "from position 3");
@@ -150,6 +168,7 @@ public class TapAccessibilityService extends AccessibilityService {
         {
             activityDataList.add(nodeInfo.getText().toString());
             //Log.d(tag, "info " + nodeInfo.getText());
+            //nodeInfo.getContentDescription().toString();
         }
     }
 
@@ -159,38 +178,6 @@ public class TapAccessibilityService extends AccessibilityService {
             nodeInfo = nodeInfo.getParent();
         }
         return nodeInfo;
-    }
-
-    @Override
-    protected boolean onKeyEvent(KeyEvent event) {
-        //Check API level
-        if(Build.VERSION.SDK_INT < 18) {
-            return super.onKeyEvent(event);
-        } else if (Build.VERSION.SDK_INT >= 23) {
-            if (!Settings.canDrawOverlays(this)) {
-                return super.onKeyEvent(event);
-            }
-        }
-
-        if(event.getKeyCode() == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
-            boolean status;
-            if(FullScreenOverlay.getInstance(mContext).isOverlayShown()){
-                return FullScreenOverlay.getInstance(mContext).removeOverlay();
-            }
-            if(CarouselOverlay.getInstance(mContext).isOverlayShown()) {
-                status =  CarouselOverlay.getInstance(mContext).removeOverlay();
-                IconOverlay.getInstance(mContext).showOverlay();
-                //Log.d("dodapp", "from position 1");
-                return  status;
-            }
-            if(LoadingOverlay.getInstance(mContext).isOverlayShown()) {
-                status =  LoadingOverlay.getInstance(mContext).removeOverlay();
-                IconOverlay.getInstance(mContext).showOverlay();
-                //Log.d("dodapp", "from position 2");
-                return  status;
-            }
-        }
-        return super.onKeyEvent(event);
     }
 
     //function to clear the keyword list
@@ -205,7 +192,7 @@ public class TapAccessibilityService extends AccessibilityService {
     @Override
     protected void onServiceConnected() {
 
-        Log.d(AppConstants.TAG, " ServiceConnected");
+        //Log.d(AppConstants.TAG, " ServiceConnected");
         mContext = this;
 
         mTracker = analyticsHelper.getTracker(AnalyticsHelper.TrackerName.APP_TRACKER, mContext);
@@ -218,12 +205,22 @@ public class TapAccessibilityService extends AccessibilityService {
         whiteListedPkgNames.add("com.flipkart.android");
         whiteListedPkgNames.add("com.myntra.android");
         whiteListedPkgNames.add("com.jabong.android");
+        whiteListedPkgNames.add("in.amazon.mShop.android.shopping");
+
+        whiteListedClassNames.add("com.jabong.android.view.activity.ProductDetailsActivity");
+        whiteListedClassNames.add("com.myntra.android.activities.PDPActivity");
+        whiteListedClassNames.add("com.amazon.mShop.details.web.WebProductDetailsActivity");
+        whiteListedClassNames.add("product_grid");
+        whiteListedClassNames.add("pl.tablica2.activities.AdActivity");
+        whiteListedClassNames.add("com.quikr.ui.vapv2.VAPActivity");
+
+        whiteListedText = "% OFF,";
 
         AccessibilityServiceInfo info = new AccessibilityServiceInfo();
         info.eventTypes = AccessibilityEvent.TYPES_ALL_MASK;
         info.notificationTimeout = 100;
         info.feedbackType = AccessibilityEvent.TYPES_ALL_MASK;
-        info.flags = AccessibilityServiceInfo.FLAG_REQUEST_FILTER_KEY_EVENTS
+        info.flags = AccessibilityServiceInfo.CAPABILITY_CAN_RETRIEVE_WINDOW_CONTENT
                 | AccessibilityServiceInfo.FLAG_RETRIEVE_INTERACTIVE_WINDOWS
                 | AccessibilityServiceInfo.FLAG_INCLUDE_NOT_IMPORTANT_VIEWS;
         setServiceInfo(info);

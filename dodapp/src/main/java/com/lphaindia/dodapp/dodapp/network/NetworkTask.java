@@ -1,7 +1,5 @@
 package com.lphaindia.dodapp.dodapp.network;
 
-import com.lphaindia.dodapp.dodapp.AppConstants;
-
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -43,9 +41,11 @@ public class NetworkTask {
                     e.printStackTrace();
                 }
             }
+            urlConnection.disconnect();
         } catch (Exception e) {
             //Log.d(AppConstants.TAG, e.getClass() + "--" + e.getMessage());
         }
         return datafromServer;
     }
 }
+

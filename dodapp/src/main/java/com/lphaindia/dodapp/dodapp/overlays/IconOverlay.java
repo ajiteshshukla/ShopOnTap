@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.net.Uri;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -16,6 +15,7 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.lphaindia.dodapp.dodapp.R;
 import com.lphaindia.dodapp.dodapp.accessibilityFeatures.TapAccessibilityService;
 import com.lphaindia.dodapp.dodapp.accessibilityFeatures.TapAnalytics;
+import com.lphaindia.dodapp.dodapp.animation.MyBounceAnimator;
 import com.lphaindia.dodapp.dodapp.keywordSearchAdapter.KeywordsToProducts;
 
 /**
@@ -23,8 +23,7 @@ import com.lphaindia.dodapp.dodapp.keywordSearchAdapter.KeywordsToProducts;
  */
 public class IconOverlay {
     private static IconOverlay mInstance = null;
-    //ImageView mOverlayView;
-    DraweeView draweeView;
+    private static DraweeView draweeView;
     private static Context mContext;
 
     public static IconOverlay getInstance(Context ctxt) {
@@ -46,9 +45,7 @@ public class IconOverlay {
         if (isOverlayShown()) {
             try {
                 WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
-                //wm.removeView(mOverlayView);
                 wm.removeView(draweeView);
-                //mOverlayView = null;
                 draweeView = null;
                 mInstance = null;
             } catch (Exception e) {
@@ -66,9 +63,6 @@ public class IconOverlay {
             //Log.w("TAG", "Cannot recreate overlay");
             return isSuccess;
         }
-        //TapAnalytics.sendAnalyticsSwipeIconVisible(TapAccessibilityService.mTracker);
-        // Create overlay video
-        //createOverlay(mOverlayView != null);
         createOverlay(draweeView != null);
         return true;
     }
@@ -88,25 +82,27 @@ public class IconOverlay {
 
         // Create System overlay video
         final WindowManager.LayoutParams params = new WindowManager.LayoutParams(
-                90, 120,
+                150,
+                150,
                 WindowManager.LayoutParams.TYPE_SYSTEM_ALERT,
-                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-                        | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                 PixelFormat.TRANSLUCENT);
         params.gravity = Gravity.BOTTOM | Gravity.RIGHT;
         params.x = 10;
         params.y = 300;
         draweeView = new SimpleDraweeView(mContext);
         DraweeController controller = Fresco.newDraweeControllerBuilder()
-                .setUri(Uri.parse("res:///" + R.drawable.sot4))
+                .setUri(Uri.parse("res:///" + R.drawable.sot_small))
                 .setAutoPlayAnimations(true)
                 .build();
         draweeView.setController(controller);
         //Add close button
         final WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
-        //wm.addView(mOverlayView, params);
+
         wm.addView(draweeView, params);
-        //mOverlayView.setOnTouchListener(new View.OnTouchListener() {
+
+        MyBounceAnimator.Animate(draweeView);
+
         draweeView.setOnTouchListener(new View.OnTouchListener() {
             private WindowManager.LayoutParams paramsF = params;
             private boolean isMoved = false;
