@@ -33,6 +33,8 @@ public class CarouselAdapter extends RecyclerView.Adapter<CarouselAdapter.Vertic
     private ArrayList<Product> mProductList;
     private Context mCtxt;
     private AdapterView.OnItemClickListener mOnItemClickListener;
+    static CardView mPreviousSelectedCard = null;
+    static int mSelectedPosition = -1;
 
     public CarouselAdapter(Context ctxt) {
         mProductList = new ArrayList<Product>();
@@ -84,6 +86,11 @@ public class CarouselAdapter extends RecyclerView.Adapter<CarouselAdapter.Vertic
         itemHolder.setProductPrice(item.sellingPrice, item.discountPercentage, item.maximumRetailPrice);
         itemHolder.setUrl(item.productUrl);
         itemHolder.setProductMerchant(item.affiliateLogo);
+        if(mSelectedPosition != position){
+            itemHolder.mCardView.setCardBackgroundColor(Color.TRANSPARENT);
+        }else {
+            itemHolder.mCardView.setCardBackgroundColor(Color.parseColor("#009688"));
+        }
     }
 
     @Override
@@ -102,6 +109,11 @@ public class CarouselAdapter extends RecyclerView.Adapter<CarouselAdapter.Vertic
         }
     }
 
+    public void setSelected(int position){
+        mSelectedPosition = position;
+        this.notifyDataSetChanged();
+
+    }
     public class VerticalItemHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private SimpleDraweeView mImgProductImage;
         private TextView mTxtProductPrice;
@@ -112,10 +124,12 @@ public class CarouselAdapter extends RecyclerView.Adapter<CarouselAdapter.Vertic
         private ImageView mImgDisc;
         private ImageView mBtnCta;
         private CarouselAdapter mAdapter;
+        protected CardView mCardView = null;
         public VerticalItemHolder(View itemView, CarouselAdapter adapter) {
             super(itemView);
             itemView.setOnClickListener(this);
             mAdapter = adapter;
+            mCardView = (CardView) itemView;
             mImgProductImage = (SimpleDraweeView) itemView.findViewById(R.id.product_image);
             mTxtProductPrice = (TextView) itemView.findViewById(R.id.product_price);
             mImgMerchantName = (SimpleDraweeView) itemView.findViewById(R.id.product_merchant);
@@ -143,7 +157,14 @@ public class CarouselAdapter extends RecyclerView.Adapter<CarouselAdapter.Vertic
 
         @Override
         public void onClick(View v) {
+            CardView current = (CardView)v;
             mAdapter.onItemHolderClick(this);
+            if(null != mPreviousSelectedCard){
+                mPreviousSelectedCard.setCardBackgroundColor(Color.TRANSPARENT);
+            }
+            current.setCardBackgroundColor(Color.parseColor("#009688"));
+            mPreviousSelectedCard = current;
+
 
         }
         public void setProductPrice(String productPrice, String discount, String mrp) {

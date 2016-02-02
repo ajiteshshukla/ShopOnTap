@@ -117,6 +117,7 @@ public class CarouselOverlay implements AdapterView.OnItemClickListener{
             @Override
             public void onPageSelected(int position) {
                 mList.scrollToPosition(position);
+                mAdapter.setSelected(position);
             }
 
             @Override
