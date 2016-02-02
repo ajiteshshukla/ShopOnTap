@@ -2,6 +2,7 @@ package com.lphaindia.dodapp.dodapp.overlays;
 
 import android.content.Context;
 import android.graphics.PixelFormat;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -19,6 +20,8 @@ import com.lphaindia.dodapp.dodapp.accessibilityFeatures.TapAccessibilityService
 import com.lphaindia.dodapp.dodapp.accessibilityFeatures.TapAnalytics;
 import com.lphaindia.dodapp.dodapp.data.Product;
 import com.lphaindia.dodapp.dodapp.uiAdapters.CarouselAdapter;
+import com.lphaindia.dodapp.dodapp.uiAdapters.FullScreenCardAdapter;
+import com.lphaindia.dodapp.dodapp.uiAdapters.ProductCardAdapter;
 
 import java.util.List;
 
@@ -29,11 +32,13 @@ public class CarouselOverlay implements AdapterView.OnItemClickListener{
     private static CarouselOverlay mInstance = null;
     RelativeLayout mOverlayView;
     private RecyclerView mList;
-    private TextView mNoItemsTextView;
     private CarouselAdapter mAdapter;
+    private FullScreenCardAdapter mFullScreenAdapter;
     private List<Product> mItems;
     private static Context mContext;
     private ImageButton cView;
+    private ImageButton minView;
+    private ViewPager mPager;
     public static CarouselOverlay getInstance(Context ctxt){
         if(null == mInstance) {
             if(ctxt == null)
@@ -101,12 +106,39 @@ public class CarouselOverlay implements AdapterView.OnItemClickListener{
         //Add close button
         WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
         cView = (ImageButton)mOverlayView.findViewById(R.id.close_btn);
+        minView = (ImageButton)mOverlayView.findViewById(R.id.min_btn);
+        mPager = (ViewPager)mOverlayView.findViewById(R.id.viewpager);
+        mPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                mList.scrollToPosition(position);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
         cView.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
                 removeOverlay();
                 IconOverlay.getInstance(mContext).showOverlay();
+            }
+        });
+        minView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                minView.setVisibility(View.GONE);
+                mPager.setVisibility(View.GONE);
+                cView.setVisibility(View.VISIBLE);
+
             }
         });
         wm.addView(mOverlayView, params);
@@ -145,6 +177,9 @@ public class CarouselOverlay implements AdapterView.OnItemClickListener{
         }
         mAdapter.setOnItemClickListener(this);
         mList.setAdapter(mAdapter);
+        mFullScreenAdapter = new FullScreenCardAdapter(mContext, mItems);
+        mPager.setAdapter(mFullScreenAdapter);
+
 
     }
 
@@ -164,7 +199,13 @@ public class CarouselOverlay implements AdapterView.OnItemClickListener{
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        //TODO Aasha
-        //FullScreenOverlay.getInstance(mContext).showOverlay(mItems, position);
+        showFullScreenView(position, id);
+    }
+
+    private void showFullScreenView(int position, long id){
+        minView.setVisibility(View.VISIBLE);
+        mPager.setVisibility(View.VISIBLE);
+        mPager.setCurrentItem(position);
+        cView.setVisibility(View.GONE);
     }
 }

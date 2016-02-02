@@ -1,11 +1,14 @@
 package com.lphaindia.dodapp.dodapp.uiAdapters;
 
+import android.graphics.Color;
 import android.graphics.Paint;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 
 
 import android.content.Intent;
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -108,7 +111,6 @@ public class CarouselAdapter extends RecyclerView.Adapter<CarouselAdapter.Vertic
         private TextView mTextProductDiscount;
         private ImageView mImgDisc;
         private ImageView mBtnCta;
-
         private CarouselAdapter mAdapter;
         public VerticalItemHolder(View itemView, CarouselAdapter adapter) {
             super(itemView);
@@ -142,6 +144,7 @@ public class CarouselAdapter extends RecyclerView.Adapter<CarouselAdapter.Vertic
         @Override
         public void onClick(View v) {
             mAdapter.onItemHolderClick(this);
+
         }
         public void setProductPrice(String productPrice, String discount, String mrp) {
             if (Float.parseFloat(productPrice) <= 0) {
