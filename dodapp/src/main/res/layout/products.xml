@@ -31,7 +31,7 @@
                 app:sl_value="0"
                 app:sl_stepValue="5"
                 app:sl_primaryColor="@color/primary"
-                app:sl_secondaryColor="@color/primary"
+                app:sl_secondaryColor="#FFF"
                 app:sl_discreteMode="true"
                 app:sl_textColor="#FFF"/>
     </LinearLayout>
