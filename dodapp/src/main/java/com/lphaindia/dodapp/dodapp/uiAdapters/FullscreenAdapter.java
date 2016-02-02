@@ -16,7 +16,6 @@ import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.lphaindia.dodapp.dodapp.R;
 import com.lphaindia.dodapp.dodapp.data.Product;
-import com.lphaindia.dodapp.dodapp.overlays.FullScreenOverlay;
 
 import java.util.ArrayList;
 
@@ -109,7 +108,8 @@ public class FullscreenAdapter extends RecyclerView.Adapter<FullscreenAdapter.Cu
             i.setData(Uri.parse(mProductLandingPage));
             i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             mCtxt.startActivity(i);
-            FullScreenOverlay.getInstance(mCtxt).removeOverlay();
+            //TODO Aasha
+            //FullScreenOverlay.getInstance(mCtxt).removeOverlay();
         }
 
         public void setProductPrice(String productPrice, String discount, String mrp) {

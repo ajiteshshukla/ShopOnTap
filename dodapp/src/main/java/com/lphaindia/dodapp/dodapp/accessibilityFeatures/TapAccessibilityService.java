@@ -12,7 +12,6 @@ import com.google.android.gms.analytics.Tracker;
 import com.lphaindia.dodapp.dodapp.Analytics.AnalyticsHelper;
 import com.lphaindia.dodapp.dodapp.AppConstants;
 import com.lphaindia.dodapp.dodapp.overlays.CarouselOverlay;
-import com.lphaindia.dodapp.dodapp.overlays.FullScreenOverlay;
 import com.lphaindia.dodapp.dodapp.overlays.IconOverlay;
 import com.lphaindia.dodapp.dodapp.overlays.LoadingOverlay;
 
@@ -81,9 +80,6 @@ public class TapAccessibilityService extends AccessibilityService {
             if (CarouselOverlay.getInstance(mContext).isOverlayShown()) {
                 CarouselOverlay.getInstance(mContext).removeOverlay();
             }
-            if (FullScreenOverlay.getInstance(mContext).isOverlayShown()) {
-                FullScreenOverlay.getInstance(mContext).removeOverlay();
-            }
             return;
         }
 
@@ -115,9 +111,6 @@ public class TapAccessibilityService extends AccessibilityService {
             if (LoadingOverlay.getInstance(mContext).isOverlayShown()) {
                 LoadingOverlay.getInstance(mContext).removeOverlay();
             }
-            if (FullScreenOverlay.getInstance(mContext).isOverlayShown()) {
-                FullScreenOverlay.getInstance(mContext).removeOverlay();
-            }
             if (CarouselOverlay.getInstance(mContext).isOverlayShown()) {
                 CarouselOverlay.getInstance(mContext).removeOverlay();
             }
@@ -128,9 +121,6 @@ public class TapAccessibilityService extends AccessibilityService {
             }
             if (CarouselOverlay.getInstance(mContext).isOverlayShown()) {
                 CarouselOverlay.getInstance(mContext).removeOverlay();
-            }
-            if (FullScreenOverlay.getInstance(mContext).isOverlayShown()) {
-                FullScreenOverlay.getInstance(mContext).removeOverlay();
             }
         }
     }

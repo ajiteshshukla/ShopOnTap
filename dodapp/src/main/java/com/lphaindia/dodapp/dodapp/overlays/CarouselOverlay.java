@@ -164,6 +164,7 @@ public class CarouselOverlay implements AdapterView.OnItemClickListener{
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        FullScreenOverlay.getInstance(mContext).showOverlay(mItems, position);
+        //TODO Aasha
+        //FullScreenOverlay.getInstance(mContext).showOverlay(mItems, position);
     }
 }

@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.TextView;
 import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.drawee.generic.GenericDraweeHierarchy;
@@ -60,9 +61,11 @@ public class ProductCardAdapter extends RecyclerView.Adapter<ProductCardAdapter.
         private TextView mTextProductPrice;
         private TextView mTextProductMrp;
         private TextView mTextProductDiscount;
+        private ImageView mImgDisc;
         private SimpleDraweeView mImgProductImage;
         private String mProductLandingPage;
         private SimpleDraweeView mLogoMerchantName;
+        private ImageView mBtnCta;
 
         public CustomViewHolder(View itemView) {
             super(itemView);
@@ -73,6 +76,9 @@ public class ProductCardAdapter extends RecyclerView.Adapter<ProductCardAdapter.
             mTextProductMrp = (TextView) itemView.findViewById(R.id.product_mrp);
             mTextProductDiscount = (TextView) itemView.findViewById(R.id.product_discount);
             mImgProductImage = (SimpleDraweeView) itemView.findViewById(R.id.product_image);
+            mImgDisc = (ImageView)itemView.findViewById(R.id.imgDiscount);
+            mBtnCta = (ImageView)itemView.findViewById(R.id.btnCta);
+            mBtnCta.setOnClickListener(this);
         }
 
         @Override
@@ -91,6 +97,10 @@ public class ProductCardAdapter extends RecyclerView.Adapter<ProductCardAdapter.
                 if (Float.parseFloat(discount) > 0) {
                     mTextProductMrp.setVisibility(View.VISIBLE);
                     mTextProductDiscount.setVisibility(View.VISIBLE);
+                    mTextProductDiscount.setPivotX(0);
+                    mTextProductDiscount.setPivotY(0);
+                    mTextProductDiscount.setRotation(-50);
+                    mImgDisc.setVisibility(View.VISIBLE);
                     mTextProductMrp.setText("₹ " + mrp);
                     mTextProductMrp.setPaintFlags(mTextProductMrp.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                     mTextProductDiscount.setText(discount + "% OFF");
@@ -98,6 +108,7 @@ public class ProductCardAdapter extends RecyclerView.Adapter<ProductCardAdapter.
                 }else{
                     mTextProductMrp.setVisibility(View.GONE);
                     mTextProductDiscount.setVisibility(View.GONE);
+                    mImgDisc.setVisibility(View.GONE);
                     title.append("₹ " + productPrice);
                 }
 
