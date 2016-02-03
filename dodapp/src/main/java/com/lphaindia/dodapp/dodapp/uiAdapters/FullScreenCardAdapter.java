@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,7 +35,6 @@ public class FullScreenCardAdapter extends PagerAdapter {
     private TextView mTextProductDiscount;
     private ImageView mImgDisc;
     private SimpleDraweeView mImgProductImage;
-    private String mProductLandingPage;
     private SimpleDraweeView mLogoMerchantName;
     private ImageView mBtnCta;
 
@@ -62,21 +62,20 @@ public class FullScreenCardAdapter extends PagerAdapter {
         mTextProductDiscount = (TextView) itemView.findViewById(R.id.product_discount);
         mImgProductImage = (SimpleDraweeView) itemView.findViewById(R.id.product_image);
         mImgDisc = (ImageView)itemView.findViewById(R.id.imgDiscount);
+        setImgProductImage(product.imageUrl, product.aspectRatio);
+        setProductPrice(product.sellingPrice, product.discountPercentage, product.maximumRetailPrice);
+        setProductName(product.title);
+        setProductMerchantLogo(product.affiliateLogo);
         mBtnCta = (ImageView)itemView.findViewById(R.id.btnCta);
         mBtnCta.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(Intent.ACTION_VIEW);
-                i.setData(Uri.parse(mProductLandingPage));
+                i.setData(Uri.parse(product.productUrl));
                 i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 mCtxt.startActivity(i);
             }
         });
-        setImgProductImage(product.imageUrl, product.aspectRatio);
-        setProductPrice(product.sellingPrice, product.discountPercentage, product.maximumRetailPrice);
-        setProductName(product.title);
-        setProductLandingPage(product.productUrl);
-        setProductMerchantLogo(product.affiliateLogo);
     }
     @Override
     public void destroyItem(View container, int position, Object obj) {
@@ -134,9 +133,6 @@ public class FullScreenCardAdapter extends PagerAdapter {
         mTextProductName.setText(productName);
     }
 
-    public void setProductLandingPage(String productLandingPage) {
-        mProductLandingPage = productLandingPage;
-    }
 
     public void setImgProductImage(String productImage, String aspectRatiostr) {
         if (aspectRatiostr != null) {
