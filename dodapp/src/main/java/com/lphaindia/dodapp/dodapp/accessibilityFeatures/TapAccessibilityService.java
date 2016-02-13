@@ -44,8 +44,6 @@ public class TapAccessibilityService extends AccessibilityService {
     public void onAccessibilityEvent(AccessibilityEvent event) {
         //Check API level
         if(Build.VERSION.SDK_INT < 18) {
-            //Log.d("dodapp ", "build version: " + Build.VERSION.SDK_INT );
-            //Log.d("dodapp", " " + event.getPackageName());
             return;
         } else if (Build.VERSION.SDK_INT >= 23) {
             if (!Settings.canDrawOverlays(this)) {
@@ -56,11 +54,10 @@ public class TapAccessibilityService extends AccessibilityService {
         //if a new view is clicked or the window state is changed clear the old list
         if (event.getEventType() == AccessibilityEvent.TYPE_VIEW_CLICKED ||
                 event.getEventType() == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
-            //Log.d("dodapp", " " + event.getPackageName());
-            //Log.d(AppConstants.TAG, " " + event.getContentDescription());
-            //Log.d(AppConstants.TAG, " " + event.toString());
             updateOverlayOnWindowChange(event);
         }
+
+
 
         //if the window content is updated or window is updated or the view is scrolled collect data
         if (event.getEventType() == AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED ||
@@ -68,7 +65,6 @@ public class TapAccessibilityService extends AccessibilityService {
                 event.getEventType() == AccessibilityEvent.TYPE_VIEW_SCROLLED ||
                 event.getEventType() == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
             fetchScreenData(event);
-            //Log.d(AppConstants.TAG, " " + activityDataList.toString());
         }
     }
 
@@ -94,7 +90,6 @@ public class TapAccessibilityService extends AccessibilityService {
             return;
         }
         clearList();
-        //Log.d(AppConstants.TAG, String.valueOf(event.getPackageName()));
         pkgName = String.valueOf(event.getPackageName());
         className = String.valueOf(event.getClassName());
         contentDescription = String.valueOf(event.getContentDescription());
@@ -104,10 +99,8 @@ public class TapAccessibilityService extends AccessibilityService {
         boolean matchClassName = (className != null && className != "" && whiteListedClassNames.contains(className));
         boolean matchContentDescription = (contentDescription != null && contentDescription != ""
                 && whiteListedClassNames.contains(contentDescription));
-        boolean matchText = (text != null && text != "" && whiteListedText.contains(text));
+        boolean matchText = (text != null && text != "" && text.indexOf("Rs. ") > 0);
 
-        //if(pkgName != null && pkgName != "" && whiteListedPkgNames.contains(pkgName)) {
-            //We will get that pullable overlay only on the whitelisted packages this way
         if(matchPackage && (matchClassName || matchContentDescription || matchText)) {
             IconOverlay.getInstance(mContext).showOverlay();
             //Log.d("dodapp", pkgName);
@@ -156,7 +149,6 @@ public class TapAccessibilityService extends AccessibilityService {
             return;
         }
         if(nodeInfo.getChildCount() == 0 && nodeInfo.getText() != null) {
-            //Log.d(tag, "info " + nodeInfo.getText());
             activityDataList.add(nodeInfo.getText().toString());
             return;
         }
@@ -167,8 +159,6 @@ public class TapAccessibilityService extends AccessibilityService {
         if(nodeInfo!= null && nodeInfo.getText() != null)
         {
             activityDataList.add(nodeInfo.getText().toString());
-            //Log.d(tag, "info " + nodeInfo.getText());
-            //nodeInfo.getContentDescription().toString();
         }
     }
 
@@ -192,11 +182,9 @@ public class TapAccessibilityService extends AccessibilityService {
     @Override
     protected void onServiceConnected() {
 
-        //Log.d(AppConstants.TAG, " ServiceConnected");
         mContext = this;
 
         mTracker = analyticsHelper.getTracker(AnalyticsHelper.TrackerName.APP_TRACKER, mContext);
-        //send to analytics - acessibility enabled
         TapAnalytics.sendAnalyticsAccessibilityEnabled(mTracker);
 
         whiteListedPkgNames.add("com.quikr");
@@ -211,6 +199,8 @@ public class TapAccessibilityService extends AccessibilityService {
         whiteListedClassNames.add("com.myntra.android.activities.PDPActivity");
         whiteListedClassNames.add("com.amazon.mShop.details.web.WebProductDetailsActivity");
         whiteListedClassNames.add("product_grid");
+        whiteListedClassNames.add("product_list");
+        whiteListedClassNames.add("Quick Access");
         whiteListedClassNames.add("pl.tablica2.activities.AdActivity");
         whiteListedClassNames.add("com.quikr.ui.vapv2.VAPActivity");
 
