@@ -1,15 +1,18 @@
 package com.lphaindia.dodapp.dodapp.uiAdapters;
 
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 
 
 import android.content.Intent;
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.content.Context;
@@ -30,6 +33,8 @@ public class CarouselAdapter extends RecyclerView.Adapter<CarouselAdapter.Vertic
     private ArrayList<Product> mProductList;
     private Context mCtxt;
     private AdapterView.OnItemClickListener mOnItemClickListener;
+    static CardView mPreviousSelectedCard = null;
+    static int mSelectedPosition = -1;
 
     public CarouselAdapter(Context ctxt) {
         mProductList = new ArrayList<Product>();
@@ -70,7 +75,7 @@ public class CarouselAdapter extends RecyclerView.Adapter<CarouselAdapter.Vertic
     @Override
     public VerticalItemHolder onCreateViewHolder(ViewGroup container, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(container.getContext());
-        View root = inflater.inflate(R.layout.view_item, container, false);
+        View root = inflater.inflate(R.layout.carousal_item, container, false);
         return new VerticalItemHolder(root, this);
     }
 
@@ -78,9 +83,14 @@ public class CarouselAdapter extends RecyclerView.Adapter<CarouselAdapter.Vertic
     public void onBindViewHolder(VerticalItemHolder itemHolder, int position) {
         Product item = mProductList.get(position);
         itemHolder.setImgProductImage(item.imageUrl, item.aspectRatio);
-        itemHolder.setProductPrice(item.sellingPrice);
+        itemHolder.setProductPrice(item.sellingPrice, item.discountPercentage, item.maximumRetailPrice);
         itemHolder.setUrl(item.productUrl);
-        itemHolder.setProductMerchant(item.affiliate);
+        itemHolder.setProductMerchant(item.affiliateLogo);
+        if(mSelectedPosition != position){
+            itemHolder.mCardView.setCardBackgroundColor(Color.TRANSPARENT);
+        }else {
+            itemHolder.mCardView.setCardBackgroundColor(Color.parseColor("#009688"));
+        }
     }
 
     @Override
@@ -99,24 +109,41 @@ public class CarouselAdapter extends RecyclerView.Adapter<CarouselAdapter.Vertic
         }
     }
 
+    public void setSelected(int position){
+        mSelectedPosition = position;
+        this.notifyDataSetChanged();
+
+    }
     public class VerticalItemHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private SimpleDraweeView mImgProductImage;
-        private Button mBtnProductPrice;
-        private TextView mTxtMerchantName;
+        private TextView mTxtProductPrice;
+        private SimpleDraweeView mImgMerchantName;
         private String mUrl;
+        private TextView mTextProductMrp;
+        private TextView mTextProductDiscount;
+        private ImageView mImgDisc;
+        private ImageView mBtnCta;
         private CarouselAdapter mAdapter;
+        protected CardView mCardView = null;
         public VerticalItemHolder(View itemView, CarouselAdapter adapter) {
             super(itemView);
             itemView.setOnClickListener(this);
             mAdapter = adapter;
+            mCardView = (CardView) itemView;
             mImgProductImage = (SimpleDraweeView) itemView.findViewById(R.id.product_image);
-            mBtnProductPrice = (Button) itemView.findViewById(R.id.product_price);
-            mTxtMerchantName = (TextView)itemView.findViewById(R.id.product_merchant);
-            mBtnProductPrice.setOnClickListener(new View.OnClickListener() {
+            mTxtProductPrice = (TextView) itemView.findViewById(R.id.product_price);
+            mImgMerchantName = (SimpleDraweeView) itemView.findViewById(R.id.product_merchant);
+            mImgDisc = (ImageView)itemView.findViewById(R.id.imgDiscount);
+            mBtnCta = (ImageView)itemView.findViewById(R.id.btnCta);
+            mTextProductDiscount = (TextView) itemView.findViewById(R.id.product_discount);
+            mTextProductMrp = (TextView) itemView.findViewById(R.id.product_mrp);
+            mImgDisc = (ImageView)itemView.findViewById(R.id.imgDiscount);
+
+            mBtnCta.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     TapAnalytics.sendAnalyticsBuyProduct(TapAccessibilityService.mTracker);
-                    if(mUrl != null){
+                    if (mUrl != null) {
                         Intent i = new Intent(Intent.ACTION_VIEW);
                         i.setData(Uri.parse(mUrl));
                         i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -130,14 +157,50 @@ public class CarouselAdapter extends RecyclerView.Adapter<CarouselAdapter.Vertic
 
         @Override
         public void onClick(View v) {
+            CardView current = (CardView)v;
             mAdapter.onItemHolderClick(this);
+            if(null != mPreviousSelectedCard){
+                mPreviousSelectedCard.setCardBackgroundColor(Color.TRANSPARENT);
+            }
+            current.setCardBackgroundColor(Color.parseColor("#009688"));
+            mPreviousSelectedCard = current;
+
+
+        }
+        public void setProductPrice(String productPrice, String discount, String mrp) {
+            if (Float.parseFloat(productPrice) <= 0) {
+                mTxtProductPrice.setText("FREE");
+            } else {
+                if (Float.parseFloat(discount) > 0) {
+                    mTextProductMrp.setVisibility(View.VISIBLE);
+                    mTextProductDiscount.setVisibility(View.VISIBLE);
+                    mTextProductDiscount.setPivotX(0);
+                    mTextProductDiscount.setPivotY(0);
+                    mTextProductDiscount.setRotation(-50);
+                    mImgDisc.setVisibility(View.VISIBLE);
+                    mTextProductMrp.setText("₹ " + mrp);
+                    mTextProductMrp.setPaintFlags(mTextProductMrp.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                    mTextProductDiscount.setText(discount + "% OFF");
+                }else{
+                    mTextProductMrp.setVisibility(View.GONE);
+                    mTextProductDiscount.setVisibility(View.GONE);
+                    mImgDisc.setVisibility(View.GONE);
+                }
+
+            }
+            mTxtProductPrice.setText("₹ " + productPrice);
         }
 
-        public void setProductPrice(CharSequence productPrice) {
-                mBtnProductPrice.setText("₹ " +productPrice);
-        }
         public void setProductMerchant(String merchant) {
-            mTxtMerchantName.setText(merchant.toUpperCase());
+            if(merchant != null) {
+                GenericDraweeHierarchyBuilder builder =
+                        new GenericDraweeHierarchyBuilder(mCtxt.getResources());
+                GenericDraweeHierarchy hierarchy = builder
+                        .setActualImageScaleType(ScalingUtils.ScaleType.FIT_CENTER)
+                        .build();
+                mImgMerchantName.setImageURI(Uri.parse(merchant));
+                mImgMerchantName.setHierarchy(hierarchy);
+            }
         }
         public void setImgProductImage(String productImage, String aspectRatioStr){
             if (aspectRatioStr != null) {

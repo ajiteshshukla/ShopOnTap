@@ -12,26 +12,51 @@
             android:src="@drawable/ic_close"
             android:layout_alignParentRight="true"
             android:layout_alignParentBottom="true"
+            android:layout_marginBottom="184dp"
             android:scaleType="fitCenter"
-            android:layout_marginBottom="260dp"
             android:paddingRight="5dp"
             android:background="#00000000"
+            />
+
+    <android.support.v4.view.ViewPager
+            android:id="@+id/viewpager"
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/section_list"
+
+            android:layout_marginLeft="63dp"
+            android:layout_marginRight="63dp"
+            android:visibility="gone"
+            />
+    <ImageButton
+            android:id="@+id/min_btn"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/ic_minimize"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:scaleType="fitCenter"
+            android:paddingRight="5dp"
+            android:background="#00000000"
+            android:visibility="gone"
             />
     <android.support.v7.widget.RecyclerView
             android:id="@+id/section_list"
             android:layout_width="match_parent"
-            android:layout_height="260dp"
+            android:layout_height="184dp"
             android:layout_alignParentBottom="true"
     />
     <TextView
             android:id="@+id/no_items"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
+            android:layout_height="184dp"
             android:layout_alignParentBottom="true"
             android:visibility="gone"
             android:text="@string/noitems"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="#FFF"
             />
+
 
 </RelativeLayout>

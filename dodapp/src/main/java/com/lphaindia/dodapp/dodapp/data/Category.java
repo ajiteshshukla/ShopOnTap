@@ -6,6 +6,7 @@ package com.lphaindia.dodapp.dodapp.data;
 public class Category {
     private String categoryName;
     private String imageUrl;
+    private int drawable;
 
     public String getImage() {
         return imageUrl;
@@ -15,11 +16,16 @@ public class Category {
         this.imageUrl = image;
     }
 
-    public Category(String categoryName) {
+    public Category(String categoryName, int drawable) {
         this.categoryName = categoryName;
+        this.drawable = drawable;
     }
 
     public String getName() {
         return categoryName;
+    }
+
+    public int getDrawable() {
+        return drawable;
     }
 }

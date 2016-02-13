@@ -1,14 +1,11 @@
 package com.lphaindia.dodapp.dodapp;
 
 import android.annotation.TargetApi;
-import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PersistableBundle;
@@ -16,28 +13,22 @@ import android.provider.Settings;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.view.*;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.SubMenu;
+import android.widget.GridView;
 import android.widget.SearchView;
 import com.crittercism.app.Crittercism;
 import com.facebook.drawee.backends.pipeline.Fresco;
-import com.lphaindia.dodapp.dodapp.data.Category;
-import com.lphaindia.dodapp.dodapp.network.NetworkTask;
-import com.lphaindia.dodapp.dodapp.uiAdapters.CategoryCard;
-import com.lphaindia.dodapp.dodapp.utils.Utility;
-import com.rey.material.widget.SnackBar;
-import it.gmariotti.cardslib.library.internal.Card;
-import it.gmariotti.cardslib.library.internal.CardGridArrayAdapter;
-import it.gmariotti.cardslib.library.view.CardGridView;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.lphaindia.dodapp.dodapp.uiAdapters.CategoryAdapter;
 
 
 public class CategoryActivity extends AppCompatActivity {
 
-    private ProgressDialog progressDialog;
-    private SnackBar snackBar;
     SearchView searchView;
+    GridView mGridView;
+    CategoryAdapter mAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState, PersistableBundle persistentState) {
@@ -64,18 +55,7 @@ public class CategoryActivity extends AppCompatActivity {
             Fresco.initialize(this);
             AppConstants.isFrescoInitialized = true;
         }
-
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Fetching Trending Categories");
-
-        snackBar = (SnackBar) findViewById(R.id.snackbar);
-        snackBar.actionTextColor(Color.WHITE);
-        snackBar.text("Something went wrong!! Unable to connect.");
-        snackBar.textColor(Color.WHITE);
-        snackBar.setVisibility(View.INVISIBLE);
-        snackBar.dismiss();
-
-        new FetchCategories().execute();
+        renderCategories();
     }
 
     public boolean isAccessibilityEnabled() {
@@ -95,75 +75,10 @@ public class CategoryActivity extends AppCompatActivity {
         return false;
     }
 
-    class FetchCategories extends AsyncTask<Void, Void, String> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            progressDialog.show();
-            setProgressBarIndeterminateVisibility(true);
-            if (snackBar.isShown()) {
-                snackBar.dismiss();
-            }
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            String datafromServer = null;
-            NetworkTask networkTask = new NetworkTask();
-            String url = AppConstants.REQUEST_URL + "?requesttype=" + AppConstants.REQUEST_CATEGORY;
-            datafromServer = networkTask.fetchDataFromUrl(url);
-            return datafromServer;
-        }
-
-        @Override
-        protected void onPostExecute(String datafromServer) {
-            super.onPostExecute(datafromServer);
-            //progressBar.setVisibility(View.GONE);
-            progressDialog.cancel();
-            if (datafromServer != null) {
-                try {
-                    List<Category> categories = Utility.getCategoryListFromJSON(datafromServer);
-                    if (categories != null && !categories.isEmpty()) {
-                        renderCategories(categories);
-                        if (snackBar.isShown()) {
-                            snackBar.dismiss();
-                        }
-                    } else {
-                        snackBar.show();
-                    }
-                } catch (Exception e) {
-                    snackBar.show();
-                    e.printStackTrace();
-                }
-            } else {
-                snackBar.show();
-            }
-        }
-    }
-
-    private void renderCategories(final List<Category> categories) {
-        if (categories != null && !categories.isEmpty()) {
-            ArrayList<Card> cards = new ArrayList<Card>();
-            for (int i = 0; i < categories.size(); i++) {
-                CategoryCard card = new CategoryCard(this, categories.get(i));
-                card.setOnClickListener(new Card.OnCardClickListener() {
-                    @Override
-                    public void onClick(Card card, View view) {
-                        //Launch product activity with the category name
-                        Intent i = new Intent(CategoryActivity.this, ProductsActivity.class);
-                        i.putExtra(AppConstants.KEY_CATEGORY, ((CategoryCard) card).getCategory().getName());
-                        startActivity(i);
-                    }
-                });
-                cards.add(card);
-            }
-            CardGridArrayAdapter mCardArrayAdapter = new CardGridArrayAdapter(this, cards);
-            CardGridView gridView = (CardGridView) findViewById(R.id.category_grid);
-            if (gridView != null) {
-                gridView.setAdapter(mCardArrayAdapter);
-            }
-        }
+    private void renderCategories() {
+        mGridView = (GridView) findViewById(R.id.category_grid);
+        mAdapter = new CategoryAdapter(CategoryActivity.this);
+        mGridView.setAdapter(mAdapter);
     }
 
     @TargetApi(23)
