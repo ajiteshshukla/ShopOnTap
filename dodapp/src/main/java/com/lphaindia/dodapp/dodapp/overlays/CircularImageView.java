@@ -12,6 +12,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.WindowManager;
 import android.widget.ImageView;
 
@@ -74,7 +75,7 @@ public class CircularImageView extends ImageView {
         paint.setStrokeCap(Paint.Cap.ROUND);      // set the paint cap to round too
         paint.setAntiAlias(true);
         Path circularPath = new Path();
-        circularPath.addCircle(this.getPivotX(), this.getPivotY(), 60*density, Path.Direction.CW);
+        circularPath.addCircle(75*density, 75*density, 60*density, Path.Direction.CW);
         canvas.drawPath(circularPath, paint);
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
         canvas.drawBitmap(finalBitmap, rect, rect, paint);

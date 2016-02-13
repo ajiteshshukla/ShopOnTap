@@ -11,6 +11,7 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.*;
 import android.widget.SearchView;
 import android.widget.Toast;
@@ -126,6 +127,7 @@ public class ProductsActivity extends AppCompatActivity implements  Slider.OnPos
                 url = AppConstants.REQUEST_URL + "?requesttype=" + AppConstants.REQUEST_SEARCH
                         + "&keywords=" + this.searchString.replaceAll(" ", "%20");
             }
+            Log.e("AASHA", "Url " + url);
             datafromServer = networkTask.fetchDataFromUrl(url);
             return datafromServer;
         }

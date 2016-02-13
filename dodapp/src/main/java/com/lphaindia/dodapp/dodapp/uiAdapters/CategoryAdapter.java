@@ -86,7 +86,7 @@ public class CategoryAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        Picasso.with(mContext).load(mCategoryList.get(position).getDrawable()).fit().into(holder.imageView);
+        Picasso.with(mContext).load(mCategoryList.get(position).getDrawable()).into(holder.imageView);
         holder.textView.setText(mCategoryList.get(position).getName());
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
