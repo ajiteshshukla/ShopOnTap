@@ -75,7 +75,7 @@ public class CircularImageView extends ImageView {
         paint.setStrokeCap(Paint.Cap.ROUND);      // set the paint cap to round too
         paint.setAntiAlias(true);
         Path circularPath = new Path();
-        circularPath.addCircle(75*density, 75*density, 60*density, Path.Direction.CW);
+        circularPath.addCircle(91*density, 91*density, 73*density, Path.Direction.CW);
         canvas.drawPath(circularPath, paint);
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
         canvas.drawBitmap(finalBitmap, rect, rect, paint);
