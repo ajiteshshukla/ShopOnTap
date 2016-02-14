@@ -30,29 +30,29 @@ public class CategoryAdapter extends BaseAdapter {
 
     public CategoryAdapter(Context ctxt) {
         mContext = ctxt;
-        Category c = new Category("Women Clothing", R.drawable.women_clothing);
+        Category c = new Category("Women Clothing", "Women Clothing", R.drawable.women_clothing);
         mCategoryList.add(c);
-        c = new Category("Men Clothing", R.drawable.men_clothing);
+        c = new Category("Men Clothing", "Men Clothing", R.drawable.men_clothing);
         mCategoryList.add(c);
-        c = new Category("Women Shoes", R.drawable.women_shoes);
+        c = new Category("Women Shoes","Women Footwear", R.drawable.women_shoes);
         mCategoryList.add(c);
-        c = new Category("Men Shoes", R.drawable.men_shoes);
+        c = new Category("Men Shoes","Men Footwear", R.drawable.men_shoes);
         mCategoryList.add(c);
-        c = new Category("Watches", R.drawable.watches);
+        c = new Category("Watches", "Watches", R.drawable.watches);
         mCategoryList.add(c);
-        c = new Category("Phones & Tablets", R.drawable.phones_tablets);
+        c = new Category("Phones & Tablets", "Mobiles and Tabs", R.drawable.phones_tablets);
         mCategoryList.add(c);
-        c = new Category("Books", R.drawable.books);
+        c = new Category("Books","Books", R.drawable.books);
         mCategoryList.add(c);
-        c = new Category("Cameras", R.drawable.cameras);
+        c = new Category("Cameras", "Cameras", R.drawable.cameras);
         mCategoryList.add(c);
-        c = new Category("Laptops", R.drawable.laptops);
+        c = new Category("Laptops", "Laptops", R.drawable.laptops);
         mCategoryList.add(c);
-        c = new Category("Bags", R.drawable.bags);
+        c = new Category("Bags","Bags", R.drawable.bags);
         mCategoryList.add(c);
-        c = new Category("Jewellery", R.drawable.jewellery);
+        c = new Category("Jewellery", "Jewellery", R.drawable.jewellery);
         mCategoryList.add(c);
-        c = new Category("Special Offers", R.drawable.offers);
+        c = new Category("Special Offers", "Special Offers", R.drawable.offers);
         mCategoryList.add(c);
     }
 
@@ -92,7 +92,7 @@ public class CategoryAdapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(mContext, ProductsActivity.class);
-                i.putExtra(AppConstants.KEY_CATEGORY, mCategoryList.get(position).getName());
+                i.putExtra(AppConstants.KEY_CATEGORY, mCategoryList.get(position).getCategoryName());
                 mContext.startActivity(i);
             }
         });
