@@ -23,25 +23,152 @@ import java.util.List;
 /**
  * Created by aasha.medhi on 10/7/15.
  */
-public class ProductCardAdapter extends RecyclerView.Adapter<ProductCardAdapter.CustomViewHolder> {
+public class ProductCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<Product> mProductList;
     private Context mCtxt;
     private AdapterView.OnItemClickListener mOnItemClickListener;
+    public static final int ITEM = 1;
+    public static final int LOADING = 2;
+    private boolean mIsLoadingFooterAdded = false;
 
     public ProductCardAdapter(Context context, List<Product> productList) {
         this.mProductList = productList;
         this.mCtxt = context;
     }
 
+    private void add(Product item) {
+        mProductList.add(item);
+        notifyItemInserted(mProductList.size()-1);
+    }
+
+    public void addAll(List<Product> videos) {
+        for (Product video : videos) {
+            add(video);
+        }
+    }
+
     @Override
-    public CustomViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.product_card_view, null);
-        CustomViewHolder viewHolder = new CustomViewHolder(view);
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+//        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.product_card_view, null);
+//        CustomViewHolder viewHolder = new CustomViewHolder(view);
+//        return viewHolder;
+
+        RecyclerView.ViewHolder viewHolder = null;
+
+        switch (viewType) {
+            case ITEM:
+                viewHolder = createProductViewHolder(viewGroup);
+                break;
+            case LOADING:
+                viewHolder = createLoadingViewHolder(viewGroup);
+                break;
+        }
         return viewHolder;
     }
 
     @Override
-    public void onBindViewHolder(CustomViewHolder holder, int position) {
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        switch (getItemViewType(position)) {
+            case ITEM:
+                bindProductViewHolder(holder, position);
+                break;
+            case LOADING:
+                bindLoadingViewHolder(holder);
+            default:
+                break;
+        }
+    }
+
+//    @Override
+//    public void onBindViewHolder(CustomViewHolder holder, int position) {
+//        Product product = mProductList.get(position);
+//        holder.setImgProductImage(product.imageUrl, product.aspectRatio);
+//        holder.setProductPrice(product.sellingPrice, product.discountPercentage, product.maximumRetailPrice);
+//        holder.setProductName(product.title);
+//        holder.setProductLandingPage(product.productUrl);
+//        holder.setProductMerchantLogo(product.affiliateLogo);
+//    }
+
+    @Override
+    public int getItemCount() {
+        return (null != mProductList ? mProductList.size() : 0);
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return (position == mProductList.size()-1 && mIsLoadingFooterAdded) ? LOADING : ITEM;
+    }
+
+    public void remove(Product item) {
+        int position = mProductList.indexOf(item);
+        if (position > -1) {
+            mProductList.remove(position);
+            notifyItemRemoved(position);
+        }
+    }
+
+    public void clear() {
+        mIsLoadingFooterAdded = false;
+        while (getItemCount() > 0) {
+            remove(getItem(0));
+        }
+    }
+
+    public boolean isEmpty() {
+        return getItemCount() == 0;
+    }
+
+    public void addLoading(){
+        mIsLoadingFooterAdded = true;
+        add(new Product());
+    }
+
+    public void removeLoading() {
+        if(mProductList.size() > 0) {
+            mIsLoadingFooterAdded = false;
+            int position = mProductList.size() - 1;
+            Product item = getItem(position);
+
+            if (item != null) {
+                mProductList.remove(position);
+                notifyItemRemoved(position);
+            }
+        }
+    }
+
+    public Product getItem(int position) {
+        return mProductList.get(position);
+    }
+
+
+    private RecyclerView.ViewHolder createProductViewHolder(ViewGroup parent) {
+        // create a new view
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.product_card_view, parent, false);
+
+        final ProductViewHolder holder = new ProductViewHolder(v);
+
+//        holder.mVideoRowRootLinearLayout.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                int adapterPos = holder.getAdapterPosition();
+//                if(adapterPos != RecyclerView.NO_POSITION){
+//                    if (mOnItemClickListener != null) {
+//                        mOnItemClickListener.onItemClick(adapterPos, holder.itemView);
+//                    }
+//                }
+//            }
+//        });
+
+        return holder;
+    }
+
+    private RecyclerView.ViewHolder createLoadingViewHolder(ViewGroup parent) {
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.load_more, parent, false);
+        return new MoreViewHolder(v);
+    }
+
+    private void bindProductViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
+        final ProductViewHolder holder = (ProductViewHolder) viewHolder;
         Product product = mProductList.get(position);
         holder.setImgProductImage(product.imageUrl, product.aspectRatio);
         holder.setProductPrice(product.sellingPrice, product.discountPercentage, product.maximumRetailPrice);
@@ -50,13 +177,13 @@ public class ProductCardAdapter extends RecyclerView.Adapter<ProductCardAdapter.
         holder.setProductMerchantLogo(product.affiliateLogo);
     }
 
-    @Override
-    public int getItemCount() {
-        return (null != mProductList ? mProductList.size() : 0);
+    private void bindLoadingViewHolder(RecyclerView.ViewHolder viewHolder){
+        //MoreViewHolder holder = (MoreViewHolder) viewHolder;
+        //holder.mLoadingImageView.setMaskOrientation(LoadingImageView.MaskOrientation.LeftToRight);
     }
 
 
-    public class CustomViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class ProductViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private TextView mTextProductName;
         private TextView mTextProductPrice;
         private TextView mTextProductMrp;
@@ -67,7 +194,7 @@ public class ProductCardAdapter extends RecyclerView.Adapter<ProductCardAdapter.
         private SimpleDraweeView mLogoMerchantName;
         private ImageView mBtnCta;
 
-        public CustomViewHolder(View itemView) {
+        public ProductViewHolder(View itemView) {
             super(itemView);
             itemView.setOnClickListener(this);
             mTextProductName = (TextView) itemView.findViewById(R.id.product_title);
@@ -149,6 +276,15 @@ public class ProductCardAdapter extends RecyclerView.Adapter<ProductCardAdapter.
             mImgProductImage.setImageURI(Uri.parse(productImage));
             mImgProductImage.setHierarchy(hierarchy);
 
+        }
+    }
+
+    public static class MoreViewHolder extends RecyclerView.ViewHolder {
+       // LoadingImageView mLoadingImageView;
+
+        public MoreViewHolder(View view) {
+            super(view);
+            //mLoadingImageView = (LoadingImageView)view.findViewById(R.id.loading_iv);
         }
     }
 }

@@ -38,8 +38,15 @@ public class ProductsActivity extends AppCompatActivity implements  Slider.OnPos
     private List<Product> mProducts;
     private List<SubCategory> mSubCategories;
     private SnackBar snackBar;
+    private LinearLayoutManager mLayoutManager;
+    private int mCurrentIndex = 0;
     SearchView searchView;
-
+    // region Constants
+    public static final int PAGE_SIZE = 30;
+    private boolean mIsLastPage = false;
+    private boolean mIsLoading = false;
+    String category;
+    String searchKey;
     @Override
     public void onPositionChanged(Slider slider, boolean b, float v, float v1, int i, int i1) {
         int value = slider.getValue();
@@ -58,8 +65,10 @@ public class ProductsActivity extends AppCompatActivity implements  Slider.OnPos
         Bundle b = getIntent().getExtras();
         // Initialize recycler view
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mLayoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setHasFixedSize(false);
+        mRecyclerView.addOnScrollListener(mRecyclerViewOnScrollListener);
         slider = (Slider) findViewById(R.id.discount_slider);
         slider.setOnPositionChangeListener(this);
 
@@ -75,8 +84,14 @@ public class ProductsActivity extends AppCompatActivity implements  Slider.OnPos
         snackBar.setVisibility(View.INVISIBLE);
         snackBar.dismiss();
 
-        String category = getIntent().getStringExtra(AppConstants.KEY_CATEGORY);
-        String searchKey = getIntent().getStringExtra(AppConstants.KEY_SEARCH);
+        category = getIntent().getStringExtra(AppConstants.KEY_CATEGORY);
+        searchKey = getIntent().getStringExtra(AppConstants.KEY_SEARCH);
+        adapter = new ProductCardAdapter(this, new ArrayList<Product>());
+        mRecyclerView.setAdapter(adapter);
+        loadMoreItems();
+    }
+
+    private void loadMoreItems(){
         if (category != null) {
             setTitle(category);
             new FetchProducts(category, SEARCH_TYPE.CATEGORY).execute();
@@ -84,8 +99,6 @@ public class ProductsActivity extends AppCompatActivity implements  Slider.OnPos
             new FetchProducts(searchKey, SEARCH_TYPE.KEYWORD).execute();
         }
     }
-
-
     @Override
     public void onResume() {
         super.onResume();
@@ -108,7 +121,9 @@ public class ProductsActivity extends AppCompatActivity implements  Slider.OnPos
         protected void onPreExecute() {
             super.onPreExecute();
             //progressBar.setVisibility(View.VISIBLE);
-            progressDialog.show();
+            mIsLoading = true;
+            if(mCurrentIndex == 0)
+                progressDialog.show();
             setProgressBarIndeterminateVisibility(true);
             if (snackBar.isShown()) {
                 snackBar.dismiss();
@@ -122,12 +137,11 @@ public class ProductsActivity extends AppCompatActivity implements  Slider.OnPos
             String url = null;
             if (searchType == SEARCH_TYPE.CATEGORY) {
                 url = AppConstants.REQUEST_URL + "?requesttype=" + AppConstants.REQUEST_PRODUCTS
-                        + "&categoryname=" + this.searchString.replaceAll(" ", "%20");
+                        + "&categoryname=" + this.searchString.replaceAll(" ", "%20") + "&index="+ mCurrentIndex;
             } else {
                 url = AppConstants.REQUEST_URL + "?requesttype=" + AppConstants.REQUEST_SEARCH
                         + "&keywords=" + this.searchString.replaceAll(" ", "%20");
             }
-            Log.e("AASHA", "Url " + url);
             datafromServer = networkTask.fetchDataFromUrl(url);
             return datafromServer;
         }
@@ -136,7 +150,8 @@ public class ProductsActivity extends AppCompatActivity implements  Slider.OnPos
         protected void onPostExecute(String datafromServer) {
             super.onPostExecute(datafromServer);
             //progressBar.setVisibility(View.GONE);
-            progressDialog.cancel();
+            if(progressDialog.isShowing())
+                progressDialog.cancel();
             if (datafromServer != null) {
                 try {
                     mProducts = Utility.getProductListFromJSON(datafromServer);
@@ -152,6 +167,7 @@ public class ProductsActivity extends AppCompatActivity implements  Slider.OnPos
                     if (snackBar.isShown()) {
                         snackBar.dismiss();
                     }
+                    mIsLoading = false;
                 } catch (Exception e) {
                     snackBar.show();
                 }
@@ -162,6 +178,7 @@ public class ProductsActivity extends AppCompatActivity implements  Slider.OnPos
     }
 
     private void renderProducts(final List<Product> products, int value) {
+        adapter.removeLoading();
         if (products == null || products.isEmpty()) {
             return;
         }
@@ -176,8 +193,14 @@ public class ProductsActivity extends AppCompatActivity implements  Slider.OnPos
             }
         }
         if (filteredProducts != null && !filteredProducts.isEmpty()) {
-            adapter = new ProductCardAdapter(this, filteredProducts);
-            mRecyclerView.setAdapter(adapter);
+            adapter.addAll(filteredProducts);
+            if (filteredProducts.size() >= PAGE_SIZE) {
+                adapter.addLoading();
+            } else {
+                mIsLastPage = true;
+            }
+            mCurrentIndex += filteredProducts.size();
+
         }
     }
 
@@ -235,4 +258,27 @@ public class ProductsActivity extends AppCompatActivity implements  Slider.OnPos
             new FetchProducts(query, SEARCH_TYPE.KEYWORD).execute();
         }
     }
+
+    private RecyclerView.OnScrollListener mRecyclerViewOnScrollListener = new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            super.onScrollStateChanged(recyclerView, newState);
+        }
+
+        @Override
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            super.onScrolled(recyclerView, dx, dy);
+            int visibleItemCount = mLayoutManager.getChildCount();
+            int totalItemCount = mLayoutManager.getItemCount();
+            int firstVisibleItemPosition = mLayoutManager.findFirstVisibleItemPosition();
+
+            if (!mIsLoading && !mIsLastPage) {
+                if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount
+                        && firstVisibleItemPosition >= 0
+                        && totalItemCount >= PAGE_SIZE) {
+                    loadMoreItems();
+                }
+            }
+        }
+    };
 }
