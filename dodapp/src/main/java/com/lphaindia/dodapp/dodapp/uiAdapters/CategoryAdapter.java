@@ -7,13 +7,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 import com.lphaindia.dodapp.dodapp.AppConstants;
-import com.lphaindia.dodapp.dodapp.CategoryActivity;
 import com.lphaindia.dodapp.dodapp.ProductsActivity;
 import com.lphaindia.dodapp.dodapp.R;
 import com.lphaindia.dodapp.dodapp.data.Category;
-import com.lphaindia.dodapp.dodapp.overlays.CircularImageView;
 import com.lphaindia.dodapp.dodapp.typeface.BigNoodleTitling;
 import com.squareup.picasso.Picasso;
 
@@ -79,14 +78,14 @@ public class CategoryAdapter extends BaseAdapter {
             LayoutInflater inflater = (LayoutInflater) mContext.
                     getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = (FrameLayout) inflater.inflate(R.layout.category_row, null);
-            holder.imageView = (CircularImageView) convertView.findViewById(R.id.img_interest);
+            holder.imageView = (ImageView) convertView.findViewById(R.id.img_interest);
             BigNoodleTitling.applyFont(mContext, holder.textView);
             holder.textView = (TextView) convertView.findViewById(R.id.text_interest);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        Picasso.with(mContext).load(mCategoryList.get(position).getDrawable()).into(holder.imageView);
+        Picasso.with(mContext).load(mCategoryList.get(position).getDrawable()).fit().into(holder.imageView);
         holder.textView.setText(mCategoryList.get(position).getName());
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -100,7 +99,7 @@ public class CategoryAdapter extends BaseAdapter {
     }
 
     class ViewHolder {
-        CircularImageView imageView;
+        ImageView imageView;
         TextView textView;
     }
 }

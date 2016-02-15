@@ -3,6 +3,7 @@
     <string name="app_name">ShopOnTap</string>
     <string name="getting_similar_items">Hang On ! We are getting similar products for you</string>
     <string name="noitems">No items to display</string>
+    <string name="banner_ad_unit_id">ca-app-pub-8872447265352449/9943396610</string>
     <string name="accessibilitydesc">ShopOnTap uses accessibility data to analyze and fetch similar products
         for users across different E-Commerce applications. ShopOnTap collects product name and description.
 

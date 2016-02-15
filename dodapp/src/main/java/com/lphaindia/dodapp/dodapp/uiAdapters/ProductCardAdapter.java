@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Paint;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,8 @@ import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.drawee.generic.GenericDraweeHierarchy;
 import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder;
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.lphaindia.dodapp.dodapp.R;
 import com.lphaindia.dodapp.dodapp.data.Product;
 
@@ -29,6 +32,7 @@ public class ProductCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     private AdapterView.OnItemClickListener mOnItemClickListener;
     public static final int ITEM = 1;
     public static final int LOADING = 2;
+    public static final int ADS = 3;
     private boolean mIsLoadingFooterAdded = false;
 
     public ProductCardAdapter(Context context, List<Product> productList) {
@@ -41,6 +45,11 @@ public class ProductCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         notifyItemInserted(mProductList.size()-1);
     }
 
+    private void add(int index, Product item) {
+        mProductList.add(index, item);
+        notifyItemInserted(index-1);
+    }
+
     public void addAll(List<Product> videos) {
         for (Product video : videos) {
             add(video);
@@ -49,10 +58,6 @@ public class ProductCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-//        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.product_card_view, null);
-//        CustomViewHolder viewHolder = new CustomViewHolder(view);
-//        return viewHolder;
-
         RecyclerView.ViewHolder viewHolder = null;
 
         switch (viewType) {
@@ -61,6 +66,8 @@ public class ProductCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 break;
             case LOADING:
                 viewHolder = createLoadingViewHolder(viewGroup);
+            case ADS:
+                viewHolder = createAdsViewHolder(viewGroup);
                 break;
         }
         return viewHolder;
@@ -74,20 +81,12 @@ public class ProductCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 break;
             case LOADING:
                 bindLoadingViewHolder(holder);
+            case ADS:
+                bindAdsViewHolder(holder);
             default:
                 break;
         }
     }
-
-//    @Override
-//    public void onBindViewHolder(CustomViewHolder holder, int position) {
-//        Product product = mProductList.get(position);
-//        holder.setImgProductImage(product.imageUrl, product.aspectRatio);
-//        holder.setProductPrice(product.sellingPrice, product.discountPercentage, product.maximumRetailPrice);
-//        holder.setProductName(product.title);
-//        holder.setProductLandingPage(product.productUrl);
-//        holder.setProductMerchantLogo(product.affiliateLogo);
-//    }
 
     @Override
     public int getItemCount() {
@@ -96,6 +95,8 @@ public class ProductCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     @Override
     public int getItemViewType(int position) {
+        if(position!= 0 && position % 6 == 0)
+            return ADS;
         return (position == mProductList.size()-1 && mIsLoadingFooterAdded) ? LOADING : ITEM;
     }
 
@@ -123,6 +124,10 @@ public class ProductCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         add(new Product());
     }
 
+    public void addAds(int index){
+        add(index, new Product());
+    }
+
     public void removeLoading() {
         if(mProductList.size() > 0) {
             mIsLoadingFooterAdded = false;
@@ -142,29 +147,19 @@ public class ProductCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
 
     private RecyclerView.ViewHolder createProductViewHolder(ViewGroup parent) {
-        // create a new view
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.product_card_view, parent, false);
-
         final ProductViewHolder holder = new ProductViewHolder(v);
-
-//        holder.mVideoRowRootLinearLayout.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                int adapterPos = holder.getAdapterPosition();
-//                if(adapterPos != RecyclerView.NO_POSITION){
-//                    if (mOnItemClickListener != null) {
-//                        mOnItemClickListener.onItemClick(adapterPos, holder.itemView);
-//                    }
-//                }
-//            }
-//        });
-
         return holder;
     }
 
     private RecyclerView.ViewHolder createLoadingViewHolder(ViewGroup parent) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.load_more, parent, false);
         return new MoreViewHolder(v);
+    }
+
+    private RecyclerView.ViewHolder createAdsViewHolder(ViewGroup parent) {
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.ads, parent, false);
+        return new AdsViewHolder(v);
     }
 
     private void bindProductViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
@@ -178,8 +173,12 @@ public class ProductCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
     private void bindLoadingViewHolder(RecyclerView.ViewHolder viewHolder){
-        //MoreViewHolder holder = (MoreViewHolder) viewHolder;
-        //holder.mLoadingImageView.setMaskOrientation(LoadingImageView.MaskOrientation.LeftToRight);
+    }
+
+    private void bindAdsViewHolder(RecyclerView.ViewHolder viewHolder){
+        final AdsViewHolder holder = (AdsViewHolder)viewHolder;
+        AdRequest adRequest = new AdRequest.Builder().build();
+        holder.mAdView.loadAd(adRequest);
     }
 
 
@@ -218,29 +217,33 @@ public class ProductCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
         public void setProductPrice(String productPrice, String discount, String mrp) {
             StringBuilder title = new StringBuilder();
-            if (Float.parseFloat(productPrice) <= 0) {
-                title.append("FREE");
-            } else {
-                if (Float.parseFloat(discount) > 0) {
-                    mTextProductMrp.setVisibility(View.VISIBLE);
-                    mTextProductDiscount.setVisibility(View.VISIBLE);
-                    mTextProductDiscount.setPivotX(0);
-                    mTextProductDiscount.setPivotY(0);
-                    mTextProductDiscount.setRotation(-50);
-                    mImgDisc.setVisibility(View.VISIBLE);
-                    mTextProductMrp.setText("₹ " + mrp);
-                    mTextProductMrp.setPaintFlags(mTextProductMrp.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                    mTextProductDiscount.setText(discount + "% OFF");
-                    title.append(productPrice);
-                }else{
-                    mTextProductMrp.setVisibility(View.GONE);
-                    mTextProductDiscount.setVisibility(View.GONE);
-                    mImgDisc.setVisibility(View.GONE);
-                    title.append("₹ " + productPrice);
-                }
+            try {
+                if (Float.parseFloat(productPrice) <= 0) {
+                    title.append("FREE");
+                } else {
+                    if (Float.parseFloat(discount) > 0) {
+                        mTextProductMrp.setVisibility(View.VISIBLE);
+                        mTextProductDiscount.setVisibility(View.VISIBLE);
+                        mTextProductDiscount.setPivotX(0);
+                        mTextProductDiscount.setPivotY(0);
+                        mTextProductDiscount.setRotation(-50);
+                        mImgDisc.setVisibility(View.VISIBLE);
+                        mTextProductMrp.setText("₹ " + mrp);
+                        mTextProductMrp.setPaintFlags(mTextProductMrp.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                        mTextProductDiscount.setText(discount + "% OFF");
+                        title.append(productPrice);
+                    } else {
+                        mTextProductMrp.setVisibility(View.GONE);
+                        mTextProductDiscount.setVisibility(View.GONE);
+                        mImgDisc.setVisibility(View.GONE);
+                        title.append("₹ " + productPrice);
+                    }
 
+                }
+                mTextProductPrice.setText(title.toString());
+            }catch (Exception e){
+                e.printStackTrace();
             }
-            mTextProductPrice.setText(title.toString());
         }
 
         public void setProductMerchantLogo(String merchant) {
@@ -264,17 +267,21 @@ public class ProductCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         }
 
         public void setImgProductImage(String productImage, String aspectRatiostr) {
-            if (aspectRatiostr != null) {
-                float aspectRatio = Float.valueOf(aspectRatiostr);
-                mImgProductImage.setAspectRatio(aspectRatio);
+            try {
+                if (aspectRatiostr != null) {
+                    float aspectRatio = Float.valueOf(aspectRatiostr);
+                    mImgProductImage.setAspectRatio(aspectRatio);
+                }
+                GenericDraweeHierarchyBuilder builder =
+                        new GenericDraweeHierarchyBuilder(mCtxt.getResources());
+                GenericDraweeHierarchy hierarchy = builder
+                        .setActualImageScaleType(ScalingUtils.ScaleType.FIT_CENTER)
+                        .build();
+                mImgProductImage.setImageURI(Uri.parse(productImage));
+                mImgProductImage.setHierarchy(hierarchy);
+            }catch (Exception e){
+                e.printStackTrace();
             }
-            GenericDraweeHierarchyBuilder builder =
-                    new GenericDraweeHierarchyBuilder(mCtxt.getResources());
-            GenericDraweeHierarchy hierarchy = builder
-                    .setActualImageScaleType(ScalingUtils.ScaleType.FIT_CENTER)
-                    .build();
-            mImgProductImage.setImageURI(Uri.parse(productImage));
-            mImgProductImage.setHierarchy(hierarchy);
 
         }
     }
@@ -285,6 +292,14 @@ public class ProductCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         public MoreViewHolder(View view) {
             super(view);
             //mLoadingImageView = (LoadingImageView)view.findViewById(R.id.loading_iv);
+        }
+    }
+    public static class AdsViewHolder extends RecyclerView.ViewHolder {
+        AdView mAdView;
+
+        public AdsViewHolder(View view) {
+            super(view);
+            mAdView = (AdView)view.findViewById(R.id.adView);
         }
     }
 }

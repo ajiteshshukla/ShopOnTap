@@ -185,6 +185,9 @@ public class ProductsActivity extends AppCompatActivity implements  Slider.OnPos
         List<Product> filteredProducts = new ArrayList<Product>();
         for (int i = 0; i < products.size(); i++) {
             try {
+                if(i != 0 && i % 6 == 0){ //For ads
+                    filteredProducts.add(new Product());
+                }
                 if (Float.valueOf(products.get(i).discountPercentage) >= value) {
                     filteredProducts.add(products.get(i));
                 }
