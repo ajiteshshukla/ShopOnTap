@@ -50,6 +50,7 @@ public class ProductsActivity extends AppCompatActivity implements  Slider.OnPos
     @Override
     public void onPositionChanged(Slider slider, boolean b, float v, float v1, int i, int i1) {
         int value = slider.getValue();
+        mCurrentIndex = 0;
         renderProducts(mProducts, value);
     }
 
