@@ -50,10 +50,17 @@ public class ProductCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         notifyItemInserted(index-1);
     }
 
-    public void addAll(List<Product> videos) {
-        for (Product video : videos) {
-            add(video);
+    public void addAll(List<Product> products) {
+        Log.e("AASHA", "current" + mProductList.size());
+        for (Product product : products) {
+            add(product);
         }
+        Log.e("AASHA", "after" + mProductList.size());
+    }
+
+    public void removeAll() {
+        mProductList.clear();
+        notifyDataSetChanged();
     }
 
     @Override
@@ -66,6 +73,7 @@ public class ProductCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 break;
             case LOADING:
                 viewHolder = createLoadingViewHolder(viewGroup);
+                break;
             case ADS:
                 viewHolder = createAdsViewHolder(viewGroup);
                 break;
@@ -81,6 +89,7 @@ public class ProductCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 break;
             case LOADING:
                 bindLoadingViewHolder(holder);
+                break;
             case ADS:
                 bindAdsViewHolder(holder);
             default:
@@ -154,7 +163,7 @@ public class ProductCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     private RecyclerView.ViewHolder createLoadingViewHolder(ViewGroup parent) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.load_more, parent, false);
-        return new MoreViewHolder(v);
+        return new LoadingViewHolder(v);
     }
 
     private RecyclerView.ViewHolder createAdsViewHolder(ViewGroup parent) {
@@ -286,10 +295,10 @@ public class ProductCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         }
     }
 
-    public static class MoreViewHolder extends RecyclerView.ViewHolder {
+    public static class LoadingViewHolder extends RecyclerView.ViewHolder {
        // LoadingImageView mLoadingImageView;
 
-        public MoreViewHolder(View view) {
+        public LoadingViewHolder(View view) {
             super(view);
             //mLoadingImageView = (LoadingImageView)view.findViewById(R.id.loading_iv);
         }

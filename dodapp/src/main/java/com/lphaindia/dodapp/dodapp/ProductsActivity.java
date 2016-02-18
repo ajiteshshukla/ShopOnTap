@@ -86,17 +86,19 @@ public class ProductsActivity extends AppCompatActivity implements  Slider.OnPos
 
         category = getIntent().getStringExtra(AppConstants.KEY_CATEGORY);
         searchKey = getIntent().getStringExtra(AppConstants.KEY_SEARCH);
+
         adapter = new ProductCardAdapter(this, new ArrayList<Product>());
         mRecyclerView.setAdapter(adapter);
-        loadMoreItems();
+
+        loadMoreItems(SEARCH_TYPE.CATEGORY, category);
     }
 
-    private void loadMoreItems(){
-        if (category != null) {
-            setTitle(category);
-            new FetchProducts(category, SEARCH_TYPE.CATEGORY).execute();
-        } else if (searchKey != null) {
-            new FetchProducts(searchKey, SEARCH_TYPE.KEYWORD).execute();
+    private void loadMoreItems(SEARCH_TYPE type, String value){
+        if (type == SEARCH_TYPE.CATEGORY) {
+            setTitle(value);
+            new FetchProducts(value, type).execute();
+        } else {
+            new FetchProducts(value, type).execute();
         }
     }
     @Override
@@ -178,6 +180,9 @@ public class ProductsActivity extends AppCompatActivity implements  Slider.OnPos
     }
 
     private void renderProducts(final List<Product> products, int value) {
+        if(mCurrentIndex == 0){
+            adapter.removeAll();
+        }
         adapter.removeLoading();
         if (products == null || products.isEmpty()) {
             return;
@@ -237,7 +242,9 @@ public class ProductsActivity extends AppCompatActivity implements  Slider.OnPos
                 item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
-                        new FetchProducts(subCategory, SEARCH_TYPE.CATEGORY).execute();
+                        mCurrentIndex = 0;
+                        loadMoreItems(SEARCH_TYPE.CATEGORY, subCategory);
+                        //new FetchProducts(subCategory, SEARCH_TYPE.CATEGORY).execute();
                         return true;
                     }
                 });
@@ -258,7 +265,9 @@ public class ProductsActivity extends AppCompatActivity implements  Slider.OnPos
             String query = intent.getStringExtra(SearchManager.QUERY);
             searchView.setQuery(query, false);
             searchView.clearFocus();
-            new FetchProducts(query, SEARCH_TYPE.KEYWORD).execute();
+            mCurrentIndex = 0;
+            loadMoreItems(SEARCH_TYPE.KEYWORD, query);
+            //new FetchProducts(query, SEARCH_TYPE.KEYWORD).execute();
         }
     }
 
@@ -279,7 +288,7 @@ public class ProductsActivity extends AppCompatActivity implements  Slider.OnPos
                 if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount
                         && firstVisibleItemPosition >= 0
                         && totalItemCount >= PAGE_SIZE) {
-                    loadMoreItems();
+                    loadMoreItems(SEARCH_TYPE.CATEGORY, category);
                 }
             }
         }
