@@ -31,6 +31,7 @@ import com.google.android.gms.gcm.GcmListenerService;
 import com.lphaindia.dodapp.dodapp.AppConstants;
 import com.lphaindia.dodapp.dodapp.CategoryActivity;
 import com.lphaindia.dodapp.dodapp.R;
+import com.lphaindia.dodapp.dodapp.data.Category;
 
 import java.net.URL;
 
@@ -86,32 +87,30 @@ public class MyGcmListenerService extends GcmListenerService {
     private void sendNotification(String message, String image) {
         Intent intent = new Intent(this, CategoryActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra("SOURCE", 1);
+
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                 PendingIntent.FLAG_ONE_SHOT);
+        if(image == null)
+            image = "http://www.sdpb.org/s/photogallery/img/no-image-available.jpg";
         Bitmap b = null;
         try {
             URL url = new URL(image);
             b = BitmapFactory.decodeStream(url.openConnection().getInputStream());
-        } catch (Exception e) {
+        }catch (Exception e){
             e.printStackTrace();
         }
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        NotificationCompat.Builder notificationBuilder;
-        if (b != null) {
-            notificationBuilder = new NotificationCompat.Builder(this)
-                    .setContentTitle("ShopOnTap")
-                    .setContentText(message)
-                    .setAutoCancel(true)
-                    .setLargeIcon(b);
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
+                .setContentTitle("ShopOnTap")
+                .setContentText(message)
+                .setAutoCancel(true)
+                .setSound(defaultSoundUri)
+                .setLargeIcon(b);
+        if(b != null)
             notificationBuilder.setStyle(new NotificationCompat.BigPictureStyle().bigPicture(b));
-        }else{
-            notificationBuilder = new NotificationCompat.Builder(this)
-                    .setContentTitle("ShopOnTap")
-                    .setContentText(message)
-                    .setAutoCancel(true);
-        }
+
         notificationBuilder.setContentIntent(pendingIntent);
-        Log.e("AASHA", "Sending notif");
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
