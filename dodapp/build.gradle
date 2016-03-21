@@ -9,6 +9,7 @@ buildscript {
 }
 apply plugin: 'com.android.application'
 apply plugin: 'android-apt'
+apply plugin: 'com.google.gms.google-services'
 
 repositories {
     jcenter()
@@ -59,7 +60,7 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:22.2.1'
     compile 'com.facebook.fresco:fresco:0.7.0+'
     compile 'com.squareup.picasso:picasso:2.5.2'
-    compile 'com.google.android.gms:play-services-analytics:8.4.0'
+    compile 'com.google.android.gms:play-services-analytics:8.3.0'
     testCompile('com.squareup.assertj:assertj-android:1.0.0') {
         exclude group: 'com.android.support', module: 'support-annotations'
     }
@@ -74,8 +75,8 @@ dependencies {
     compile 'com.github.rey5137:material:1.2.1.6-SNAPSHOT'
 
     compile 'com.crittercism:crittercism-android-agent:+'
-    compile 'com.google.android.gms:play-services-ads:8.4.0'
-
+    compile 'com.google.android.gms:play-services-ads:8.3.0'
+    compile 'com.google.android.gms:play-services-gcm:8.3.0'
 }
 
 apt {

@@ -2,17 +2,17 @@ package com.lphaindia.dodapp.dodapp;
 
 import android.annotation.TargetApi;
 import android.app.SearchManager;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
+import android.content.*;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -21,6 +21,10 @@ import android.widget.GridView;
 import android.widget.SearchView;
 import com.crittercism.app.Crittercism;
 import com.facebook.drawee.backends.pipeline.Fresco;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
+import com.lphaindia.dodapp.dodapp.pushnotification.QuickstartPreferences;
+import com.lphaindia.dodapp.dodapp.pushnotification.RegistrationIntentService;
 import com.lphaindia.dodapp.dodapp.uiAdapters.CategoryAdapter;
 
 
@@ -29,6 +33,9 @@ public class CategoryActivity extends AppCompatActivity {
     SearchView searchView;
     GridView mGridView;
     CategoryAdapter mAdapter;
+    private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+    //Push notification
+    private BroadcastReceiver mRegistrationBroadcastReceiver;
 
     @Override
     public void onCreate(Bundle savedInstanceState, PersistableBundle persistentState) {
@@ -55,6 +62,9 @@ public class CategoryActivity extends AppCompatActivity {
             Fresco.initialize(this);
             AppConstants.isFrescoInitialized = true;
         }
+        Log.e("AASHA", "Reg ");
+        //Register for push notifs
+        registerForPushNotification();
         renderCategories();
     }
 
@@ -175,4 +185,43 @@ public class CategoryActivity extends AppCompatActivity {
         }
     }
 
+    private void registerForPushNotification() {
+        mRegistrationBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                SharedPreferences sharedPreferences =
+                        PreferenceManager.getDefaultSharedPreferences(context);
+                boolean sentToken = sharedPreferences
+                        .getBoolean(QuickstartPreferences.SENT_TOKEN_TO_SERVER, false);
+                if (sentToken) {
+                    Log.e("AASHA", "Registered for push notifs");
+                } else {
+                    Log.e("AASHA", "Failed");
+                }
+            }
+        };
+        if (checkPlayServices()) {
+            Log.e("AASHA", " play");
+            // Start IntentService to register this application with GCM.
+            Intent intent = new Intent(this, RegistrationIntentService.class);
+            startService(intent);
+        }else{
+            Log.e("AASHA", "No play");
+        }
+    }
+    private boolean checkPlayServices() {
+        GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
+        int resultCode = apiAvailability.isGooglePlayServicesAvailable(this);
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (apiAvailability.isUserResolvableError(resultCode)) {
+                apiAvailability.getErrorDialog(this, resultCode, PLAY_SERVICES_RESOLUTION_REQUEST)
+                        .show();
+            } else {
+                Log.i("TAG", "This device is not supported.");
+                finish();
+            }
+            return false;
+        }
+        return true;
+    }
 }
