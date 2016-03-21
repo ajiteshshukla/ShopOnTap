@@ -51,11 +51,9 @@ public class ProductCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
     public void addAll(List<Product> products) {
-        Log.e("AASHA", "current" + mProductList.size());
         for (Product product : products) {
             add(product);
         }
-        Log.e("AASHA", "after" + mProductList.size());
     }
 
     public void removeAll() {
